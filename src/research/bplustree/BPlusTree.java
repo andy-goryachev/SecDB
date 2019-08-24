@@ -40,10 +40,10 @@ import java.util.Queue;
 public class BPlusTree<K extends Comparable<? super K>, V>
 {
 	@FunctionalInterface
-	public interface SearchClient<K,V>
+	public interface QueryClient<K,V>
 	{
 		/** accepts query results.  the query is aborted when this callback returns false */
-		public boolean acceptSearchResult(K key, V value);
+		public boolean acceptQueryResult(K key, V value);
 	}
 	
 	//
@@ -94,7 +94,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public void query(K start, boolean includeStart, K end, boolean includeEnd, SearchClient client)
+	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 	{
 		if(start.compareTo(end) <= 0)
 		{
@@ -208,9 +208,9 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 		public abstract boolean isUnderflow();
 		
-		public abstract boolean queryForward(K start, boolean includeStart, K end, boolean endPolicy, SearchClient client);
+		public abstract boolean queryForward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
 
-		public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, SearchClient client);
+		public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
 		
 		//
 
@@ -339,7 +339,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, SearchClient client)
+		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 		{
 			int ix = insertIndex(start);
 			int sz = children.size();
@@ -357,7 +357,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, SearchClient client)
+		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 		{
 			int ix = insertIndex(start);
 			
@@ -549,7 +549,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, SearchClient client)
+		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 		{
 			int sz = size();
 			for(int i=0; i<sz; i++)
@@ -561,7 +561,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				
 				if(((!includeStart && cms > 0) || (includeStart && cms >= 0)) && ((!includeEnd && cme < 0) || (includeEnd && cme <= 0)))
 				{
-					if(!client.acceptSearchResult(key, val))
+					if(!client.acceptQueryResult(key, val))
 					{
 						return false;
 					}
@@ -575,7 +575,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, SearchClient client)
+		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 		{
 			for(int i=size()-1; i>=0; i--)
 			{
@@ -586,7 +586,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				
 				if(((!includeStart && cms < 0) || (includeStart && cms <= 0)) && ((!includeEnd && cme > 0) || (includeEnd && cme >= 0)))
 				{
-					if(!client.acceptSearchResult(key, val))
+					if(!client.acceptQueryResult(key, val))
 					{
 						return false;
 					}
