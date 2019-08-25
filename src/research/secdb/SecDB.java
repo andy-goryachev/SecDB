@@ -2,6 +2,7 @@
 package research.secdb;
 import java.io.Closeable;
 import java.io.IOException;
+import research.bplustree.BPlusTree;
 
 
 /**
@@ -14,17 +15,20 @@ public class SecDB<K extends Comparable<? super K>,R>
 	public interface QueryCallback<K,V>
 	{
 		/** accepts query results.  the query is aborted when this callback returns false */
-		public boolean acceptQueryResult(K key, V value);
+		public boolean acceptQueryResult(K key, IStored value);
 	}
-	
+
+	private static final int BRANCHING_FACTOR = 4;
 	private final IStore store;
 	private final IEncryptor encryptor;
+	private final BPlusTree<K,IStored> tree;
 	
 	
 	public SecDB(IStore store, IEncryptor enc)
 	{
 		this.store = store;
 		this.encryptor = enc;
+		this.tree = new BPlusTree(BRANCHING_FACTOR);
 	}
 	
 	
