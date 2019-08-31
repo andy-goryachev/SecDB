@@ -33,6 +33,7 @@ import java.util.Queue;
 
 /**
  * A Java implementation of B+ tree for key-value store.
+ * Not thread safe.
  * 
  * Original code:
  * https://github.com/jiaguofang/b-plus-tree
@@ -49,7 +50,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	//
 
 	protected final int branchingFactor;
-	protected Node root;
+	protected Node rootNode;
 
 
 	public BPlusTree(int branchingFactor)
@@ -59,7 +60,40 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			throw new IllegalArgumentException("Illegal branching factor: " + branchingFactor);
 		}
 		this.branchingFactor = branchingFactor;
-		root = new LeafNode();
+	}
+	
+	
+	protected void setRoot(Node root)
+	{
+		this.rootNode = root;
+	}
+	
+	
+	protected Node newRootNode()
+	{
+		return newLeafNode();
+	}
+	
+	
+	protected LeafNode newLeafNode()
+	{
+		return new LeafNode();
+	}
+	
+	
+	protected InternalNode newInternalNode()
+	{
+		return new InternalNode();
+	}
+	
+	
+	protected Node root()
+	{
+		if(rootNode == null)
+		{
+			rootNode = newRootNode();
+		}
+		return rootNode;
 	}
 
 
@@ -80,7 +114,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public V get(K key)
 	{
-		return root.getValue(key);
+		return root().getValue(key);
 	}
 
 	
@@ -96,6 +130,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 	{
+		Node root = root();
 		if(start.compareTo(end) <= 0)
 		{
 			root.queryForward(start, includeStart, end, includeEnd, client);
@@ -119,7 +154,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void insert(K key, V value)
 	{
-		root.insertValue(key, value);
+		root().insertValue(key, value);
 	}
 
 
@@ -131,21 +166,21 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void remove(K key)
 	{
-		root.remove(key);
+		root().remove(key);
 	}
 	
 	
 	/** returns the total number of values stored in a tree.  this is an expensive call */
 	public long getTotalCount()
 	{
-		return root.countValues();
+		return root().countValues();
 	}
 
 
 	public String toString()
 	{
 		Queue<List<Node>> queue = new LinkedList<List<Node>>();
-		queue.add(Arrays.asList(root));
+		queue.add(Arrays.asList(root()));
 		StringBuilder sb = new StringBuilder();
 		while(!queue.isEmpty())
 		{
@@ -286,6 +321,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		@Override
 		public void remove(K key)
 		{
+			Node root = root();
 			Node child = getChild(key);
 			child.remove(key);
 			if(child.isUnderflow())
@@ -304,7 +340,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				
 				if(root.size() == 0)
 				{
-					root = left;
+					setRoot(left);
 				}
 			}
 		}
@@ -313,6 +349,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		@Override
 		public void insertValue(K key, V value)
 		{
+			Node root = root();
 			Node child = getChild(key);
 			child.insertValue(key, value);
 			if(child.isOverflow())
@@ -320,14 +357,15 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				Node sibling = child.split();
 				insertChild(sibling.getFirstLeafKey(), sibling);
 			}
+			
 			if(root.isOverflow())
 			{
 				Node sibling = split();
-				InternalNode newRoot = new InternalNode();
+				InternalNode newRoot = newInternalNode();
 				newRoot.keys.add(sibling.getFirstLeafKey());
 				newRoot.children.add(this);
 				newRoot.children.add(sibling);
-				root = newRoot;
+				setRoot(newRoot);
 			}
 		}
 
@@ -391,7 +429,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		{
 			int from = size() / 2 + 1;
 			int to = size();
-			InternalNode sibling = new InternalNode();
+			InternalNode sibling = newInternalNode();
 			sibling.keys.addAll(keys.subList(from, to));
 			sibling.children.addAll(children.subList(from, to + 1));
 
@@ -518,6 +556,8 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		@Override
 		public void insertValue(K key, V value)
 		{
+			Node root = root();
+			
 			int ix = indexOf(key);
 			int valueIndex = ix >= 0 ? ix : -ix - 1;
 			if(ix >= 0)
@@ -533,11 +573,11 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			if(root.isOverflow())
 			{
 				Node sibling = split();
-				InternalNode newRoot = new InternalNode();
+				InternalNode newRoot = newInternalNode();
 				newRoot.keys.add(sibling.getFirstLeafKey());
 				newRoot.children.add(this);
 				newRoot.children.add(sibling);
-				root = newRoot;
+				setRoot(newRoot);
 			}
 		}
 
@@ -616,7 +656,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			int from = (size() + 1) / 2;
 			int to = size();
 
-			LeafNode sibling = new LeafNode();
+			LeafNode sibling = newLeafNode();
 			sibling.keys.addAll(keys.subList(from, to));
 			sibling.values.addAll(values.subList(from, to));
 
