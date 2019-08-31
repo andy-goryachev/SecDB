@@ -7,5 +7,11 @@ package research.secdb;
  */
 public interface IStored
 {
-
+	public boolean hasValue();
+	
+	
+	public long getLength();
+	
+	
+	public IStream getIStream();
 }

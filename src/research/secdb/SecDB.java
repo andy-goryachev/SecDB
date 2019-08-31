@@ -8,6 +8,8 @@ import research.bplustree.BPlusTree;
 
 /**
  * Secure Key-Value Store.
+ * K: key type
+ * R: reference type
  */
 public class SecDB<K extends Comparable<? super K>,R>
 	implements Closeable, IKeyValueStore<K,R>
@@ -20,7 +22,7 @@ public class SecDB<K extends Comparable<? super K>,R>
 	}
 
 	private static final int TREE_BRANCHING_FACTOR = 4;
-	private final IStore store;
+	private final IStore<R> store;
 	private final IEncryptor encryptor;
 	private final BPlusTree<K,IStored> tree;
 	

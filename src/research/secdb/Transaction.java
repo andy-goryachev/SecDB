@@ -26,6 +26,10 @@ public abstract class Transaction
 	}
 	
 	
+	// TODO
+	// read, read bytes, write, contains
+	
+	
 	public void submit(SecDB db)
 	{
 		db.submit(this);
