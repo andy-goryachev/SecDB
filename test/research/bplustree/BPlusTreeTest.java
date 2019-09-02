@@ -95,7 +95,7 @@ public class BPlusTreeTest
 	{
 		ArrayList<V> rv = new ArrayList<>();
 		
-		t.query(start, includeStart, end, includeEnd, new BPlusTree.QueryClient<K,V>()
+		t.query(start, includeStart, end, includeEnd, new BPlusTreeNode.QueryClient<K,V>()
 		{
 			public boolean acceptQueryResult(K key, V value)
 			{
