@@ -1,6 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
 import goryachev.common.util.Log;
+import goryachev.common.util.SKey;
 import java.io.Closeable;
 import java.io.IOException;
 import research.bplustree.BPlusTree;
@@ -11,8 +12,8 @@ import research.bplustree.BPlusTree;
  * K: key type
  * R: reference type
  */
-public class SecDB<K extends Comparable<? super K>,R>
-	implements Closeable, IKeyValueStore<K,R>
+public class SecDB
+	implements Closeable, IKeyValueStore<SKey,Ref>
 {
 	@FunctionalInterface
 	public interface QueryCallback<K,V>
@@ -22,17 +23,19 @@ public class SecDB<K extends Comparable<? super K>,R>
 	}
 
 	private static final int TREE_BRANCHING_FACTOR = 4;
-	private final IStore<R> store;
+	private static final int NODE_SIZE_LIMIT = 1_000_000;
+	private final IStore<Ref> store;
 	private final IEncryptor encryptor;
-	private final BPlusTree<K,IStored> tree;
+	private final BPlusTree<String,IStored> tree;
 	
 	
 	public SecDB(IStore store, IEncryptor enc)
 	{
 		this.store = store;
 		this.encryptor = enc;
+		
 		// TODO load root node
-		this.tree = new BPlusTree(TREE_BRANCHING_FACTOR)
+		tree = new BPlusTree(TREE_BRANCHING_FACTOR)
 		{
 			// TODO loading nodes
 		};
@@ -55,48 +58,73 @@ public class SecDB<K extends Comparable<? super K>,R>
 	{
 		store.close();
 	}
-
-
-	public void commit() throws Exception
+	
+	
+	protected BPlusTree<SKey,IStored>.Node loadRoot() throws Exception
 	{
-	}
-
-
-	public IStream getValue(K key) throws Exception
-	{
-		return null;
-	}
-
-
-	public R putValue(K key, IStream in) throws Exception
-	{
-		return null;
-	}
-
-
-	public boolean containsKey(K key) throws Exception
-	{
-		return false;
-	}
-
-
-	public boolean removeKey(K key) throws Exception
-	{
-		return false;
+		Ref ref = store.getRootRef();
+		IStream in = store.load(ref);
+		return readNode(in);
 	}
 	
 	
-	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryCallback client)
+	protected BPlusTree<SKey,IStored>.Node readNode(IStream is) throws Exception
+	{
+		byte[] b = is.readBytes(NODE_SIZE_LIMIT);
+		byte[] dec = encryptor.decrypt(b);
+		try
+		{
+			return SecNode.read(dec);
+		}
+		finally
+		{
+			encryptor.zero(dec);
+		}
+	}
+
+
+	public void commit(BPlusTree<SKey,byte[]>.Node newRoot) throws Exception
 	{
 		// TODO
 	}
 
 
-	public synchronized void submit(Transaction tx)
+	public IStream getValue(SKey key) throws Exception
+	{
+		return null;
+	}
+
+
+	public Ref putValue(SKey key, IStream in) throws Exception
+	{
+		return null;
+	}
+
+
+	public boolean containsKey(SKey key) throws Exception
+	{
+		return false;
+	}
+
+
+	public boolean removeKey(SKey key) throws Exception
+	{
+		return false;
+	}
+	
+	
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryCallback client)
+	{
+		// TODO
+	}
+
+
+	public synchronized void execute(Transaction tx)
 	{
 		try
 		{
-			tx.setDB(this);
+			BPlusTree<SKey,IStored>.Node root = loadRoot(); 
+			tx.setRoot(root);
 			
 			tx.body();
 			

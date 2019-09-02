@@ -1,6 +1,8 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
 import goryachev.common.util.Log;
+import goryachev.common.util.SKey;
+import research.bplustree.BPlusTree;
 
 
 /**
@@ -18,7 +20,7 @@ public abstract class Transaction
 	
 	//
 	
-	private SecDB db;
+	private BPlusTree<SKey,IStored>.Node root;
 	
 	
 	public Transaction()
@@ -30,21 +32,27 @@ public abstract class Transaction
 	// read, read bytes, write, contains
 	
 	
-	public void submit(SecDB db)
+	public IStored read(SKey key) throws Exception
 	{
-		db.submit(this);
+		return root.getValue(key);
 	}
 	
 	
-	protected void setDB(SecDB db)
+	public void execute(SecDB db)
+	{		
+		db.execute(this);
+	}
+	
+	
+	protected void setRoot(BPlusTree<SKey,IStored>.Node root)
 	{
-		if(this.db == null)
+		if(this.root == null)
 		{
-			this.db = db;
+			this.root = root;
 		}
 		else
 		{
 			throw new Error("transaction can be executed only once");
-		}
+		}	
 	}
 }

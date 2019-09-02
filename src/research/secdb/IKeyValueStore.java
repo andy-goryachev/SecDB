@@ -1,6 +1,5 @@
 // Copyright © 2014-2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
-import java.io.InputStream;
 
 
 public interface IKeyValueStore<K extends Comparable<? super K>, R>
@@ -19,8 +18,4 @@ public interface IKeyValueStore<K extends Comparable<? super K>, R>
 	
 	/** removes key, returns true if key existed */
 	public boolean removeKey(K key) throws Exception;
-	
-	
-	/** flushes changes to the persistent storage */
-	public void commit() throws Exception;
 }

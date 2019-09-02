@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 
 /**
- * IStream.
+ * Input Stream wrapper with additional convenience methods.
  */
 public interface IStream
 	extends Closeable
@@ -14,4 +14,7 @@ public interface IStream
 	
 	
 	public long getLength();
+
+
+	public byte[] readBytes(int limit) throws Exception;
 }
