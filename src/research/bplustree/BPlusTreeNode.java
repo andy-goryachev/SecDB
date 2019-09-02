@@ -40,6 +40,7 @@ import java.util.Queue;
  */
 public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 {
+	// TODO accept exception to handle errors?
 	@FunctionalInterface
 	public interface QueryClient<K,V>
 	{
@@ -48,6 +49,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	}
 	
 	//
+	
+	public abstract boolean containsKey(K key); 
 	
 	public abstract V getValue(K key);
 
@@ -147,7 +150,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	//
 	
 
-	// TODO
 	public static class InternalNode<K extends Comparable<? super K>,V>
 		extends BPlusTreeNode<K,V>
 	{
@@ -157,6 +159,13 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public InternalNode()
 		{
 			this.children = new ArrayList<>();
+		}
+		
+		
+		@Override
+		public boolean containsKey(K key)
+		{
+			return getChild(key).containsKey(key);
 		}
 
 
@@ -183,8 +192,13 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor)
 		{
 			BPlusTreeNode<K,V> child = getChild(key);
-			// TODO if nothing was removed
-			child.remove(root, key, branchingFactor);
+			BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
+			if(newRoot == null)
+			{
+				// nothing was removed
+				return null;
+			}
+			
 			if(child.isUnderflow(branchingFactor))
 			{
 				BPlusTreeNode<K,V> childLeftSibling = getChildLeftSibling(key);
@@ -376,7 +390,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	//
 	
 
-	// TODO
 	public static class LeafNode<K extends Comparable<? super K>,V>
 		extends BPlusTreeNode<K,V>
 	{
@@ -386,6 +399,14 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public LeafNode()
 		{
 			values = new ArrayList<V>();
+		}
+		
+		
+		@Override
+		public boolean containsKey(K key)
+		{
+			int ix = indexOf(key);
+			return (ix >= 0);
 		}
 
 

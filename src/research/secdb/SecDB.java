@@ -4,6 +4,7 @@ import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import java.io.Closeable;
 import java.io.IOException;
+import research.bplustree.BPlusTreeNode;
 
 
 /**
@@ -12,13 +13,6 @@ import java.io.IOException;
 public class SecDB
 	implements Closeable, IKeyValueStore<SKey,Ref>
 {
-	@FunctionalInterface
-	public interface QueryCallback<K,V>
-	{
-		/** accepts query results.  the query is aborted when this callback returns false */
-		public boolean acceptQueryResult(K key, IStored value);
-	}
-
 	private static final int TREE_BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
 	private final IStore<Ref> store;
@@ -79,37 +73,21 @@ public class SecDB
 	}
 
 
-	public IStream getValue(SKey key) throws Exception
+	public IStored getValue(SKey key) throws Exception
 	{
-		// TODO
-		return null;
-	}
-
-
-	public Ref putValue(SKey key, IStream in) throws Exception
-	{
-		// TODO
-		return null;
+		return loadRoot().getValue(key);
 	}
 
 
 	public boolean containsKey(SKey key) throws Exception
 	{
-		// TODO
-		return false;
+		return loadRoot().containsKey(key);
 	}
 
-
-	public boolean removeKey(SKey key) throws Exception
-	{
-		// TODO
-		return false;
-	}
 	
-	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryCallback client)
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, BPlusTreeNode.QueryClient<SKey,IStored> client) throws Exception
 	{
-		// TODO
+		loadRoot().query(start, includeStart, end, includeEnd, client);
 	}
 
 
@@ -122,7 +100,11 @@ public class SecDB
 			
 			tx.body();
 			
-			commit(root);
+			SecNode newRoot = tx.getRoot();
+			if(newRoot != null)
+			{
+				commit(newRoot);
+			}
 			
 			try
 			{

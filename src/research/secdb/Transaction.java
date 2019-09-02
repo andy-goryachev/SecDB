@@ -37,6 +37,12 @@ public abstract class Transaction
 	}
 	
 	
+	public boolean containsKey(SKey key)
+	{
+		return root.containsKey(key);
+	}
+	
+	
 	public void execute(SecDB db)
 	{		
 		db.execute(this);
@@ -53,5 +59,11 @@ public abstract class Transaction
 		{
 			throw new Error("transaction can be executed only once");
 		}	
+	}
+	
+	
+	protected SecNode getRoot()
+	{
+		return root;
 	}
 }
