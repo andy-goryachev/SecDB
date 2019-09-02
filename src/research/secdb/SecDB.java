@@ -4,8 +4,6 @@ import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import java.io.Closeable;
 import java.io.IOException;
-import research.bplustree.BPlusTree;
-import research.bplustree.BPlusTreeNode;
 
 
 /**
@@ -25,19 +23,12 @@ public class SecDB
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
 	private final IStore<Ref> store;
 	private final IEncryptor encryptor;
-	private final BPlusTree<String,IStored> tree;
 	
 	
 	public SecDB(IStore store, IEncryptor enc)
 	{
 		this.store = store;
 		this.encryptor = enc;
-		
-		// TODO load root node
-		tree = new BPlusTree(TREE_BRANCHING_FACTOR)
-		{
-			// TODO loading nodes
-		};
 	}
 	
 	
