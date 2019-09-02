@@ -60,7 +60,7 @@ public class SecDB
 	}
 	
 	
-	protected BPlusTree<SKey,IStored>.Node loadRoot() throws Exception
+	protected BPlusTree<SKey,IStored>.BPlusTreeNode loadRoot() throws Exception
 	{
 		Ref ref = store.getRootRef();
 		IStream in = store.load(ref);
@@ -68,7 +68,7 @@ public class SecDB
 	}
 	
 	
-	protected BPlusTree<SKey,IStored>.Node readNode(IStream is) throws Exception
+	protected BPlusTree<SKey,IStored>.BPlusTreeNode readNode(IStream is) throws Exception
 	{
 		byte[] b = is.readBytes(NODE_SIZE_LIMIT);
 		byte[] dec = encryptor.decrypt(b);
@@ -83,7 +83,7 @@ public class SecDB
 	}
 
 
-	public void commit(BPlusTree<SKey,byte[]>.Node newRoot) throws Exception
+	public void commit(BPlusTree<SKey,byte[]>.BPlusTreeNode newRoot) throws Exception
 	{
 		// TODO
 	}
@@ -123,7 +123,7 @@ public class SecDB
 	{
 		try
 		{
-			BPlusTree<SKey,IStored>.Node root = loadRoot(); 
+			BPlusTree<SKey,IStored>.BPlusTreeNode root = loadRoot(); 
 			tx.setRoot(root);
 			
 			tx.body();

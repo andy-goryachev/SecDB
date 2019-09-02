@@ -9,7 +9,7 @@ import research.bplustree.BPlusTree;
  */
 public class SecNode
 {
-	public static BPlusTree<SKey,IStored>.Node read(byte[] dec)
+	public static BPlusTree<SKey,IStored>.BPlusTreeNode read(byte[] dec)
 	{
 		return null;
 	}

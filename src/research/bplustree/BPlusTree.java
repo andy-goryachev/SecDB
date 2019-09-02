@@ -49,8 +49,8 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	
 	//
 
-	protected final int branchingFactor;
-	protected Node rootNode;
+	private final int branchingFactor;
+	protected BPlusTreeNode rootNode;
 
 
 	public BPlusTree(int branchingFactor)
@@ -63,13 +63,13 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	}
 	
 	
-	protected void setRoot(Node root)
+	protected void setRoot(BPlusTreeNode root)
 	{
 		this.rootNode = root;
 	}
 	
 	
-	protected Node newRootNode()
+	protected BPlusTreeNode newRootNode()
 	{
 		return newLeafNode();
 	}
@@ -87,7 +87,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	}
 	
 	
-	protected Node root()
+	protected BPlusTreeNode root()
 	{
 		if(rootNode == null)
 		{
@@ -130,15 +130,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
 	{
-		Node root = root();
-		if(start.compareTo(end) <= 0)
-		{
-			root.queryForward(start, includeStart, end, includeEnd, client);
-		}
-		else
-		{
-			root.queryBackward(start, includeStart, end, includeEnd, client);
-		}
+		root().query(start, includeStart, end, includeEnd, client);
 	}
 
 
@@ -154,7 +146,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void insert(K key, V value)
 	{
-		root().insertValue(key, value);
+		root().insertValue(key, value, branchingFactor);
 	}
 
 
@@ -166,7 +158,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void remove(K key)
 	{
-		root().remove(key);
+		root().remove(key, branchingFactor);
 	}
 	
 	
@@ -179,20 +171,20 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 	public String toString()
 	{
-		Queue<List<Node>> queue = new LinkedList<List<Node>>();
+		Queue<List<BPlusTreeNode>> queue = new LinkedList<List<BPlusTreeNode>>();
 		queue.add(Arrays.asList(root()));
 		StringBuilder sb = new StringBuilder();
 		while(!queue.isEmpty())
 		{
-			Queue<List<Node>> nextQueue = new LinkedList<List<Node>>();
+			Queue<List<BPlusTreeNode>> nextQueue = new LinkedList<List<BPlusTreeNode>>();
 			while(!queue.isEmpty())
 			{
-				List<Node> nodes = queue.remove();
+				List<BPlusTreeNode> nodes = queue.remove();
 				sb.append('{');
-				Iterator<Node> it = nodes.iterator();
+				Iterator<BPlusTreeNode> it = nodes.iterator();
 				while(it.hasNext())
 				{
-					Node node = it.next();
+					BPlusTreeNode node = it.next();
 					sb.append(node.toString());
 					if(it.hasNext())
 					{
@@ -223,25 +215,25 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	//
 	
 
-	public abstract class Node
+	public abstract class BPlusTreeNode
 	{
 		public abstract V getValue(K key);
 
 		public abstract long countValues();
 
-		public abstract void remove(K key);
+		public abstract void remove(K key, int branchingFactor);
 
-		public abstract void insertValue(K key, V value);
+		public abstract void insertValue(K key, V value, int branchingFactor);
 
 		public abstract K getFirstLeafKey();
 
-		public abstract void merge(Node sibling);
+		public abstract void merge(BPlusTreeNode sibling);
 
-		public abstract Node split();
+		public abstract BPlusTreeNode split();
 
-		public abstract boolean isOverflow();
+		public abstract boolean isOverflow(int branchingFactor);
 
-		public abstract boolean isUnderflow();
+		public abstract boolean isUnderflow(int branchingFactor);
 		
 		public abstract boolean queryForward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
 
@@ -252,7 +244,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		protected final List<K> keys;
 		
 		
-		public Node()
+		public BPlusTreeNode()
 		{
 			keys = new ArrayList<K>();
 		}
@@ -281,6 +273,29 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		{
 			return keys.toString();
 		}
+		
+		
+		/**
+		 * Performs a search query with the keys specified by the range:
+		 * {@code key1} and {@code key2}.
+		 * 
+		 * @param start the start key of the range
+		 * @param includeStart whether to include the start key in the query
+		 * @param end the end end of the range
+		 * @param includeEnd whether to include end key in the query
+		 * @param client handler accepts query results
+		 */
+		public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		{
+			if(start.compareTo(end) <= 0)
+			{
+				queryForward(start, includeStart, end, includeEnd, client);
+			}
+			else
+			{
+				queryBackward(start, includeStart, end, includeEnd, client);
+			}
+		}
 	}
 	
 	
@@ -288,14 +303,14 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	
 
 	public class InternalNode
-		extends Node
+		extends BPlusTreeNode
 	{
-		protected final List<Node> children;
+		protected final List<BPlusTreeNode> children;
 
 
 		public InternalNode()
 		{
-			this.children = new ArrayList<Node>();
+			this.children = new ArrayList<BPlusTreeNode>();
 		}
 
 
@@ -310,7 +325,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		public long countValues()
 		{
 			long total = 0;
-			for(Node ch: children)
+			for(BPlusTreeNode ch: children)
 			{
 				total += ch.countValues();
 			}
@@ -319,22 +334,22 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void remove(K key)
+		public void remove(K key, int branchingFactor)
 		{
-			Node root = root();
-			Node child = getChild(key);
-			child.remove(key);
-			if(child.isUnderflow())
+			BPlusTreeNode root = root();
+			BPlusTreeNode child = getChild(key);
+			child.remove(key, branchingFactor);
+			if(child.isUnderflow(branchingFactor))
 			{
-				Node childLeftSibling = getChildLeftSibling(key);
-				Node childRightSibling = getChildRightSibling(key);
-				Node left = childLeftSibling != null ? childLeftSibling : child;
-				Node right = childLeftSibling != null ? child : childRightSibling;
+				BPlusTreeNode childLeftSibling = getChildLeftSibling(key);
+				BPlusTreeNode childRightSibling = getChildRightSibling(key);
+				BPlusTreeNode left = childLeftSibling != null ? childLeftSibling : child;
+				BPlusTreeNode right = childLeftSibling != null ? child : childRightSibling;
 				left.merge(right);
 				deleteChild(right.getFirstLeafKey());
-				if(left.isOverflow())
+				if(left.isOverflow(branchingFactor))
 				{
-					Node sibling = left.split();
+					BPlusTreeNode sibling = left.split();
 					insertChild(sibling.getFirstLeafKey(), sibling);
 				}
 				
@@ -347,20 +362,20 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void insertValue(K key, V value)
+		public void insertValue(K key, V value, int branchingFactor)
 		{
-			Node root = root();
-			Node child = getChild(key);
-			child.insertValue(key, value);
-			if(child.isOverflow())
+			BPlusTreeNode root = root();
+			BPlusTreeNode child = getChild(key);
+			child.insertValue(key, value, branchingFactor);
+			if(child.isOverflow(branchingFactor))
 			{
-				Node sibling = child.split();
+				BPlusTreeNode sibling = child.split();
 				insertChild(sibling.getFirstLeafKey(), sibling);
 			}
 			
-			if(root.isOverflow())
+			if(root.isOverflow(branchingFactor))
 			{
-				Node sibling = split();
+				BPlusTreeNode sibling = split();
 				InternalNode newRoot = newInternalNode();
 				newRoot.keys.add(sibling.getFirstLeafKey());
 				newRoot.children.add(this);
@@ -384,7 +399,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			
 			for(int i=ix; i<sz; i++)
 			{
-				Node n = children.get(i);
+				BPlusTreeNode n = children.get(i);
 				if(!n.queryForward(start, includeStart, end, includeEnd, client))
 				{
 					return false;
@@ -401,7 +416,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			
 			for(int i=children.size()-1; i>=0; i--)
 			{
-				Node n = children.get(i);
+				BPlusTreeNode n = children.get(i);
 				if(!n.queryBackward(start, includeStart, end, includeEnd, client))
 				{
 					return false;
@@ -413,7 +428,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void merge(Node sibling)
+		public void merge(BPlusTreeNode sibling)
 		{
 			@SuppressWarnings("unchecked")
 			InternalNode node = (InternalNode)sibling;
@@ -425,7 +440,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public Node split()
+		public BPlusTreeNode split()
 		{
 			int from = size() / 2 + 1;
 			int to = size();
@@ -441,20 +456,20 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public boolean isOverflow()
+		public boolean isOverflow(int branchingFactor)
 		{
 			return children.size() > branchingFactor;
 		}
 
 
 		@Override
-		public boolean isUnderflow()
+		public boolean isUnderflow(int branchingFactor)
 		{
 			return children.size() < (branchingFactor + 1) / 2;
 		}
 
 
-		public Node getChild(K key)
+		public BPlusTreeNode getChild(K key)
 		{
 			int ix = insertIndex(key);
 			return children.get(ix);
@@ -472,7 +487,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 
-		public void insertChild(K key, Node child)
+		public void insertChild(K key, BPlusTreeNode child)
 		{
 			int ix = indexOf(key);
 			int childIndex = ix >= 0 ? ix + 1 : -ix - 1;
@@ -488,7 +503,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 
-		public Node getChildLeftSibling(K key)
+		public BPlusTreeNode getChildLeftSibling(K key)
 		{
 			int ix = insertIndex(key);
 			if(ix > 0)
@@ -499,7 +514,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 
-		public Node getChildRightSibling(K key)
+		public BPlusTreeNode getChildRightSibling(K key)
 		{
 			int ix = insertIndex(key);
 			if(ix < size())
@@ -515,7 +530,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	
 
 	public class LeafNode
-		extends Node
+		extends BPlusTreeNode
 	{
 		protected final List<V> values;
 
@@ -542,7 +557,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void remove(K key)
+		public void remove(K key, int branchingFactor)
 		{
 			int ix = indexOf(key);
 			if(ix >= 0)
@@ -554,9 +569,9 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void insertValue(K key, V value)
+		public void insertValue(K key, V value, int branchingFactor)
 		{
-			Node root = root();
+			BPlusTreeNode root = root();
 			
 			int ix = indexOf(key);
 			int valueIndex = ix >= 0 ? ix : -ix - 1;
@@ -570,9 +585,9 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				values.add(valueIndex, value);
 			}
 			
-			if(root.isOverflow())
+			if(root.isOverflow(branchingFactor))
 			{
-				Node sibling = split();
+				BPlusTreeNode sibling = split();
 				InternalNode newRoot = newInternalNode();
 				newRoot.keys.add(sibling.getFirstLeafKey());
 				newRoot.children.add(this);
@@ -641,7 +656,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void merge(Node sibling)
+		public void merge(BPlusTreeNode sibling)
 		{
 			@SuppressWarnings("unchecked")
 			LeafNode node = (LeafNode)sibling;
@@ -651,7 +666,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public Node split()
+		public BPlusTreeNode split()
 		{
 			int from = (size() + 1) / 2;
 			int to = size();
@@ -668,14 +683,14 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public boolean isOverflow()
+		public boolean isOverflow(int branchingFactor)
 		{
 			return values.size() > branchingFactor - 1;
 		}
 
 
 		@Override
-		public boolean isUnderflow()
+		public boolean isUnderflow(int branchingFactor)
 		{
 			return values.size() < branchingFactor / 2;
 		}

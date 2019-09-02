@@ -20,7 +20,7 @@ public abstract class Transaction
 	
 	//
 	
-	private BPlusTree<SKey,IStored>.Node root;
+	private BPlusTree<SKey,IStored>.BPlusTreeNode root;
 	
 	
 	public Transaction()
@@ -44,7 +44,7 @@ public abstract class Transaction
 	}
 	
 	
-	protected void setRoot(BPlusTree<SKey,IStored>.Node root)
+	protected void setRoot(BPlusTree<SKey,IStored>.BPlusTreeNode root)
 	{
 		if(this.root == null)
 		{
