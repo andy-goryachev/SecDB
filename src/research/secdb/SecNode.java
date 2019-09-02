@@ -1,9 +1,8 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
 import goryachev.common.util.SKey;
+import java.util.List;
 import research.bplustree.BPlusTreeNode;
-import research.bplustree.BPlusTreeNode.InternalNode;
-import research.bplustree.BPlusTreeNode.LeafNode;
 
 
 /**
@@ -14,7 +13,11 @@ public abstract class SecNode
 {
 	public static SecNode read(byte[] dec)
 	{
-		// TODO
+		// TODO int size
+		// positive: leaf node
+		// negative: internal node
+		// TODO keys
+		// TODO IStored: inline, ref, length
 		return null;
 	}
 	
@@ -38,7 +41,15 @@ public abstract class SecNode
 	
 	public static class SecLeafNode extends BPlusTreeNode.LeafNode<SKey,IStored>
 	{
+		public SecLeafNode()
+		{
+		}
 		
+		
+		protected SecLeafNode(List<SKey> keys, List<IStored> values)
+		{
+			super(keys, values);
+		}
 	}
 	
 	
@@ -47,6 +58,14 @@ public abstract class SecNode
 	
 	public static class SecInternalNode extends BPlusTreeNode.InternalNode<SKey,IStored>
 	{
+		public SecInternalNode()
+		{
+		}
 		
+		
+		protected SecInternalNode(List<SKey> keys, List<BPlusTreeNode<SKey,IStored>> children)
+		{
+			super(keys, children);
+		}
 	}
 }

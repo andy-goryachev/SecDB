@@ -23,12 +23,8 @@
 //
 package research.bplustree;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 
 /**
@@ -83,7 +79,14 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	
 	public BPlusTreeNode()
 	{
-		keys = new ArrayList<K>();
+		this.keys = new ArrayList<K>();
+	}
+	
+	
+	/** serialization constructor */
+	protected BPlusTreeNode(List<K> keys)
+	{
+		this.keys = keys;
 	}
 
 
@@ -159,6 +162,15 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public InternalNode()
 		{
 			this.children = new ArrayList<>();
+		}
+		
+		
+		/** serialization constructor */
+		protected InternalNode(List<K> keys, List<BPlusTreeNode<K,V>> children)
+		{
+			super(keys);
+			// TODO check if sizes are equal
+			this.children = children;
 		}
 		
 		
@@ -398,7 +410,16 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 		public LeafNode()
 		{
-			values = new ArrayList<V>();
+			this.values = new ArrayList<V>();
+		}
+		
+		
+		/** serialization constructor */
+		protected LeafNode(List<K> keys, List<V> values)
+		{
+			super(keys);
+			// TODO check if sizes are equal
+			this.values = values;
 		}
 		
 		
