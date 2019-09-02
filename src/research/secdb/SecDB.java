@@ -5,12 +5,11 @@ import goryachev.common.util.SKey;
 import java.io.Closeable;
 import java.io.IOException;
 import research.bplustree.BPlusTree;
+import research.bplustree.BPlusTreeNode;
 
 
 /**
  * Secure Key-Value Store.
- * K: key type
- * R: reference type
  */
 public class SecDB
 	implements Closeable, IKeyValueStore<SKey,Ref>

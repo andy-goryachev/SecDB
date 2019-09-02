@@ -2,7 +2,6 @@
 package research.secdb;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
-import research.bplustree.BPlusTree;
 
 
 /**
@@ -20,7 +19,7 @@ public abstract class Transaction
 	
 	//
 	
-	private BPlusTree<SKey,IStored>.Node root;
+	private SecNode root;
 	
 	
 	public Transaction()
@@ -44,7 +43,7 @@ public abstract class Transaction
 	}
 	
 	
-	protected void setRoot(BPlusTree<SKey,IStored>.Node root)
+	protected void setRoot(SecNode root)
 	{
 		if(this.root == null)
 		{

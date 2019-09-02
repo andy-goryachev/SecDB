@@ -22,9 +22,7 @@
 //	SOFTWARE.
 //
 package research.bplustree;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,17 +38,8 @@ import java.util.Queue;
  */
 public class BPlusTree<K extends Comparable<? super K>, V>
 {
-	@FunctionalInterface
-	public interface QueryClient<K,V>
-	{
-		/** accepts query results.  the query is aborted when this callback returns false */
-		public boolean acceptQueryResult(K key, V value);
-	}
-	
-	//
-
-	protected final int branchingFactor;
-	protected Node rootNode;
+	private final int branchingFactor;
+	private BPlusTreeNode<K,V> root = new BPlusTreeNode.LeafNode();
 
 
 	public BPlusTree(int branchingFactor)
@@ -62,40 +51,6 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		this.branchingFactor = branchingFactor;
 	}
 	
-	
-	protected void setRoot(Node root)
-	{
-		this.rootNode = root;
-	}
-	
-	
-	protected Node newRootNode()
-	{
-		return newLeafNode();
-	}
-	
-	
-	protected LeafNode newLeafNode()
-	{
-		return new LeafNode();
-	}
-	
-	
-	protected InternalNode newInternalNode()
-	{
-		return new InternalNode();
-	}
-	
-	
-	protected Node root()
-	{
-		if(rootNode == null)
-		{
-			rootNode = newRootNode();
-		}
-		return rootNode;
-	}
-
 
 	/**
 	 * Returns the value to which the specified key is associated, or
@@ -114,7 +69,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public V get(K key)
 	{
-		return root().getValue(key);
+		return root.getValue(key);
 	}
 
 	
@@ -128,17 +83,9 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+	public void query(K start, boolean includeStart, K end, boolean includeEnd, BPlusTreeNode.QueryClient<K,V> client)
 	{
-		Node root = root();
-		if(start.compareTo(end) <= 0)
-		{
-			root.queryForward(start, includeStart, end, includeEnd, client);
-		}
-		else
-		{
-			root.queryBackward(start, includeStart, end, includeEnd, client);
-		}
+		root.query(start, includeStart, end, includeEnd, client);
 	}
 
 
@@ -154,7 +101,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void insert(K key, V value)
 	{
-		root().insertValue(key, value);
+		setRoot(root.insertValue(root, key, value, branchingFactor));
 	}
 
 
@@ -166,41 +113,51 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void remove(K key)
 	{
-		root().remove(key);
+		setRoot(root.remove(root, key, branchingFactor));
+	}
+	
+	
+	protected void setRoot(BPlusTreeNode<K,V> n)
+	{
+		if(n != null)
+		{
+			root = n;
+		}
 	}
 	
 	
 	/** returns the total number of values stored in a tree.  this is an expensive call */
 	public long getTotalCount()
 	{
-		return root().countValues();
+		return root.countValues();
 	}
 
 
 	public String toString()
 	{
-		Queue<List<Node>> queue = new LinkedList<List<Node>>();
-		queue.add(Arrays.asList(root()));
+		Queue<List<BPlusTreeNode>> queue = new LinkedList<List<BPlusTreeNode>>();
+		queue.add(Arrays.asList(root));
 		StringBuilder sb = new StringBuilder();
 		while(!queue.isEmpty())
 		{
-			Queue<List<Node>> nextQueue = new LinkedList<List<Node>>();
+			Queue<List<BPlusTreeNode>> nextQueue = new LinkedList<List<BPlusTreeNode>>();
 			while(!queue.isEmpty())
 			{
-				List<Node> nodes = queue.remove();
+				List<BPlusTreeNode> nodes = queue.remove();
 				sb.append('{');
-				Iterator<Node> it = nodes.iterator();
+				Iterator<BPlusTreeNode> it = nodes.iterator();
 				while(it.hasNext())
 				{
-					Node node = it.next();
+					BPlusTreeNode node = it.next();
 					sb.append(node.toString());
 					if(it.hasNext())
 					{
 						sb.append(", ");
 					}
-					if(node instanceof BPlusTree.InternalNode)
+					
+					if(node instanceof BPlusTreeNode.InternalNode)
 					{
-						nextQueue.add(((InternalNode)node).children);
+						nextQueue.add(((BPlusTreeNode.InternalNode)node).children);
 					}
 				}
 				sb.append('}');
@@ -217,467 +174,5 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 		return sb.toString();
-	}
-	
-	
-	//
-	
-
-	public abstract class Node
-	{
-		public abstract V getValue(K key);
-
-		public abstract long countValues();
-
-		public abstract void remove(K key);
-
-		public abstract void insertValue(K key, V value);
-
-		public abstract K getFirstLeafKey();
-
-		public abstract void merge(Node sibling);
-
-		public abstract Node split();
-
-		public abstract boolean isOverflow();
-
-		public abstract boolean isUnderflow();
-		
-		public abstract boolean queryForward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
-
-		public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
-		
-		//
-
-		protected final List<K> keys;
-		
-		
-		public Node()
-		{
-			keys = new ArrayList<K>();
-		}
-
-
-		public int size()
-		{
-			return keys.size();
-		}
-		
-		
-		public int indexOf(K key)
-		{
-			return Collections.binarySearch(keys, key);
-		}
-		
-		
-		public int insertIndex(K key)
-		{
-			int ix = Collections.binarySearch(keys, key);
-			return ix >= 0 ? ix + 1 : -ix - 1;
-		}
-
-
-		public String toString()
-		{
-			return keys.toString();
-		}
-	}
-	
-	
-	//
-	
-
-	public class InternalNode
-		extends Node
-	{
-		protected final List<Node> children;
-
-
-		public InternalNode()
-		{
-			this.children = new ArrayList<Node>();
-		}
-
-
-		@Override
-		public V getValue(K key)
-		{
-			return getChild(key).getValue(key);
-		}
-		
-		
-		@Override
-		public long countValues()
-		{
-			long total = 0;
-			for(Node ch: children)
-			{
-				total += ch.countValues();
-			}
-			return total;
-		}
-
-
-		@Override
-		public void remove(K key)
-		{
-			Node root = root();
-			Node child = getChild(key);
-			child.remove(key);
-			if(child.isUnderflow())
-			{
-				Node childLeftSibling = getChildLeftSibling(key);
-				Node childRightSibling = getChildRightSibling(key);
-				Node left = childLeftSibling != null ? childLeftSibling : child;
-				Node right = childLeftSibling != null ? child : childRightSibling;
-				left.merge(right);
-				deleteChild(right.getFirstLeafKey());
-				if(left.isOverflow())
-				{
-					Node sibling = left.split();
-					insertChild(sibling.getFirstLeafKey(), sibling);
-				}
-				
-				if(root.size() == 0)
-				{
-					setRoot(left);
-				}
-			}
-		}
-
-
-		@Override
-		public void insertValue(K key, V value)
-		{
-			Node root = root();
-			Node child = getChild(key);
-			child.insertValue(key, value);
-			if(child.isOverflow())
-			{
-				Node sibling = child.split();
-				insertChild(sibling.getFirstLeafKey(), sibling);
-			}
-			
-			if(root.isOverflow())
-			{
-				Node sibling = split();
-				InternalNode newRoot = newInternalNode();
-				newRoot.keys.add(sibling.getFirstLeafKey());
-				newRoot.children.add(this);
-				newRoot.children.add(sibling);
-				setRoot(newRoot);
-			}
-		}
-
-
-		@Override
-		public K getFirstLeafKey()
-		{
-			return children.get(0).getFirstLeafKey();
-		}
-
-		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
-		{
-			int ix = insertIndex(start);
-			int sz = children.size();
-			
-			for(int i=ix; i<sz; i++)
-			{
-				Node n = children.get(i);
-				if(!n.queryForward(start, includeStart, end, includeEnd, client))
-				{
-					return false;
-				}
-			}
-			
-			return true;
-		}
-
-
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
-		{
-			int ix = insertIndex(start);
-			
-			for(int i=children.size()-1; i>=0; i--)
-			{
-				Node n = children.get(i);
-				if(!n.queryBackward(start, includeStart, end, includeEnd, client))
-				{
-					return false;
-				}
-			}
-			
-			return true;
-		}
-
-
-		@Override
-		public void merge(Node sibling)
-		{
-			@SuppressWarnings("unchecked")
-			InternalNode node = (InternalNode)sibling;
-			keys.add(node.getFirstLeafKey());
-			keys.addAll(node.keys);
-			children.addAll(node.children);
-
-		}
-
-
-		@Override
-		public Node split()
-		{
-			int from = size() / 2 + 1;
-			int to = size();
-			InternalNode sibling = newInternalNode();
-			sibling.keys.addAll(keys.subList(from, to));
-			sibling.children.addAll(children.subList(from, to + 1));
-
-			keys.subList(from - 1, to).clear();
-			children.subList(from, to + 1).clear();
-
-			return sibling;
-		}
-
-
-		@Override
-		public boolean isOverflow()
-		{
-			return children.size() > branchingFactor;
-		}
-
-
-		@Override
-		public boolean isUnderflow()
-		{
-			return children.size() < (branchingFactor + 1) / 2;
-		}
-
-
-		public Node getChild(K key)
-		{
-			int ix = insertIndex(key);
-			return children.get(ix);
-		}
-
-
-		public void deleteChild(K key)
-		{
-			int ix = indexOf(key);
-			if(ix >= 0)
-			{
-				keys.remove(ix);
-				children.remove(ix + 1);
-			}
-		}
-
-
-		public void insertChild(K key, Node child)
-		{
-			int ix = indexOf(key);
-			int childIndex = ix >= 0 ? ix + 1 : -ix - 1;
-			if(ix >= 0)
-			{
-				children.set(childIndex, child);
-			}
-			else
-			{
-				keys.add(childIndex, key);
-				children.add(childIndex + 1, child);
-			}
-		}
-
-
-		public Node getChildLeftSibling(K key)
-		{
-			int ix = insertIndex(key);
-			if(ix > 0)
-			{
-				return children.get(ix - 1);
-			}
-			return null;
-		}
-
-
-		public Node getChildRightSibling(K key)
-		{
-			int ix = insertIndex(key);
-			if(ix < size())
-			{
-				return children.get(ix + 1);
-			}
-			return null;
-		}
-	}
-	
-	
-	//
-	
-
-	public class LeafNode
-		extends Node
-	{
-		protected final List<V> values;
-
-
-		public LeafNode()
-		{
-			values = new ArrayList<V>();
-		}
-
-
-		@Override
-		public V getValue(K key)
-		{
-			int ix = indexOf(key);
-			return ix >= 0 ? values.get(ix) : null;
-		}
-		
-		
-		@Override
-		public long countValues()
-		{
-			return values.size();
-		}
-
-
-		@Override
-		public void remove(K key)
-		{
-			int ix = indexOf(key);
-			if(ix >= 0)
-			{
-				keys.remove(ix);
-				values.remove(ix);
-			}
-		}
-
-
-		@Override
-		public void insertValue(K key, V value)
-		{
-			Node root = root();
-			
-			int ix = indexOf(key);
-			int valueIndex = ix >= 0 ? ix : -ix - 1;
-			if(ix >= 0)
-			{
-				values.set(valueIndex, value);
-			}
-			else
-			{
-				keys.add(valueIndex, key);
-				values.add(valueIndex, value);
-			}
-			
-			if(root.isOverflow())
-			{
-				Node sibling = split();
-				InternalNode newRoot = newInternalNode();
-				newRoot.keys.add(sibling.getFirstLeafKey());
-				newRoot.children.add(this);
-				newRoot.children.add(sibling);
-				setRoot(newRoot);
-			}
-		}
-
-
-		@Override
-		public K getFirstLeafKey()
-		{
-			return keys.get(0);
-		}
-
-		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
-		{
-			int sz = size();
-			for(int i=0; i<sz; i++)
-			{
-				K key = keys.get(i);
-				V val = values.get(i);
-				int cms = key.compareTo(start);
-				int cme = key.compareTo(end);
-				
-				if(((!includeStart && cms > 0) || (includeStart && cms >= 0)) && ((!includeEnd && cme < 0) || (includeEnd && cme <= 0)))
-				{
-					if(!client.acceptQueryResult(key, val))
-					{
-						return false;
-					}
-				}
-				else if((!includeEnd && cme >= 0) || (includeEnd && cme > 0))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
-		{
-			for(int i=size()-1; i>=0; i--)
-			{
-				K key = keys.get(i);
-				V val = values.get(i);
-				int cms = key.compareTo(start);
-				int cme = key.compareTo(end);
-				
-				if(((!includeStart && cms < 0) || (includeStart && cms <= 0)) && ((!includeEnd && cme > 0) || (includeEnd && cme >= 0)))
-				{
-					if(!client.acceptQueryResult(key, val))
-					{
-						return false;
-					}
-				}
-				else if((!includeEnd && cme <= 0) || (includeEnd && cme < 0))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-
-		@Override
-		public void merge(Node sibling)
-		{
-			@SuppressWarnings("unchecked")
-			LeafNode node = (LeafNode)sibling;
-			keys.addAll(node.keys);
-			values.addAll(node.values);
-		}
-
-
-		@Override
-		public Node split()
-		{
-			int from = (size() + 1) / 2;
-			int to = size();
-
-			LeafNode sibling = newLeafNode();
-			sibling.keys.addAll(keys.subList(from, to));
-			sibling.values.addAll(values.subList(from, to));
-
-			keys.subList(from, to).clear();
-			values.subList(from, to).clear();
-
-			return sibling;
-		}
-
-
-		@Override
-		public boolean isOverflow()
-		{
-			return values.size() > branchingFactor - 1;
-		}
-
-
-		@Override
-		public boolean isUnderflow()
-		{
-			return values.size() < branchingFactor / 2;
-		}
 	}
 }
