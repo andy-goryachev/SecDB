@@ -11,7 +11,7 @@ import research.bplustree.BPlusTreeNode;
  * Secure Key-Value Store.
  */
 public class SecDB
-	implements Closeable, IKeyValueStore<SKey,Ref>
+	implements Closeable
 {
 	private static final int TREE_BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
