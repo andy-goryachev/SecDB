@@ -153,255 +153,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	//
 	
 
-	public static class InternalNode<K extends Comparable<? super K>,V>
-		extends BPlusTreeNode<K,V>
-	{
-		protected final List<BPlusTreeNode<K,V>> children;
-
-
-		public InternalNode()
-		{
-			this.children = new ArrayList<>();
-		}
-		
-		
-		/** serialization constructor */
-		protected InternalNode(List<K> keys, List<BPlusTreeNode<K,V>> children)
-		{
-			super(keys);
-			// TODO check if sizes are equal
-			this.children = children;
-		}
-		
-		
-		@Override
-		public boolean containsKey(K key)
-		{
-			return getChild(key).containsKey(key);
-		}
-
-
-		@Override
-		public V getValue(K key)
-		{
-			return getChild(key).getValue(key);
-		}
-		
-		
-		@Override
-		public long countValues()
-		{
-			long total = 0;
-			for(BPlusTreeNode ch: children)
-			{
-				total += ch.countValues();
-			}
-			return total;
-		}
-
-
-		@Override
-		public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor)
-		{
-			BPlusTreeNode<K,V> child = getChild(key);
-			BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
-			if(newRoot == null)
-			{
-				// nothing was removed
-				return null;
-			}
-			
-			if(child.isUnderflow(branchingFactor))
-			{
-				BPlusTreeNode<K,V> childLeftSibling = getChildLeftSibling(key);
-				BPlusTreeNode<K,V> childRightSibling = getChildRightSibling(key);
-				BPlusTreeNode<K,V> left = childLeftSibling != null ? childLeftSibling : child;
-				BPlusTreeNode<K,V> right = childLeftSibling != null ? child : childRightSibling;
-				left.merge(right);
-				deleteChild(right.getFirstLeafKey());
-				if(left.isOverflow(branchingFactor))
-				{
-					BPlusTreeNode<K,V> sibling = left.split();
-					insertChild(sibling.getFirstLeafKey(), sibling);
-				}
-				
-				if(root.size() == 0)
-				{
-					return left;
-				}
-			}
-			return root;
-		}
-
-
-		@Override
-		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor)
-		{
-			BPlusTreeNode<K,V> child = getChild(key);
-			child.insertValue(root, key, value, branchingFactor);
-			if(child.isOverflow(branchingFactor))
-			{
-				BPlusTreeNode<K,V> sibling = child.split();
-				insertChild(sibling.getFirstLeafKey(), sibling);
-			}
-			
-			if(root.isOverflow(branchingFactor))
-			{
-				BPlusTreeNode<K,V> sibling = split();
-				InternalNode<K,V> newRoot = newInternalNode();
-				newRoot.keys.add(sibling.getFirstLeafKey());
-				newRoot.children.add(this);
-				newRoot.children.add(sibling);
-				return newRoot;
-			}
-			return root;
-		}
-
-
-		@Override
-		public K getFirstLeafKey()
-		{
-			return children.get(0).getFirstLeafKey();
-		}
-
-		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
-		{
-			int ix = insertIndex(start);
-			int sz = children.size();
-			
-			for(int i=ix; i<sz; i++)
-			{
-				BPlusTreeNode n = children.get(i);
-				if(!n.queryForward(start, includeStart, end, includeEnd, client))
-				{
-					return false;
-				}
-			}
-			
-			return true;
-		}
-
-
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
-		{
-			int ix = insertIndex(start);
-			
-			for(int i=children.size()-1; i>=0; i--)
-			{
-				BPlusTreeNode n = children.get(i);
-				if(!n.queryBackward(start, includeStart, end, includeEnd, client))
-				{
-					return false;
-				}
-			}
-			
-			return true;
-		}
-
-
-		@Override
-		public void merge(BPlusTreeNode<K,V> sibling)
-		{
-			@SuppressWarnings("unchecked")
-			InternalNode<K,V> node = (InternalNode)sibling;
-			keys.add(node.getFirstLeafKey());
-			keys.addAll(node.keys);
-			children.addAll(node.children);
-
-		}
-
-
-		@Override
-		public BPlusTreeNode<K,V> split()
-		{
-			int from = size() / 2 + 1;
-			int to = size();
-			InternalNode sibling = newInternalNode();
-			sibling.keys.addAll(keys.subList(from, to));
-			sibling.children.addAll(children.subList(from, to + 1));
-
-			keys.subList(from - 1, to).clear();
-			children.subList(from, to + 1).clear();
-
-			return sibling;
-		}
-
-
-		@Override
-		public boolean isOverflow(int branchingFactor)
-		{
-			return children.size() > branchingFactor;
-		}
-
-
-		@Override
-		public boolean isUnderflow(int branchingFactor)
-		{
-			return children.size() < (branchingFactor + 1) / 2;
-		}
-
-
-		public BPlusTreeNode<K,V> getChild(K key)
-		{
-			int ix = insertIndex(key);
-			return children.get(ix);
-		}
-
-
-		public void deleteChild(K key)
-		{
-			int ix = indexOf(key);
-			if(ix >= 0)
-			{
-				keys.remove(ix);
-				children.remove(ix + 1);
-			}
-		}
-
-
-		public void insertChild(K key, BPlusTreeNode<K,V> child)
-		{
-			int ix = indexOf(key);
-			int childIndex = ix >= 0 ? ix + 1 : -ix - 1;
-			if(ix >= 0)
-			{
-				children.set(childIndex, child);
-			}
-			else
-			{
-				keys.add(childIndex, key);
-				children.add(childIndex + 1, child);
-			}
-		}
-
-
-		public BPlusTreeNode<K,V> getChildLeftSibling(K key)
-		{
-			int ix = insertIndex(key);
-			if(ix > 0)
-			{
-				return children.get(ix - 1);
-			}
-			return null;
-		}
-
-
-		public BPlusTreeNode<K,V> getChildRightSibling(K key)
-		{
-			int ix = insertIndex(key);
-			if(ix < size())
-			{
-				return children.get(ix + 1);
-			}
-			return null;
-		}
-	}
-	
-	
-	//
-	
-
 	public static class LeafNode<K extends Comparable<? super K>,V>
 		extends BPlusTreeNode<K,V>
 	{
@@ -584,6 +335,257 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public boolean isUnderflow(int branchingFactor)
 		{
 			return values.size() < branchingFactor / 2;
+		}
+	}
+	
+	
+	//
+	
+
+	public static class InternalNode<K extends Comparable<? super K>,V>
+		extends BPlusTreeNode<K,V>
+	{
+		protected final List<BPlusTreeNode<K,V>> children;
+
+
+		public InternalNode()
+		{
+			this.children = new ArrayList<>();
+		}
+		
+		
+		/** serialization constructor */
+		protected InternalNode(List<K> keys, List<BPlusTreeNode<K,V>> children)
+		{
+			super(keys);
+			// TODO check if sizes are equal
+			this.children = children;
+		}
+		
+		
+		@Override
+		public boolean containsKey(K key)
+		{
+			return getChild(key).containsKey(key);
+		}
+
+
+		@Override
+		public V getValue(K key)
+		{
+			return getChild(key).getValue(key);
+		}
+		
+		
+		@Override
+		public long countValues()
+		{
+			long total = 0;
+			for(BPlusTreeNode ch: children)
+			{
+				total += ch.countValues();
+			}
+			return total;
+		}
+
+
+		@Override
+		public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor)
+		{
+			BPlusTreeNode<K,V> child = getChild(key);
+			BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
+			if(newRoot == null)
+			{
+				// nothing was removed
+				return null;
+			}
+			
+			if(child.isUnderflow(branchingFactor))
+			{
+				BPlusTreeNode<K,V> childLeftSibling = getChildLeftSibling(key);
+				BPlusTreeNode<K,V> childRightSibling = getChildRightSibling(key);
+				BPlusTreeNode<K,V> left = childLeftSibling != null ? childLeftSibling : child;
+				BPlusTreeNode<K,V> right = childLeftSibling != null ? child : childRightSibling;
+				left.merge(right);
+				deleteChild(right.getFirstLeafKey());
+				if(left.isOverflow(branchingFactor))
+				{
+					BPlusTreeNode<K,V> sibling = left.split();
+					insertChild(sibling.getFirstLeafKey(), sibling);
+				}
+				
+				if(root.size() == 0)
+				{
+					return left;
+				}
+			}
+			return root;
+		}
+
+
+		@Override
+		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor)
+		{
+			BPlusTreeNode<K,V> child = getChild(key);
+			child.insertValue(root, key, value, branchingFactor);
+			if(child.isOverflow(branchingFactor))
+			{
+				BPlusTreeNode<K,V> sibling = child.split();
+				insertChild(sibling.getFirstLeafKey(), sibling);
+			}
+			
+			if(root.isOverflow(branchingFactor))
+			{
+				BPlusTreeNode<K,V> sibling = split();
+				InternalNode<K,V> newRoot = newInternalNode();
+				newRoot.keys.add(sibling.getFirstLeafKey());
+				newRoot.children.add(this);
+				newRoot.children.add(sibling);
+				return newRoot;
+			}
+			return root;
+		}
+
+
+		@Override
+		public K getFirstLeafKey()
+		{
+			return children.get(0).getFirstLeafKey();
+		}
+
+		
+		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		{
+			int ix = insertIndex(start);
+			int sz = children.size();
+			
+			for(int i=ix; i<sz; i++)
+			{
+				BPlusTreeNode n = children.get(i);
+				if(!n.queryForward(start, includeStart, end, includeEnd, client))
+				{
+					return false;
+				}
+			}
+			
+			return true;
+		}
+
+
+		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		{
+			int ix = insertIndex(start);
+			
+			for(int i=children.size()-1; i>=0; i--)
+			{
+				BPlusTreeNode n = children.get(i);
+				if(!n.queryBackward(start, includeStart, end, includeEnd, client))
+				{
+					return false;
+				}
+			}
+			
+			return true;
+		}
+
+
+		@Override
+		public void merge(BPlusTreeNode<K,V> sibling)
+		{
+			@SuppressWarnings("unchecked")
+			InternalNode<K,V> node = (InternalNode)sibling;
+			keys.add(node.getFirstLeafKey());
+			keys.addAll(node.keys);
+			children.addAll(node.children);
+		}
+
+
+		@Override
+		public BPlusTreeNode<K,V> split()
+		{
+			int from = size() / 2 + 1;
+			int to = size();
+			InternalNode sibling = newInternalNode();
+			
+			// FIX
+			
+			sibling.keys.addAll(keys.subList(from, to));
+			sibling.children.addAll(children.subList(from, to + 1));
+
+			keys.subList(from - 1, to).clear();
+			children.subList(from, to + 1).clear();
+
+			return sibling;
+		}
+
+
+		@Override
+		public boolean isOverflow(int branchingFactor)
+		{
+			return children.size() > branchingFactor;
+		}
+
+
+		@Override
+		public boolean isUnderflow(int branchingFactor)
+		{
+			return children.size() < (branchingFactor + 1) / 2;
+		}
+
+
+		public BPlusTreeNode<K,V> getChild(K key)
+		{
+			int ix = insertIndex(key);
+			return children.get(ix);
+		}
+
+
+		public void deleteChild(K key)
+		{
+			int ix = indexOf(key);
+			if(ix >= 0)
+			{
+				keys.remove(ix);
+				children.remove(ix + 1);
+			}
+		}
+
+
+		public void insertChild(K key, BPlusTreeNode<K,V> child)
+		{
+			int ix = indexOf(key);
+			int childIndex = ix >= 0 ? ix + 1 : -ix - 1;
+			if(ix >= 0)
+			{
+				children.set(childIndex, child);
+			}
+			else
+			{
+				keys.add(childIndex, key);
+				children.add(childIndex + 1, child);
+			}
+		}
+
+
+		public BPlusTreeNode<K,V> getChildLeftSibling(K key)
+		{
+			int ix = insertIndex(key);
+			if(ix > 0)
+			{
+				return children.get(ix - 1);
+			}
+			return null;
+		}
+
+
+		public BPlusTreeNode<K,V> getChildRightSibling(K key)
+		{
+			int ix = insertIndex(key);
+			if(ix < size())
+			{
+				return children.get(ix + 1);
+			}
+			return null;
 		}
 	}
 }
