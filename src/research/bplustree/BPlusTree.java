@@ -22,6 +22,7 @@
 //	SOFTWARE.
 //
 package research.bplustree;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -125,13 +126,6 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 	}
 	
-	
-	/** returns the total number of values stored in a tree.  this is an expensive call */
-	public long getTotalCount()
-	{
-		return root.countValues();
-	}
-
 
 	public String toString()
 	{
@@ -157,7 +151,14 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 					
 					if(node instanceof BPlusTreeNode.InternalNode)
 					{
-						nextQueue.add(((BPlusTreeNode.InternalNode)node).children);
+						BPlusTreeNode.InternalNode n = (BPlusTreeNode.InternalNode)node;
+						int sz = n.getChildCount();
+						ArrayList<BPlusTreeNode> children = new ArrayList(sz);
+						for(int i=0; i<sz; i++)
+						{
+							children.add(n.childAt(i));
+						}
+						nextQueue.add(children);
 					}
 				}
 				sb.append('}');
