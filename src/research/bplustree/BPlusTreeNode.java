@@ -146,7 +146,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	}
 	
 	
-	protected InternalNode<K,V> newInternalNode()
+	/** dropping generics as they are getting in a way */
+	protected InternalNode newInternalNode()
 	{
 		return new LocalInternalNode();
 	}

@@ -31,7 +31,7 @@ public abstract class SecNode
 	
 	
 	@Override
-	protected BPlusTreeNode.InternalNode<SKey,IStored> newInternalNode()
+	protected BPlusTreeNode.InternalNode newInternalNode()
 	{
 		return new SecInternalNode();
 	}
@@ -57,9 +57,10 @@ public abstract class SecNode
 	//
 	
 	
-	public static class SecInternalNode extends BPlusTreeNode.InternalNode<SKey,IStored>
+	public static class SecInternalNode extends BPlusTreeNode.InternalNode<SKey,NodeHolder>
 	{
-		protected final List<BPlusTreeNode<SKey,IStored>> children;
+		protected final List<BPlusTreeNode<SKey,NodeHolder>> children;
+		//protected final List<BPlusTreeNode<SKey,IStored>> children;
 		
 		
 		public SecInternalNode()
@@ -68,7 +69,7 @@ public abstract class SecNode
 		}
 		
 		
-		protected SecInternalNode(List<SKey> keys, List<BPlusTreeNode<SKey,IStored>> children)
+		protected SecInternalNode(List<SKey> keys, List<BPlusTreeNode<SKey,NodeHolder>> children)
 		{
 			super(keys);
 			this.children = children;
@@ -76,7 +77,7 @@ public abstract class SecNode
 		
 		
 		
-		protected void addChild(BPlusTreeNode<SKey,IStored> n)
+		protected void addChild(BPlusTreeNode<SKey,NodeHolder> n)
 		{
 			children.add(n);
 		}
@@ -88,8 +89,9 @@ public abstract class SecNode
 		}
 
 
-		protected BPlusTreeNode<SKey,IStored> childAt(int ix)
+		protected BPlusTreeNode<SKey,NodeHolder> childAt(int ix)
 		{
+			// TODO
 			return children.get(ix);
 		}
 
@@ -100,13 +102,13 @@ public abstract class SecNode
 		}
 
 
-		protected void setChild(int ix, BPlusTreeNode<SKey,IStored> n)
+		protected void setChild(int ix, BPlusTreeNode<SKey,NodeHolder> n)
 		{
 			children.set(ix, n);
 		}
 
 
-		protected void addChild(int ix, BPlusTreeNode<SKey,IStored> n)
+		protected void addChild(int ix, BPlusTreeNode<SKey,NodeHolder> n)
 		{
 			children.add(ix, n);
 		}
