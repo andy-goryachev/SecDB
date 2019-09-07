@@ -1,5 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
+import goryachev.common.io.DReader;
+import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
 import java.util.List;
@@ -12,14 +14,31 @@ import research.bplustree.BPlusTreeNode;
 public abstract class SecNode
 	extends BPlusTreeNode<SKey,IStored>
 {
-	public static SecNode read(byte[] dec)
+	public static SecNode read(byte[] buf) throws Exception
 	{
-		// TODO int size
-		// positive: leaf node
-		// negative: internal node
-		// TODO keys
-		// TODO IStored: inline, ref, length
-		return null;
+		DReader rd = new DReader(buf);
+		try
+		{
+			int sz = rd.readInt();
+			if(sz > 0)
+			{
+				// leaf node
+				// keys
+				// values/refs
+			}
+			else
+			{
+				// internal node
+				// keys
+				// children refs
+				sz = -sz;
+			}
+			return null;
+		}
+		finally
+		{
+			CKit.close(rd);
+		}
 	}
 	
 	
