@@ -7,7 +7,7 @@ import research.bplustree.BPlusTreeNode;
 
 
 /**
- * SecDB B+ Tree Node implementation.
+ * SecDB B+ Tree Node implementation that uses underlying IStore.
  */
 public abstract class SecNode
 	extends BPlusTreeNode<SKey,IStored>
@@ -60,7 +60,6 @@ public abstract class SecNode
 	public static class SecInternalNode extends BPlusTreeNode.InternalNode<SKey,NodeHolder>
 	{
 		protected final List<BPlusTreeNode<SKey,NodeHolder>> children;
-		//protected final List<BPlusTreeNode<SKey,IStored>> children;
 		
 		
 		public SecInternalNode()

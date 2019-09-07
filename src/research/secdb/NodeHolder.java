@@ -8,31 +8,33 @@ package research.secdb;
 public class NodeHolder
 	implements IStored
 {
+	private final boolean hasValue;
+	private final long length;
 	private SecNode node;
 	
 	
-	public NodeHolder()
+	public NodeHolder(boolean hasValue, long length)
 	{
+		this.hasValue = hasValue;
+		this.length = length;
 	}
 	
 	
 	public boolean hasValue()
 	{
-		// TODO
-		return false;
+		return hasValue;
 	}
 
 
 	public long getLength()
 	{
-		// TODO
-		return 0;
+		return length;
 	}
 
 
 	public IStream getIStream()
 	{
-		// TODO
+		// TODO problem: need IStore
 		return null;
 	}
 	
