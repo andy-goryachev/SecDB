@@ -72,7 +72,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 	public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
 	
-	// TODO isLeafNode isInternalNode
+	public abstract boolean isLeafNode();
 	
 	//
 
@@ -173,6 +173,12 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		{
 			super(keys);
 			this.values = values;
+		}
+		
+		
+		public boolean isLeafNode()
+		{
+			return true;
 		}
 		
 		
@@ -368,6 +374,12 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		protected InternalNode(List<K> keys)
 		{
 			super(keys);
+		}
+		
+		
+		public boolean isLeafNode()
+		{
+			return false;
 		}
 		
 		
