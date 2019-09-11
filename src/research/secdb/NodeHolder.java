@@ -8,13 +8,15 @@ package research.secdb;
 public class NodeHolder
 	implements IStored
 {
+	private final IStore store;
 	private final boolean hasValue;
 	private final long length;
 	private SecNode node;
 	
 	
-	public NodeHolder(boolean hasValue, long length)
+	public NodeHolder(IStore store, boolean hasValue, long length)
 	{
+		this.store = store;
 		this.hasValue = hasValue;
 		this.length = length;
 	}
@@ -34,7 +36,6 @@ public class NodeHolder
 
 	public IStream getIStream()
 	{
-		// TODO problem: need IStore
 		return null;
 	}
 	
@@ -44,7 +45,7 @@ public class NodeHolder
 		if(node == null)
 		{
 			byte[] b = getIStream().readBytes(Integer.MAX_VALUE);
-			node = SecNode.read(b);
+			node = SecNode.read(store, b);
 		}
 		return node;
 	}

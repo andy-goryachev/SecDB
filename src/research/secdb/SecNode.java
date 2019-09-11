@@ -14,7 +14,16 @@ import research.bplustree.BPlusTreeNode;
 public abstract class SecNode
 	extends BPlusTreeNode<SKey,IStored>
 {
-	public static SecNode read(byte[] buf) throws Exception
+	private final IStore store;
+
+
+	protected SecNode(IStore store)
+	{
+		this.store = store;
+	}
+	
+	
+	public static SecNode read(IStore store, byte[] buf) throws Exception
 	{
 		DReader rd = new DReader(buf);
 		try
