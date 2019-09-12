@@ -73,12 +73,6 @@ public abstract class SecNode
 		public SecLeafNode()
 		{
 		}
-		
-		
-		protected SecLeafNode(List<SKey> keys, List<IStored> values)
-		{
-			super(keys, values);
-		}
 	}
 	
 	
@@ -94,14 +88,6 @@ public abstract class SecNode
 		{
 			children = new CList();
 		}
-		
-		
-		protected SecInternalNode(List<SKey> keys, List<BPlusTreeNode<SKey,NodeHolder>> children)
-		{
-			super(keys);
-			this.children = children;
-		}
-		
 		
 		
 		protected void addChild(BPlusTreeNode<SKey,NodeHolder> n)

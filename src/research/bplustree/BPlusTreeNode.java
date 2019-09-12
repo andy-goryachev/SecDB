@@ -84,13 +84,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		this.keys = new ArrayList<K>();
 	}
 	
-	
-	/** serialization constructor */
-	protected BPlusTreeNode(List<K> keys)
-	{
-		this.keys = keys;
-	}
-
 
 	public int size()
 	{
@@ -165,14 +158,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public LeafNode()
 		{
 			this.values = new ArrayList<V>();
-		}
-		
-		
-		/** serialization constructor */
-		protected LeafNode(List<K> keys, List<V> values)
-		{
-			super(keys);
-			this.values = values;
 		}
 		
 		
@@ -367,13 +352,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		
 		public InternalNode()
 		{
-		}
-		
-		
-		/** serialization constructor */
-		protected InternalNode(List<K> keys)
-		{
-			super(keys);
 		}
 		
 		
@@ -623,14 +601,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public LocalInternalNode()
 		{
 			this.children = new ArrayList<>();
-		}
-		
-		
-		/** serialization constructor */
-		protected LocalInternalNode(List<K> keys, List<BPlusTreeNode<K,V>> children)
-		{
-			super(keys);
-			this.children = children;
 		}
 		
 		
