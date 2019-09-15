@@ -4,7 +4,7 @@ import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import java.io.Closeable;
 import java.io.IOException;
-import research.bplustree.BPlusTreeNode;
+import research.bplustree.BPlusTree;
 
 
 /**
@@ -85,7 +85,7 @@ public class SecDB
 	}
 
 	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, BPlusTreeNode.QueryClient<SKey,IStored> client) throws Exception
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, BPlusTree.QueryClient<SKey,IStored> client) throws Exception
 	{
 		loadRoot().query(start, includeStart, end, includeEnd, client);
 	}
