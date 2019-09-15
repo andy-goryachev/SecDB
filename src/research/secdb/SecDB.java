@@ -58,7 +58,7 @@ public class SecDB
 		byte[] dec = encryptor.decrypt(b);
 		try
 		{
-			return SecNode.read(store, dec);
+			return SecIO.read(store, dec);
 		}
 		finally
 		{

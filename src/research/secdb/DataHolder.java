@@ -50,7 +50,7 @@ public class DataHolder
 		if(node == null)
 		{
 			byte[] b = getIStream().readBytes(Integer.MAX_VALUE);
-			node = SecNode.read(store, b);
+			node = SecIO.read(store, b);
 		}
 		return node;
 	}
