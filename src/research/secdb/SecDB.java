@@ -48,6 +48,7 @@ public class SecDB
 	protected BPlusTreeNode<SKey,DataHolder> loadRoot() throws Exception
 	{
 		Ref ref = store.getRootRef();
+		// TODO if ref == null
 		IStream in = store.load(ref);
 		return readNode(in);
 	}
@@ -70,7 +71,9 @@ public class SecDB
 
 	protected void commit(BPlusTreeNode<SKey,DataHolder> newRoot) throws Exception
 	{
-		// TODO
+		// TODO write nodes and values depth first
+		// TODO write new root
+		// TODO set root ref
 	}
 
 

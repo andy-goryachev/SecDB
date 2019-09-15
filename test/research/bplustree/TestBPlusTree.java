@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-public class BPlusTreeTest
+public class TestBPlusTree
 {
 	public static void main(String[] args)
 	{
