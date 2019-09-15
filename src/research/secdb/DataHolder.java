@@ -1,8 +1,5 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
-import goryachev.common.util.SKey;
-import research.bplustree.BPlusTreeNode;
-
 
 /**
  * Data Holder: stores a reference to and, if possible, the cached value of
@@ -10,48 +7,96 @@ import research.bplustree.BPlusTreeNode;
  * - BPlusTreeNode
  * - large object (reference only)
  */
-public class DataHolder
+public abstract class DataHolder
 	implements IStored
 {
+	public abstract boolean hasValue();
+	
+	public abstract long getLength();
+	
+	public abstract IStream getIStream();
+	
+	//
+	
 	private final IStore store;
-	private final boolean hasValue;
-	private final long length;
-	private BPlusTreeNode<SKey,DataHolder> node;
 	
 	
-	public DataHolder(IStore store, boolean hasValue, long length)
+	public DataHolder(IStore store)
 	{
 		this.store = store;
-		this.hasValue = hasValue;
-		this.length = length;
 	}
 	
 	
-	public boolean hasValue()
+	public IStore getIStore()
 	{
-		return hasValue;
-	}
-
-
-	public long getLength()
-	{
-		return length;
-	}
-
-
-	public IStream getIStream()
-	{
-		return null;
+		return store;
 	}
 	
+
+	//
 	
-	public BPlusTreeNode<SKey,DataHolder> getNode() throws Exception
+	
+	public static class REF extends DataHolder
 	{
-		if(node == null)
+		private final Ref ref;
+		
+		
+		public REF(IStore store, Ref ref)
 		{
-			byte[] b = getIStream().readBytes(Integer.MAX_VALUE);
-			node = SecIO.read(store, b);
+			super(store);
+			this.ref = ref;
 		}
-		return node;
+
+
+		public boolean hasValue()
+		{
+			return false;
+		}
+
+
+		public long getLength()
+		{
+			return 0;
+		}
+
+
+		public IStream getIStream()
+		{
+			return null;
+		}
+	}
+	
+	
+	//
+	
+	
+	public static class VAL extends DataHolder
+	{
+		private final byte[] bytes;
+		
+		
+		public VAL(IStore store, byte[] bytes)
+		{
+			super(store);
+			this.bytes = bytes;
+		}
+
+
+		public boolean hasValue()
+		{
+			return true;
+		}
+
+
+		public long getLength()
+		{
+			return bytes.length;
+		}
+
+
+		public IStream getIStream()
+		{
+			return new ByteArrayIStream(bytes);
+		}
 	}
 }

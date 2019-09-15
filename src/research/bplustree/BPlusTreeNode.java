@@ -36,23 +36,23 @@ import java.util.List;
  */
 public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 {
-	public abstract boolean containsKey(K key); 
+	public abstract boolean containsKey(K key) throws Exception; 
 	
-	public abstract V getValue(K key);
+	public abstract V getValue(K key) throws Exception;
 
 	/** returns new root node or null if no changes were made */
-	public abstract BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor);
+	public abstract BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor) throws Exception;
 
 	/** returns new root node or null if no changes were made */
-	public abstract BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor);
+	public abstract BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor) throws Exception;
 
-	public abstract K getFirstLeafKey();
+	public abstract K getFirstLeafKey() throws Exception;
 	
 	protected abstract void addChild(BPlusTreeNode<K,V> n);
 
-	public abstract void merge(BPlusTreeNode<K,V> sibling);
+	public abstract void merge(BPlusTreeNode<K,V> sibling) throws Exception;
 
-	public abstract BPlusTreeNode<K,V> split();
+	public abstract BPlusTreeNode<K,V> split() throws Exception;
 
 	public abstract boolean isOverflow(int branchingFactor);
 
@@ -201,7 +201,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor)
+		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor) throws Exception
 		{
 			int ix = indexOf(key);
 			int valueIndex = ix >= 0 ? ix : -ix - 1;
@@ -336,7 +336,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	{
 		protected abstract int getChildCount();
 		
-		protected abstract BPlusTreeNode<K,V> childAt(int ix);
+		protected abstract BPlusTreeNode<K,V> childAt(int ix) throws Exception;
 		
 		protected abstract void removeChildAt(int ix);
 		
@@ -359,21 +359,21 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		
 		
 		@Override
-		public boolean containsKey(K key)
+		public boolean containsKey(K key) throws Exception
 		{
 			return getChild(key).containsKey(key);
 		}
 
 
 		@Override
-		public V getValue(K key)
+		public V getValue(K key) throws Exception
 		{
 			return getChild(key).getValue(key);
 		}
 		
 
 		@Override
-		public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor)
+		public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor) throws Exception
 		{
 			BPlusTreeNode<K,V> child = getChild(key);
 			BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
@@ -407,7 +407,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor)
+		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor) throws Exception
 		{
 			BPlusTreeNode<K,V> child = getChild(key);
 			child.insertValue(root, key, value, branchingFactor);
@@ -431,7 +431,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public K getFirstLeafKey()
+		public K getFirstLeafKey() throws Exception
 		{
 			return childAt(0).getFirstLeafKey();
 		}
@@ -473,7 +473,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void merge(BPlusTreeNode<K,V> sibling)
+		public void merge(BPlusTreeNode<K,V> sibling) throws Exception
 		{
 			@SuppressWarnings("unchecked")
 			InternalNode<K,V> node = (InternalNode)sibling;
@@ -489,7 +489,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public BPlusTreeNode<K,V> split()
+		public BPlusTreeNode<K,V> split() throws Exception
 		{
 			int from = size() / 2 + 1;
 			int to = size();
@@ -528,7 +528,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 
-		public BPlusTreeNode<K,V> getChild(K key)
+		public BPlusTreeNode<K,V> getChild(K key) throws Exception
 		{
 			int ix = insertIndex(key);
 			return childAt(ix);
@@ -562,7 +562,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 
-		public BPlusTreeNode<K,V> getChildLeftSibling(K key)
+		public BPlusTreeNode<K,V> getChildLeftSibling(K key) throws Exception
 		{
 			int ix = insertIndex(key);
 			if(ix > 0)
@@ -573,7 +573,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 
-		public BPlusTreeNode<K,V> getChildRightSibling(K key)
+		public BPlusTreeNode<K,V> getChildRightSibling(K key) throws Exception
 		{
 			int ix = insertIndex(key);
 			if(ix < size())

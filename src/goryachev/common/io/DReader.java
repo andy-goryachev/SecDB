@@ -39,6 +39,14 @@ public class DReader
 	{
 		CIOTools.readFully(in, b);
 	}
+	
+	
+	public byte[] readFully(int byteCount) throws IOException
+	{
+		byte[] b = new byte[byteCount];
+		CIOTools.readFully(in, b);
+		return b;
+	}
 
 
 	public void readFully(byte[] b, int off, int len) throws IOException

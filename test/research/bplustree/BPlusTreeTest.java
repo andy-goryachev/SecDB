@@ -17,7 +17,7 @@ public class BPlusTreeTest
 	
 	
 	@Test
-	public void testLoad()
+	public void testLoad() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 0);
 		
@@ -52,7 +52,7 @@ public class BPlusTreeTest
 	
 	
 	@Test
-	public void test()
+	public void test() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
 		t.remove(1);
@@ -75,7 +75,7 @@ public class BPlusTreeTest
 
 
 	@Test
-	public void testForward()
+	public void testForward() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
 		
@@ -92,7 +92,7 @@ public class BPlusTreeTest
 	
 	
 	@Test
-	public void testBackward()
+	public void testBackward() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
 		
@@ -131,7 +131,7 @@ public class BPlusTreeTest
 	}
 	
 	
-	protected BPlusTree<Integer,String> tree(int branchingFactor, int start, int end)
+	protected BPlusTree<Integer,String> tree(int branchingFactor, int start, int end) throws Exception
 	{
 		BPlusTree<Integer,String> t = new BPlusTree<Integer,String>(branchingFactor);
 		for(int i=start; i<=end; i++)

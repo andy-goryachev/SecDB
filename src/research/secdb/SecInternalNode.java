@@ -2,7 +2,6 @@
 package research.secdb;
 import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
-import java.util.List;
 import research.bplustree.BPlusTreeNode;
 
 
@@ -13,7 +12,7 @@ public class SecInternalNode
 	extends BPlusTreeNode.InternalNode<SKey,DataHolder>
 {
 	private final IStore store;
-	protected final List<BPlusTreeNode<SKey,DataHolder>> children;
+	protected final CList<NodeHolder> children;
 	
 	
 	public SecInternalNode(IStore store)
@@ -25,7 +24,7 @@ public class SecInternalNode
 	
 	protected void addChild(BPlusTreeNode<SKey,DataHolder> n)
 	{
-		children.add(n);
+		children.add(new NodeHolder(n));
 	}
 
 
@@ -35,9 +34,10 @@ public class SecInternalNode
 	}
 
 
-	protected BPlusTreeNode<SKey,DataHolder> childAt(int ix)
+	protected BPlusTreeNode<SKey,DataHolder> childAt(int ix) throws Exception
 	{
-		return children.get(ix);
+		NodeHolder h = children.get(ix);
+		return h.getNode();
 	}
 
 
@@ -49,13 +49,13 @@ public class SecInternalNode
 
 	protected void setChild(int ix, BPlusTreeNode<SKey,DataHolder> n)
 	{
-		children.set(ix, n);
+		children.set(ix, new NodeHolder(n));
 	}
 
 
 	protected void addChild(int ix, BPlusTreeNode<SKey,DataHolder> n)
 	{
-		children.add(ix, n);
+		children.add(ix, new NodeHolder(n));
 	}
 	
 	
@@ -68,5 +68,10 @@ public class SecInternalNode
 	protected InternalNode newInternalNode()
 	{
 		return new SecInternalNode(store);
+	}
+
+
+	protected void addChild(DataHolder d)
+	{
 	}
 }

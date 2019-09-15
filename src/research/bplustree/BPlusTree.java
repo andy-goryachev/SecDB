@@ -68,7 +68,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @return the value to which the specified key is associated, or
 	 *         {@code null} if this tree contains no association for the key
 	 */
-	public V get(K key)
+	public V get(K key) throws Exception
 	{
 		return root.getValue(key);
 	}
@@ -100,7 +100,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @param value
 	 *            the value to be associated with the specified key
 	 */
-	public void insert(K key, V value)
+	public void insert(K key, V value) throws Exception
 	{
 		setRoot(root.insertValue(root, key, value, branchingFactor));
 	}
@@ -112,7 +112,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @param key
 	 *            the key whose association is to be removed from the tree
 	 */
-	public void remove(K key)
+	public void remove(K key) throws Exception
 	{
 		setRoot(root.remove(root, key, branchingFactor));
 	}
@@ -128,6 +128,12 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	
 
 	public String toString()
+	{
+		return "BPlusTree";
+	}
+	
+	
+	public String dump() throws Exception
 	{
 		Queue<List<BPlusTreeNode>> queue = new LinkedList<List<BPlusTreeNode>>();
 		queue.add(Arrays.asList(root));

@@ -38,7 +38,7 @@ public abstract class Transaction
 	}
 	
 	
-	public boolean containsKey(SKey key)
+	public boolean containsKey(SKey key) throws Exception
 	{
 		return root.containsKey(key);
 	}
