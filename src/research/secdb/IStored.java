@@ -13,5 +13,5 @@ public interface IStored
 	public long getLength();
 	
 	
-	public IStream getIStream();
+	public IStream getIStream() throws Exception;
 }

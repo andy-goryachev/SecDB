@@ -1,9 +1,11 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
+import goryachev.common.util.CKit;
+import goryachev.common.util.FH;
 
 
 /**
- * Reference.
+ * SecDB Stored Object Reference.
  */
 public class Ref
 {
@@ -17,5 +19,53 @@ public class Ref
 		this.segment = segment;
 		this.offset = offset;
 		this.length = length;
+	}
+	
+	
+	public String getSegment()
+	{
+		return segment;
+	}
+	
+	
+	public long getOffset()
+	{
+		return offset;
+	}
+	
+	
+	public long getLength()
+	{
+		return length;
+	}
+	
+	
+	public int hashCode()
+	{
+		int h = FH.hash(Ref.class);
+		h = FH.hash(h, segment);
+		h = FH.hash(h, offset);
+		return FH.hash(h, length);
+	}
+	
+	
+	public boolean equals(Object x)
+	{
+		if(x == this)
+		{
+			return true;
+		}
+		else if(x instanceof Ref)
+		{
+			Ref r = (Ref)x;
+			return
+				(offset == r.offset) &&
+				(length == r.length) &&
+				CKit.equals(segment, r.segment);
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

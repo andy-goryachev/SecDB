@@ -1,5 +1,6 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
+import goryachev.common.util.D;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import java.io.Closeable;
@@ -14,7 +15,7 @@ import research.bplustree.QueryClient;
 public class SecDB
 	implements Closeable
 {
-	private static final int TREE_BRANCHING_FACTOR = 4;
+	private static final int BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
 	private final IStore<Ref> store;
 	private final IEncryptor encryptor;
@@ -48,9 +49,15 @@ public class SecDB
 	protected BPlusTreeNode<SKey,DataHolder> loadRoot() throws Exception
 	{
 		Ref ref = store.getRootRef();
-		// TODO if ref == null
-		IStream in = store.load(ref);
-		return readNode(in);
+		if(ref == null)
+		{
+			return new SecLeafNode(store);
+		}
+		else
+		{
+			IStream in = store.load(ref);
+			return readNode(in);
+		}
 	}
 	
 	
@@ -74,6 +81,7 @@ public class SecDB
 		// TODO write nodes and values depth first
 		// TODO write new root
 		// TODO set root ref
+		D.print("commit TBD");
 	}
 
 
@@ -100,7 +108,7 @@ public class SecDB
 		try
 		{
 			BPlusTreeNode<SKey,DataHolder> root = loadRoot(); 
-			tx.setRoot(root);
+			tx.setRoot(store, root, BRANCHING_FACTOR);
 			
 			tx.body();
 			

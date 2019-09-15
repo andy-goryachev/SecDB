@@ -12,13 +12,12 @@ public class SecInternalNode
 	extends BPlusTreeNode.InternalNode<SKey,DataHolder>
 {
 	private final IStore store;
-	protected final CList<NodeHolder> children;
+	protected final CList<NodeHolder> children = new CList();
 	
 	
 	public SecInternalNode(IStore store)
 	{
 		this.store = store;
-		children = new CList();
 	}
 	
 	

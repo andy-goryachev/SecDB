@@ -14,20 +14,20 @@ public abstract class DataHolder
 	
 	public abstract long getLength();
 	
-	public abstract IStream getIStream();
+	public abstract IStream getIStream() throws Exception;
 	
 	//
 	
-	private final IStore store;
+	private final IStore<Ref> store;
 	
 	
-	public DataHolder(IStore store)
+	public DataHolder(IStore<Ref> store)
 	{
 		this.store = store;
 	}
 	
 	
-	public IStore getIStore()
+	public IStore<Ref> getIStore()
 	{
 		return store;
 	}
@@ -56,13 +56,13 @@ public abstract class DataHolder
 
 		public long getLength()
 		{
-			return 0;
+			return ref.getLength();
 		}
 
 
-		public IStream getIStream()
+		public IStream getIStream() throws Exception
 		{
-			return null;
+			return getIStore().load(ref);
 		}
 	}
 	

@@ -20,7 +20,9 @@ public abstract class Transaction
 	
 	//
 	
+	private IStore<Ref> store;
 	private BPlusTreeNode<SKey,DataHolder> root;
+	private int branchingFactor;
 	
 	
 	public Transaction()
@@ -28,8 +30,7 @@ public abstract class Transaction
 	}
 	
 	
-	// TODO
-	// read, read bytes, write, contains
+	// TODO read bytes
 	
 	
 	public DataHolder read(SKey key) throws Exception
@@ -44,17 +45,28 @@ public abstract class Transaction
 	}
 	
 	
+	public void insert(SKey key, IStream in) throws Exception
+	{
+		Ref ref = store.store(in);
+		DataHolder h = new DataHolder.REF(store, ref);
+		BPlusTreeNode<SKey,DataHolder> newRoot = root.insertValue(root, key, h, branchingFactor);
+		root = newRoot;
+	}
+	
+	
 	public void execute(SecDB db)
 	{		
 		db.execute(this);
 	}
 	
 	
-	protected void setRoot(BPlusTreeNode<SKey,DataHolder> root)
+	protected void setRoot(IStore<Ref> store, BPlusTreeNode<SKey,DataHolder> root, int branchingFactor)
 	{
-		if(this.root == null)
+		if(this.store == null)
 		{
+			this.store = store;
 			this.root = root;
+			this.branchingFactor = branchingFactor;
 		}
 		else
 		{
