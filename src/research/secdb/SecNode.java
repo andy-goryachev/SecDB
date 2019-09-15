@@ -22,7 +22,7 @@ public abstract class SecNode
 	}
 	
 	
-	public static BPlusTreeNode<SKey,IStored> read(IStore store, byte[] buf) throws Exception
+	public static BPlusTreeNode<SKey,DataHolder> read(IStore store, byte[] buf) throws Exception
 	{
 		DReader rd = new DReader(buf);
 		try
@@ -32,30 +32,19 @@ public abstract class SecNode
 			{
 				// leaf node
 				SecLeafNode n = new SecLeafNode();
-				for(int i=0; i<sz; i++)
-				{
-					String s = rd.readString();
-					SKey key = new SKey(s);
-					n.insertIndex(key);
-				}
-				// values/refs
+				readKeys(rd, sz, n);
+				// value refs
 				return n;
 			}
 			else
 			{
 				// internal node
 				SecInternalNode n = new SecInternalNode();
-				// keys
-				// children refs
 				sz = -sz;
-				for(int i=0; i<sz; i++)
-				{
-					String s = rd.readString();
-					SKey key = new SKey(s);
-					n.insertIndex(key);
-				}
+				readKeys(rd, sz, n);
+				// child node refs
+				return n;
 			}
-			return null;
 		}
 		finally
 		{
@@ -64,13 +53,24 @@ public abstract class SecNode
 	}
 	
 	
-	protected BPlusTreeNode.LeafNode<SKey,IStored> newLeafNode()
+	private static void readKeys(DReader rd, int sz, BPlusTreeNode<SKey,DataHolder> n) throws Exception
+	{
+		for(int i=0; i<sz; i++)
+		{
+			String s = rd.readString();
+			SKey key = new SKey(s);
+			n.insertIndex(key);
+		}
+	}
+	
+	
+	protected BPlusTreeNode.LeafNode<SKey,DataHolder> newLeafNode()
 	{
 		return new SecLeafNode();
 	}
 	
 	
-	protected BPlusTreeNode.InternalNode newInternalNode()
+	protected BPlusTreeNode.InternalNode<SKey,DataHolder> newInternalNode()
 	{
 		return new SecInternalNode();
 	}
@@ -79,7 +79,7 @@ public abstract class SecNode
 	//
 	
 	
-	public static class SecLeafNode extends BPlusTreeNode.LeafNode<SKey,IStored>
+	public static class SecLeafNode extends BPlusTreeNode.LeafNode<SKey,DataHolder>
 	{
 		public SecLeafNode()
 		{
@@ -90,9 +90,9 @@ public abstract class SecNode
 	//
 	
 	
-	public static class SecInternalNode extends BPlusTreeNode.InternalNode<SKey,NodeHolder>
+	public static class SecInternalNode extends BPlusTreeNode.InternalNode<SKey,DataHolder>
 	{
-		protected final List<BPlusTreeNode<SKey,NodeHolder>> children;
+		protected final List<BPlusTreeNode<SKey,DataHolder>> children;
 		
 		
 		public SecInternalNode()
@@ -101,7 +101,7 @@ public abstract class SecNode
 		}
 		
 		
-		protected void addChild(BPlusTreeNode<SKey,NodeHolder> n)
+		protected void addChild(BPlusTreeNode<SKey,DataHolder> n)
 		{
 			children.add(n);
 		}
@@ -113,9 +113,8 @@ public abstract class SecNode
 		}
 
 
-		protected BPlusTreeNode<SKey,NodeHolder> childAt(int ix)
+		protected BPlusTreeNode<SKey,DataHolder> childAt(int ix)
 		{
-			// TODO
 			return children.get(ix);
 		}
 
@@ -126,13 +125,13 @@ public abstract class SecNode
 		}
 
 
-		protected void setChild(int ix, BPlusTreeNode<SKey,NodeHolder> n)
+		protected void setChild(int ix, BPlusTreeNode<SKey,DataHolder> n)
 		{
 			children.set(ix, n);
 		}
 
 
-		protected void addChild(int ix, BPlusTreeNode<SKey,NodeHolder> n)
+		protected void addChild(int ix, BPlusTreeNode<SKey,DataHolder> n)
 		{
 			children.add(ix, n);
 		}

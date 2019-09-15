@@ -5,18 +5,21 @@ import research.bplustree.BPlusTreeNode;
 
 
 /**
- * Node Holder.
+ * Data Holder: stores a reference to and, if possible, the cached value of
+ * - short inline value
+ * - BPlusTreeNode
+ * - large object (reference only)
  */
-public class NodeHolder
+public class DataHolder
 	implements IStored
 {
 	private final IStore store;
 	private final boolean hasValue;
 	private final long length;
-	private BPlusTreeNode<SKey,IStored> node;
+	private BPlusTreeNode<SKey,DataHolder> node;
 	
 	
-	public NodeHolder(IStore store, boolean hasValue, long length)
+	public DataHolder(IStore store, boolean hasValue, long length)
 	{
 		this.store = store;
 		this.hasValue = hasValue;
@@ -42,7 +45,7 @@ public class NodeHolder
 	}
 	
 	
-	public BPlusTreeNode<SKey,IStored> getNode() throws Exception
+	public BPlusTreeNode<SKey,DataHolder> getNode() throws Exception
 	{
 		if(node == null)
 		{

@@ -20,7 +20,7 @@ public abstract class Transaction
 	
 	//
 	
-	private BPlusTreeNode<SKey,IStored> root;
+	private BPlusTreeNode<SKey,DataHolder> root;
 	
 	
 	public Transaction()
@@ -50,7 +50,7 @@ public abstract class Transaction
 	}
 	
 	
-	protected void setRoot(BPlusTreeNode<SKey,IStored> root)
+	protected void setRoot(BPlusTreeNode<SKey,DataHolder> root)
 	{
 		if(this.root == null)
 		{
@@ -63,7 +63,7 @@ public abstract class Transaction
 	}
 	
 	
-	protected BPlusTreeNode<SKey,IStored> getRoot()
+	protected BPlusTreeNode<SKey,DataHolder> getRoot()
 	{
 		return root;
 	}
