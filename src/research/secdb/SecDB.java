@@ -5,6 +5,7 @@ import goryachev.common.util.SKey;
 import java.io.Closeable;
 import java.io.IOException;
 import research.bplustree.BPlusTreeNode;
+import research.bplustree.QueryClient;
 
 
 /**
@@ -73,7 +74,7 @@ public class SecDB
 	}
 
 
-	public IStored getValue(SKey key) throws Exception
+	public DataHolder getValue(SKey key) throws Exception
 	{
 		return loadRoot().getValue(key);
 	}
@@ -85,7 +86,7 @@ public class SecDB
 	}
 
 	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, BPlusTreeNode.QueryClient<SKey,IStored> client) throws Exception
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder> client) throws Exception
 	{
 		loadRoot().query(start, includeStart, end, includeEnd, client);
 	}

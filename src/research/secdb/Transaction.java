@@ -32,7 +32,7 @@ public abstract class Transaction
 	// read, read bytes, write, contains
 	
 	
-	public IStored read(SKey key) throws Exception
+	public DataHolder read(SKey key) throws Exception
 	{
 		return root.getValue(key);
 	}

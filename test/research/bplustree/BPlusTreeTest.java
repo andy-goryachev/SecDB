@@ -6,7 +6,6 @@ import goryachev.common.util.CKit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import research.bplustree.BPlusTreeNode.QueryClient;
 
 
 public class BPlusTreeTest
@@ -39,6 +38,12 @@ public class BPlusTreeTest
 			{
 				counter.incrementAndGet();
 				return true;
+			}
+
+			
+			public void onError(Throwable err)
+			{
+				err.printStackTrace();
 			}
 		};
 		t.query(Integer.MIN_VALUE, true, Integer.MAX_VALUE, true, c);
@@ -107,12 +112,18 @@ public class BPlusTreeTest
 	{
 		ArrayList<V> rv = new ArrayList<>();
 		
-		t.query(start, includeStart, end, includeEnd, new BPlusTreeNode.QueryClient<K,V>()
+		t.query(start, includeStart, end, includeEnd, new QueryClient<K,V>()
 		{
 			public boolean acceptQueryResult(K key, V value)
 			{
 				rv.add(value);
 				return true;
+			}
+			
+			
+			public void onError(Throwable err)
+			{
+				err.printStackTrace();
 			}
 		});
 		
