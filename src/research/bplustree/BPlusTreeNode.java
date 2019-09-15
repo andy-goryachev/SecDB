@@ -36,16 +36,6 @@ import java.util.List;
  */
 public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 {
-	// TODO accept exception to handle errors?
-	@FunctionalInterface
-	public interface QueryClient<K,V>
-	{
-		/** accepts query results.  the query is aborted when this callback returns false */
-		public boolean acceptQueryResult(K key, V value);
-	}
-	
-	//
-	
 	public abstract boolean containsKey(K key); 
 	
 	public abstract V getValue(K key);
@@ -68,9 +58,9 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 	public abstract boolean isUnderflow(int branchingFactor);
 	
-	public abstract boolean queryForward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
+	public abstract boolean queryForward(K start, boolean includeStart, K end, boolean endPolicy, BPlusTree.QueryClient<K,V> client);
 
-	public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient client);
+	public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, BPlusTree.QueryClient<K,V> client);
 	
 	public abstract boolean isLeafNode();
 	
@@ -120,7 +110,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+	public void query(K start, boolean includeStart, K end, boolean includeEnd, BPlusTree.QueryClient<K,V> client)
 	{
 		if(start.compareTo(end) <= 0)
 		{
@@ -238,7 +228,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, BPlusTree.QueryClient<K,V> client)
 		{
 			int sz = size();
 			for(int i=0; i<sz; i++)
@@ -264,7 +254,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, BPlusTree.QueryClient<K,V> client)
 		{
 			for(int i=size()-1; i>=0; i--)
 			{
@@ -440,7 +430,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 		
-		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, BPlusTree.QueryClient<K,V> client)
 		{
 			int ix = insertIndex(start);
 			int sz = getChildCount();
@@ -458,7 +448,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		}
 
 
-		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient client)
+		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, BPlusTree.QueryClient<K,V> client)
 		{
 			int ix = insertIndex(start);
 			
