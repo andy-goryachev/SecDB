@@ -1,20 +1,25 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
+import goryachev.common.util.SKey;
+import research.bplustree.BPlusTreeNode;
 
 
 /**
- * Node Holder.
+ * Data Holder: stores a reference to and, if possible, the cached value of
+ * - short inline value
+ * - BPlusTreeNode
+ * - large object (reference only)
  */
-public class NodeHolder
+public class DataHolder
 	implements IStored
 {
 	private final IStore store;
 	private final boolean hasValue;
 	private final long length;
-	private SecNode node;
+	private BPlusTreeNode<SKey,DataHolder> node;
 	
 	
-	public NodeHolder(IStore store, boolean hasValue, long length)
+	public DataHolder(IStore store, boolean hasValue, long length)
 	{
 		this.store = store;
 		this.hasValue = hasValue;
@@ -40,12 +45,12 @@ public class NodeHolder
 	}
 	
 	
-	public SecNode getNode() throws Exception
+	public BPlusTreeNode<SKey,DataHolder> getNode() throws Exception
 	{
 		if(node == null)
 		{
 			byte[] b = getIStream().readBytes(Integer.MAX_VALUE);
-			node = SecNode.read(store, b);
+			node = SecIO.read(store, b);
 		}
 		return node;
 	}
