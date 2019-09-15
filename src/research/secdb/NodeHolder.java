@@ -1,5 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
+import goryachev.common.util.SKey;
+import research.bplustree.BPlusTreeNode;
 
 
 /**
@@ -11,7 +13,7 @@ public class NodeHolder
 	private final IStore store;
 	private final boolean hasValue;
 	private final long length;
-	private SecNode node;
+	private BPlusTreeNode<SKey,IStored> node;
 	
 	
 	public NodeHolder(IStore store, boolean hasValue, long length)
@@ -40,7 +42,7 @@ public class NodeHolder
 	}
 	
 	
-	public SecNode getNode() throws Exception
+	public BPlusTreeNode<SKey,IStored> getNode() throws Exception
 	{
 		if(node == null)
 		{

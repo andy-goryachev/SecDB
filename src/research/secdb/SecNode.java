@@ -12,7 +12,6 @@ import research.bplustree.BPlusTreeNode;
  * SecDB B+ Tree Node implementation that uses underlying IStore.
  */
 public abstract class SecNode
-	extends BPlusTreeNode<SKey,IStored>
 {
 	private final IStore store;
 
@@ -23,7 +22,7 @@ public abstract class SecNode
 	}
 	
 	
-	public static SecNode read(IStore store, byte[] buf) throws Exception
+	public static BPlusTreeNode<SKey,IStored> read(IStore store, byte[] buf) throws Exception
 	{
 		DReader rd = new DReader(buf);
 		try
@@ -32,15 +31,29 @@ public abstract class SecNode
 			if(sz > 0)
 			{
 				// leaf node
-				// keys
+				SecLeafNode n = new SecLeafNode();
+				for(int i=0; i<sz; i++)
+				{
+					String s = rd.readString();
+					SKey key = new SKey(s);
+					n.insertIndex(key);
+				}
 				// values/refs
+				return n;
 			}
 			else
 			{
 				// internal node
+				SecInternalNode n = new SecInternalNode();
 				// keys
 				// children refs
 				sz = -sz;
+				for(int i=0; i<sz; i++)
+				{
+					String s = rd.readString();
+					SKey key = new SKey(s);
+					n.insertIndex(key);
+				}
 			}
 			return null;
 		}
@@ -51,14 +64,12 @@ public abstract class SecNode
 	}
 	
 	
-	@Override
 	protected BPlusTreeNode.LeafNode<SKey,IStored> newLeafNode()
 	{
 		return new SecLeafNode();
 	}
 	
 	
-	@Override
 	protected BPlusTreeNode.InternalNode newInternalNode()
 	{
 		return new SecInternalNode();
