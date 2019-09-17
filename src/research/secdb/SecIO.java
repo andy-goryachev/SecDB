@@ -1,6 +1,8 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
 import goryachev.common.io.DReader;
+import goryachev.common.io.DWriter;
+import goryachev.common.io.DWriterBytes;
 import goryachev.common.util.CKit;
 import goryachev.common.util.SKey;
 import research.bplustree.BPlusTreeNode;
@@ -11,13 +13,50 @@ import research.bplustree.BPlusTreeNode;
  */
 public class SecIO
 {
+	public static Ref store(IStore<Ref> store, BPlusTreeNode<SKey,DataHolder> node) throws Exception
+	{
+		DWriterBytes wr = new DWriterBytes();
+		try
+		{
+			if(node instanceof SecLeafNode)
+			{
+				SecLeafNode n = (SecLeafNode)node;
+				int sz = n.size();
+				wr.writeXInt8(sz);
+				
+				writeKeys(wr, sz, n);
+				writeValues(store, wr, n);
+			}
+			else if(node instanceof SecInternalNode)
+			{
+				SecInternalNode n = (SecInternalNode)node;
+				int sz = n.size();
+				wr.writeXInt8(-sz);
+				
+				writeKeys(wr, sz, n);
+				writeNodeRefs(store, wr, n);
+			}
+			else
+			{
+				throw new Error("?" + node);
+			}
+			
+			byte[] b = wr.toByteArray();
+			return store.store(new ByteArrayIStream(b));
+		}
+		finally
+		{
+			CKit.close(wr);
+		}
+	}
+	
+	
 	public static BPlusTreeNode<SKey,DataHolder> read(IStore store, byte[] buf) throws Exception
 	{
 		DReader rd = new DReader(buf);
 		try
 		{
-			int sz = rd.readInt();
-			// TODO check for max size
+			int sz = rd.readXInt8();
 			if(sz > 0)
 			{
 				// leaf node
@@ -43,21 +82,45 @@ public class SecIO
 	}
 	
 	
+	private static void writeKeys(DWriter wr, int sz, BPlusTreeNode<SKey,DataHolder> n) throws Exception
+	{
+		for(int i=0; i<sz; i++)
+		{
+			SKey k = n.keyAt(i);
+			String s = k.toString();
+			wr.writeString(s);
+		}
+	}
+	
+	
 	private static void readKeys(DReader rd, int sz, BPlusTreeNode<SKey,DataHolder> n) throws Exception
 	{
 		for(int i=0; i<sz; i++)
 		{
 			String s = rd.readString();
 			SKey key = new SKey(s);
-			n.insertIndex(key);
+			n.addKey(key);
+		}
+	}
+	
+	
+	private static void writeValues(IStore store, DWriter wr, SecLeafNode n) throws Exception
+	{
+		int sz = n.getValueCount();
+		wr.writeUInt8(sz);
+		
+		for(int i=0; i<sz; i++)
+		{
+			DataHolder d = n.valueAt(i);
+			writeDataHolder(store, d, wr);
 		}
 	}
 	
 	
 	private static void readValues(IStore store, DReader rd, SecLeafNode n) throws Exception
 	{
-		int sz = rd.readInt();
-		// TODO check for max size
+		int sz = rd.readUInt8();
+		
 		for(int i=0; i<sz; i++)
 		{
 			DataHolder d = readDataHolder(store, rd);
@@ -66,19 +129,48 @@ public class SecIO
 	}
 	
 	
+	private static void writeNodeRefs(IStore store, DWriter wr, SecInternalNode n) throws Exception
+	{
+		int sz = n.getChildCount();
+		wr.writeUInt8(sz);
+
+		for(int i=0; i<sz; i++)
+		{
+			NodeHolder h = n.nodeHolderAt(i);
+			if(h.isModified())
+			{
+				// store node first
+				Ref ref = store(store, h.getNode());
+				writeRef(ref, wr);
+			}
+			else
+			{
+				// store ref
+				writeRef(h.getRef(), wr);
+			}
+		}
+	}
+	
+	
 	private static void readNodeRefs(IStore store, DReader rd, SecInternalNode n) throws Exception
 	{
-		int sz = rd.readInt();
-		// TODO check for max size
+		int sz = rd.readUInt8();
 		for(int i=0; i<sz; i++)
 		{
 			DataHolder d = readDataHolder(store, rd);
 			n.addChild(d);
 		}
 	}
+	
+	
+	private static void writeRef(Ref ref, DWriter wr) throws Exception
+	{
+		wr.writeString(ref.getSegment());
+		wr.writeLong(ref.getOffset());
+		wr.writeLong(ref.getLength());
+	}
 
 
-	// TODO remove?
 	private static Ref readRef(DReader rd) throws Exception
 	{
 		String segment = rd.readString();
@@ -88,15 +180,33 @@ public class SecIO
 	}
 	
 	
+	private static void writeDataHolder(IStore store, DataHolder d, DWriter wr) throws Exception
+	{
+		if(d.isRef())
+		{
+			wr.writeUInt8(0);
+			writeRef(d.getRef(), wr);
+		}
+		else
+		{
+			byte[] b = d.getBytes();
+			int len = b.length;
+			if(len > 255)
+			{
+				throw new Error("too long: " + len);
+			}
+			wr.writeUInt8(len);
+			wr.write(b);
+		}
+	}
+	
+	
 	private static DataHolder readDataHolder(IStore store, DReader rd) throws Exception
 	{
-		int sz = rd.readInt8();
+		int sz = rd.readUInt8();
 		if(sz == 0)
 		{
-			String segment = rd.readString();
-			long offset = rd.readLong();
-			long length = rd.readLong();
-			Ref ref = new Ref(segment, offset, length);
+			Ref ref = readRef(rd);
 			return new DataHolder.REF(store, ref);
 		}
 		else

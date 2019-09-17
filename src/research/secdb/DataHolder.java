@@ -1,6 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
 
+
 /**
  * Data Holder: stores a reference to and, if possible, the cached value of
  * - short inline value
@@ -15,6 +16,13 @@ public abstract class DataHolder
 	public abstract long getLength();
 	
 	public abstract IStream getIStream() throws Exception;
+	
+	public abstract Ref getRef();
+	
+	public abstract boolean isRef();
+	
+	/** returns underlying byte array, internal method */
+	protected abstract byte[] getBytes();
 	
 	//
 	
@@ -64,6 +72,24 @@ public abstract class DataHolder
 		{
 			return getIStore().load(ref);
 		}
+
+
+		public Ref getRef()
+		{
+			return ref;
+		}
+
+
+		public boolean isRef()
+		{
+			return true;
+		}
+
+
+		protected byte[] getBytes()
+		{
+			return null;
+		}
 	}
 	
 	
@@ -97,6 +123,24 @@ public abstract class DataHolder
 		public IStream getIStream()
 		{
 			return new ByteArrayIStream(bytes);
+		}
+		
+		
+		public Ref getRef()
+		{
+			return null;
+		}
+		
+		
+		public boolean isRef()
+		{
+			return false;
+		}
+		
+		
+		protected byte[] getBytes()
+		{
+			return bytes;
 		}
 	}
 }

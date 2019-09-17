@@ -5,6 +5,7 @@ import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.SKey;
+import research.bplustree.QueryClient;
 
 
 /**
@@ -19,28 +20,56 @@ public class TestSecDB
 	
 	
 	@Test
-	public void test()
+	public void test() throws Exception
 	{
-		IStore<Ref> store = new InMemoryStore();
+		InMemoryStore store = new InMemoryStore();
 		SecDB db = new SecDB(store);
 		try
 		{
-			db.execute(new Transaction()
+			for(int i=0; i<10; i++)
 			{
-				protected void body() throws Exception
+				int index = i;
+				
+				D.print(i);
+
+				db.execute(new Transaction()
 				{
-					SKey k = new SKey("1");
-					byte[] v = new byte[] { (byte)1, (byte)2 };
-					
-					D.print("contains:", containsKey(k), "expecting false");
-					
-					insert(k, new ByteArrayIStream(v));
-					
-					D.print("contains:", containsKey(k), "expecting true");
-					
-					DataHolder h = read(k);
-					byte[] rv = h.getIStream().readBytes(Integer.MAX_VALUE);
-					D.print("success:", CKit.equals(v, rv));
+					protected void body() throws Exception
+					{
+						SKey k = new SKey(String.valueOf(index));
+						byte[] v = new byte[] { (byte)index };
+						
+						D.print("contains:", containsKey(k), "expecting false");
+						
+						insert(k, new ByteArrayIStream(v));
+						
+						D.print("contains:", containsKey(k), "expecting true");
+						
+						DataHolder h = read(k);
+						byte[] rv = h.getIStream().readBytes(Integer.MAX_VALUE);
+						D.print("success:", CKit.equals(v, rv));
+					}
+				});
+				
+				D.print(store.dump());
+			}
+						
+			// query
+			SKey start = new SKey("0");
+			SKey end = new SKey("1000");
+			
+			db.query(start, true, end, true, new QueryClient<SKey,DataHolder>()
+			{
+				public void onError(Throwable err)
+				{
+					err.printStackTrace();
+				}
+				
+				
+				public boolean acceptQueryResult(SKey key, DataHolder value)
+				{
+					D.print(key);
+					return true;
 				}
 			});
 		}

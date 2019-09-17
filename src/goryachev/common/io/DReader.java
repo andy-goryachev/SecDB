@@ -83,14 +83,27 @@ public class DReader
 	}
 	
 	
-	public int readInt8() throws IOException
+	/** reads one byte as an unsigned int (range 0..255) */
+	public int readUInt8() throws IOException
 	{
 		int ch = in.read();
 		if(ch < 0)
 		{
 			throw new EOFException();
 		}
-		return (ch & 0xff);
+		return ch;
+	}
+	
+	
+	/** reads one byte as an signed int (range -128 to 127) */
+	public int readXInt8() throws IOException
+	{
+		int ch = in.read();
+		if(ch < 0)
+		{
+			throw new EOFException();
+		}
+		return (byte)ch;
 	}
 	
 	

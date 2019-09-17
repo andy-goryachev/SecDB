@@ -2,6 +2,7 @@
 package research.secdb;
 import goryachev.common.util.CKit;
 import goryachev.common.util.FH;
+import goryachev.common.util.Hex;
 
 
 /**
@@ -19,6 +20,12 @@ public class Ref
 		this.segment = segment;
 		this.offset = offset;
 		this.length = length;
+	}
+	
+	
+	public String toString()
+	{
+		return "Ref:" + segment + ":" + Hex.toHexString(offset) + ":" + Hex.toHexString(length);
 	}
 	
 	

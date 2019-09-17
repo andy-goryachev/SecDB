@@ -21,20 +21,39 @@ public class SecLeafNode
 	}
 	
 	
+	protected SecLeafNode modified()
+	{
+		setModified();
+		return this;
+	}
+	
+	
 	protected LeafNode<SKey,DataHolder> newLeafNode()
 	{
-		return new SecLeafNode(store);
+		return new SecLeafNode(store).modified();
 	}
 	
 	
 	protected InternalNode newInternalNode()
 	{
-		return new SecInternalNode(store);
+		return new SecInternalNode(store).modified();
 	}
 
 
 	protected void addValue(DataHolder d)
 	{
 		values.add(d);
+	}
+
+
+	public int getValueCount()
+	{
+		return values.size();
+	}
+
+
+	public DataHolder valueAt(int ix)
+	{
+		return values.get(ix);
 	}
 }

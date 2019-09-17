@@ -21,6 +21,13 @@ public class SecInternalNode
 	}
 	
 	
+	protected SecInternalNode modified()
+	{
+		setModified();
+		return this;
+	}
+	
+	
 	protected void addChild(BPlusTreeNode<SKey,DataHolder> n)
 	{
 		children.add(new NodeHolder(n));
@@ -60,17 +67,25 @@ public class SecInternalNode
 	
 	protected LeafNode<SKey,DataHolder> newLeafNode()
 	{
-		return new SecLeafNode(store);
+		return new SecLeafNode(store).modified();
 	}
 	
 	
 	protected InternalNode newInternalNode()
 	{
-		return new SecInternalNode(store);
+		return new SecInternalNode(store).modified();
 	}
 
 
 	protected void addChild(DataHolder d)
 	{
+		NodeHolder h = new NodeHolder(d);
+		children.add(h);
+	}
+
+
+	public NodeHolder nodeHolderAt(int ix)
+	{
+		return children.get(ix);
 	}
 }

@@ -67,6 +67,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	//
 
 	protected final List<K> keys;
+	private boolean modified;
 	
 	
 	public BPlusTreeNode()
@@ -81,16 +82,48 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	}
 	
 	
+	public K keyAt(int ix)
+	{
+		return keys.get(ix);
+	}
+	
+	
 	public int indexOf(K key)
 	{
 		return Collections.binarySearch(keys, key);
 	}
 	
 	
-	public int insertIndex(K key)
+	public int findInsertIndex(K key)
 	{
 		int ix = Collections.binarySearch(keys, key);
 		return ix >= 0 ? ix + 1 : -ix - 1;
+	}
+	
+	
+	/** deserialization */
+	// TODO should be protected
+	public void addKey(K k)
+	{
+		keys.add(k);
+	}
+	
+
+	public final boolean isModified()
+	{
+		return modified;
+	}
+	
+	
+	protected void setModified(boolean on)
+	{
+		modified = on;
+	}
+	
+	
+	protected void setModified()
+	{
+		modified = true;
 	}
 
 
@@ -194,6 +227,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 			{
 				keys.remove(ix);
 				values.remove(ix);
+				setModified();
 				return root;
 			}
 			return null;
@@ -215,10 +249,14 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				values.add(valueIndex, value);
 			}
 			
+			setModified();
+			
 			if(root.isOverflow(branchingFactor))
 			{
 				BPlusTreeNode sibling = split();
+				
 				InternalNode newRoot = newInternalNode();
+				newRoot.setModified();
 				newRoot.keys.add(sibling.getFirstLeafKey());
 				newRoot.addChild(this);
 				newRoot.addChild(sibling);
@@ -293,21 +331,24 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 			LeafNode node = (LeafNode)sibling;
 			keys.addAll(node.keys);
 			values.addAll(node.values);
+			setModified();
 		}
 
 
 		@Override
 		public BPlusTreeNode split()
 		{
-			int from = (size() + 1) / 2;
 			int to = size();
+			int from = (to + 1) / 2;
 
 			LeafNode sibling = newLeafNode();
+			sibling.setModified();
 			sibling.keys.addAll(keys.subList(from, to));
 			sibling.values.addAll(values.subList(from, to));
 
 			keys.subList(from, to).clear();
 			values.subList(from, to).clear();
+			setModified();
 
 			return sibling;
 		}
@@ -411,6 +452,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		{
 			BPlusTreeNode<K,V> child = getChild(key);
 			child.insertValue(root, key, value, branchingFactor);
+			
 			if(child.isOverflow(branchingFactor))
 			{
 				BPlusTreeNode<K,V> sibling = child.split();
@@ -424,6 +466,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				newRoot.keys.add(sibling.getFirstLeafKey());
 				newRoot.addChild(this);
 				newRoot.addChild(sibling);
+				newRoot.setModified();
 				return newRoot;
 			}
 			return root;
@@ -439,7 +482,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		
 		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 		{
-			int ix = insertIndex(start);
+			int ix = findInsertIndex(start);
 			int sz = getChildCount();
 			
 			for(int i=ix; i<sz; i++)
@@ -457,7 +500,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 		public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 		{
-			int ix = insertIndex(start);
+			int ix = findInsertIndex(start);
 			
 			for(int i=getChildCount()-1; i>=0; i--)
 			{
@@ -485,18 +528,21 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 			{
 				addChild(node.childAt(i));
 			}
+			
+			setModified();
 		}
 
 
 		@Override
 		public BPlusTreeNode<K,V> split() throws Exception
 		{
-			int from = size() / 2 + 1;
 			int to = size();
+			int from = to / 2 + 1;
 			InternalNode sibling = newInternalNode();
 			
 			sibling.keys.addAll(keys.subList(from, to));
 			keys.subList(from - 1, to).clear();
+			sibling.setModified();
 
 			for(int i=from; i<=to; i++)
 			{
@@ -509,6 +555,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 //
 //			keys.subList(from - 1, to).clear();
 //			children.subList(from, to + 1).clear();
+			
+			setModified();
 
 			return sibling;
 		}
@@ -530,7 +578,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 		public BPlusTreeNode<K,V> getChild(K key) throws Exception
 		{
-			int ix = insertIndex(key);
+			int ix = findInsertIndex(key);
 			return childAt(ix);
 		}
 
@@ -542,6 +590,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 			{
 				keys.remove(ix);
 				removeChildAt(ix + 1);
+				setModified();
 			}
 		}
 
@@ -559,12 +608,14 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				keys.add(childIndex, key);
 				addChild(childIndex + 1, child);
 			}
+			
+			setModified();
 		}
 
 
 		public BPlusTreeNode<K,V> getChildLeftSibling(K key) throws Exception
 		{
-			int ix = insertIndex(key);
+			int ix = findInsertIndex(key);
 			if(ix > 0)
 			{
 				return childAt(ix - 1);
@@ -575,7 +626,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 		public BPlusTreeNode<K,V> getChildRightSibling(K key) throws Exception
 		{
-			int ix = insertIndex(key);
+			int ix = findInsertIndex(key);
 			if(ix < size())
 			{
 				return childAt(ix + 1);

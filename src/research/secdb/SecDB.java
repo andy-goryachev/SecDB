@@ -1,6 +1,5 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package research.secdb;
-import goryachev.common.util.D;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import java.io.Closeable;
@@ -51,7 +50,7 @@ public class SecDB
 		Ref ref = store.getRootRef();
 		if(ref == null)
 		{
-			return new SecLeafNode(store);
+			return new SecLeafNode(store).modified();
 		}
 		else
 		{
@@ -73,15 +72,6 @@ public class SecDB
 		{
 			encryptor.zero(dec);
 		}
-	}
-
-
-	protected void commit(BPlusTreeNode<SKey,DataHolder> newRoot) throws Exception
-	{
-		// TODO write nodes and values depth first
-		// TODO write new root
-		// TODO set root ref
-		D.print("commit TBD");
 	}
 
 
@@ -149,5 +139,12 @@ public class SecDB
 				Log.ex(e);
 			}
 		}
+	}
+	
+
+	protected void commit(BPlusTreeNode<SKey,DataHolder> newRoot) throws Exception
+	{
+		Ref ref = SecIO.store(store, newRoot);
+		store.setRootRef(ref);
 	}
 }

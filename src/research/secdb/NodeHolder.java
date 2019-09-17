@@ -34,4 +34,23 @@ public class NodeHolder
 		}
 		return node;
 	}
+
+
+	public Ref getRef()
+	{
+		return dataHolder.getRef();
+	}
+
+
+	public boolean isModified()
+	{
+		if(node == null)
+		{
+			return false;
+		}
+		else
+		{
+			return node.isModified();
+		}
+	}
 }
