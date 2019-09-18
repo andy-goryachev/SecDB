@@ -136,6 +136,9 @@ public class SecIO
 
 		for(int i=0; i<sz; i++)
 		{
+			// data holder type = REF
+			wr.writeUInt8(0);
+			
 			NodeHolder h = n.nodeHolderAt(i);
 			if(h.isModified())
 			{
@@ -146,7 +149,8 @@ public class SecIO
 			else
 			{
 				// store ref
-				writeRef(h.getRef(), wr);
+				Ref ref = h.getRef();
+				writeRef(ref, wr);
 			}
 		}
 	}

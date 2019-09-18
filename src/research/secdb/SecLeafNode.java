@@ -12,7 +12,6 @@ public class SecLeafNode
 	extends BPlusTreeNode.LeafNode<SKey,DataHolder>
 {
 	private final IStore store;
-	private final CList<DataHolder> values = new CList();
 
 	
 	public SecLeafNode(IStore store)
