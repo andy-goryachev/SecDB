@@ -28,16 +28,14 @@ public class TestSecDB
 		{
 			for(int i=0; i<10; i++)
 			{
-				int index = i;
-				
-				D.print(i);
+				SKey k = new SKey(String.valueOf(i));
+				D.print(k);
 
 				db.execute(new Transaction()
 				{
 					protected void body() throws Exception
 					{
-						SKey k = new SKey(String.valueOf(index));
-						byte[] v = new byte[] { (byte)index };
+						byte[] v = ("value." + k).getBytes(CKit.CHARSET_UTF8);
 						
 						D.print("contains:", containsKey(k), "expecting false");
 						
@@ -51,29 +49,29 @@ public class TestSecDB
 					}
 				});
 				
-				D.print(store.dump());
-			}
+				D.print("store dump:", store.dump());
 						
-			// query
-			SKey start = new SKey("0");
-			SKey end = new SKey("1000");
-			
-			D.print("query", start, end);
-			
-			db.query(start, true, end, true, new QueryClient<SKey,DataHolder>()
-			{
-				public void onError(Throwable err)
-				{
-					err.printStackTrace();
-				}
+				// query
+				SKey start = new SKey("0");
+				SKey end = new SKey("1000");
 				
+				D.print("query", start, end);
 				
-				public boolean acceptQueryResult(SKey key, DataHolder value)
+				db.query(start, true, end, true, new QueryClient<SKey,DataHolder>()
 				{
-					D.print(key);
-					return true;
-				}
-			});
+					public void onError(Throwable err)
+					{
+						err.printStackTrace();
+					}
+					
+					
+					public boolean acceptQueryResult(SKey key, DataHolder value)
+					{
+						D.print(key);
+						return true;
+					}
+				});
+			}
 		}
 		finally
 		{

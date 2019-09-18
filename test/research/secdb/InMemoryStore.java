@@ -60,6 +60,7 @@ public class InMemoryStore
 
 	public Ref getRootRef()
 	{
+		D.print("getRootRef", rootRef); // FIX
 		return rootRef;
 	}
 
