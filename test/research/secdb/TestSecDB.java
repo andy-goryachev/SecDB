@@ -58,6 +58,8 @@ public class TestSecDB
 			SKey start = new SKey("0");
 			SKey end = new SKey("1000");
 			
+			D.print("query", start, end);
+			
 			db.query(start, true, end, true, new QueryClient<SKey,DataHolder>()
 			{
 				public void onError(Throwable err)
