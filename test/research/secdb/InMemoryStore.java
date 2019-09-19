@@ -31,6 +31,10 @@ public class InMemoryStore
 	public String dump()
 	{
 		SB sb = new SB();
+		
+		sb.append("root=");
+		sb.append(rootRef);
+		
 		CList<Ref> keys = objects.keys();
 		Collections.sort(keys, new Comparator<Ref>()
 		{
@@ -39,7 +43,7 @@ public class InMemoryStore
 				int d = CKit.compare(a.getSegment(), b.getSegment());
 				if(d == 0)
 				{
-					
+					d = CKit.compare(a.getOffset(), b.getOffset());
 				}
 				return d;
 			}

@@ -28,8 +28,13 @@ public class TestSecDB
 		{
 			for(int i=0; i<10; i++)
 			{
-				SKey k = new SKey(String.valueOf(i));
+				SKey k = key(i);
 				D.print(k);
+				
+				if(i >= 2)
+				{
+					D.print();
+				}
 
 				db.execute(new Transaction()
 				{
@@ -52,8 +57,8 @@ public class TestSecDB
 				D.print("store dump:", store.dump());
 						
 				// query
-				SKey start = new SKey("0");
-				SKey end = new SKey("1000");
+				SKey start = key(0);
+				SKey end = key(1000);
 				
 				D.print("query", start, end);
 				
@@ -67,7 +72,7 @@ public class TestSecDB
 					
 					public boolean acceptQueryResult(SKey key, DataHolder value)
 					{
-						D.print(key);
+						D.print("    query:", key);
 						return true;
 					}
 				});
@@ -77,5 +82,11 @@ public class TestSecDB
 		{
 			CKit.close(db);
 		}
+	}
+	
+	
+	protected static SKey key(int n)
+	{
+		return new SKey(String.format("%08d", n));
 	}
 }

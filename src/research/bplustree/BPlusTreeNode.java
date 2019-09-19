@@ -238,15 +238,15 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor) throws Exception
 		{
 			int ix = indexOf(key);
-			int valueIndex = ix >= 0 ? ix : -ix - 1;
 			if(ix >= 0)
 			{
-				values.set(valueIndex, value);
+				values.set(ix, value);
 			}
 			else
 			{
-				keys.add(valueIndex, key);
-				values.add(valueIndex, value);
+				ix = -ix - 1;
+				keys.add(ix, key);
+				values.add(ix, value);
 			}
 			
 			setModified();
@@ -598,15 +598,15 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public void insertChild(K key, BPlusTreeNode<K,V> child)
 		{
 			int ix = indexOf(key);
-			int childIndex = ix >= 0 ? ix + 1 : -ix - 1;
 			if(ix >= 0)
 			{
-				setChild(childIndex, child);
+				setChild(ix, child);
 			}
 			else
 			{
-				keys.add(childIndex, key);
-				addChild(childIndex + 1, child);
+				ix = -ix;
+				keys.add(ix - 1, key);
+				addChild(ix, child);
 			}
 			
 			setModified();

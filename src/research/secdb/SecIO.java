@@ -56,6 +56,7 @@ public class SecIO
 		DReader rd = new DReader(buf);
 		try
 		{
+			// TODO perhaps add constructors that take arrays of (keys,refs/values)
 			int sz = rd.readXInt8();
 			if(sz > 0)
 			{
