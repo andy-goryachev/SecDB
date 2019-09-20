@@ -2,8 +2,6 @@
 package research.secdb;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
-import java.io.Closeable;
-import java.io.IOException;
 import research.bplustree.BPlusTreeNode;
 import research.bplustree.QueryClient;
 
@@ -12,7 +10,6 @@ import research.bplustree.QueryClient;
  * Secure Key-Value Store.
  */
 public class SecDB
-	implements Closeable
 {
 	private static final int BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
@@ -22,18 +19,6 @@ public class SecDB
 	public SecDB(IStore store)
 	{
 		this.store = store;
-	}
-	
-	
-	public void open() throws Exception
-	{
-		store.open();
-	}
-	
-	
-	public void close() throws IOException
-	{
-		store.close();
 	}
 	
 	
