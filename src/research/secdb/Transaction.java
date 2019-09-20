@@ -47,8 +47,21 @@ public abstract class Transaction
 	
 	public void insert(SKey key, IStream in) throws Exception
 	{
-		Ref ref = store.store(in);
-		DataHolder h = new DataHolder.REF(store, ref);
+		DataHolder h;
+		
+		if(in.getLength() < SecIO.MAX_INLINE_SIZE)
+		{
+			// store value inline
+			byte[] b = in.readBytes(SecIO.MAX_INLINE_SIZE);
+			h = new DataHolder.VAL(store, b);
+		}
+		else
+		{
+			// store value in a separate segment
+			Ref ref = store.store(in);
+			h = new DataHolder.REF(store, ref);
+		}
+		
 		BPlusTreeNode<SKey,DataHolder> newRoot = root.insertValue(root, key, h, branchingFactor);
 		root = newRoot;
 	}

@@ -13,6 +13,12 @@ import research.bplustree.BPlusTreeNode;
  */
 public class SecIO
 {
+	/** marks DataHolder.REF instead of DataHolder.VAL */
+	public static final int REF_MARKER = 255;
+	/** size threshold below which small values are stored in the leaf node */
+	public static final int MAX_INLINE_SIZE = REF_MARKER - 1;
+	
+	
 	public static Ref store(IStore<Ref> store, BPlusTreeNode<SKey,DataHolder> node) throws Exception
 	{
 		DWriterBytes wr = new DWriterBytes();
@@ -138,7 +144,7 @@ public class SecIO
 		for(int i=0; i<sz; i++)
 		{
 			// data holder type = REF
-			wr.writeUInt8(0);
+			wr.writeUInt8(REF_MARKER);
 			
 			NodeHolder h = n.nodeHolderAt(i);
 			if(h.isModified())
@@ -189,14 +195,14 @@ public class SecIO
 	{
 		if(d.isRef())
 		{
-			wr.writeUInt8(0);
+			wr.writeUInt8(REF_MARKER);
 			writeRef(d.getRef(), wr);
 		}
 		else
 		{
 			byte[] b = d.getBytes();
 			int len = b.length;
-			if(len > 255)
+			if(len > MAX_INLINE_SIZE)
 			{
 				throw new Error("too long: " + len);
 			}
@@ -209,7 +215,7 @@ public class SecIO
 	private static DataHolder readDataHolder(IStore store, DReader rd) throws Exception
 	{
 		int sz = rd.readUInt8();
-		if(sz == 0)
+		if(sz == REF_MARKER)
 		{
 			Ref ref = readRef(rd);
 			return new DataHolder.REF(store, ref);

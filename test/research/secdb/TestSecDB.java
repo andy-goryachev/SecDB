@@ -4,6 +4,7 @@ import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
+import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import research.bplustree.QueryClient;
 
@@ -40,7 +41,7 @@ public class TestSecDB
 				{
 					protected void body() throws Exception
 					{
-						byte[] v = ("value." + k).getBytes(CKit.CHARSET_UTF8);
+						byte[] v = ("v." + k).getBytes(CKit.CHARSET_UTF8);
 						
 						D.print("contains:", containsKey(k), "expecting false");
 						
@@ -72,7 +73,7 @@ public class TestSecDB
 					
 					public boolean acceptQueryResult(SKey key, DataHolder value)
 					{
-						D.print("    query:", key);
+						D.print("    query:", key, Hex.toHexString(value.getBytes()));
 						return true;
 					}
 				});
@@ -87,6 +88,6 @@ public class TestSecDB
 	
 	protected static SKey key(int n)
 	{
-		return new SKey(String.format("%08d", n));
+		return new SKey(String.format("%04d", n));
 	}
 }
