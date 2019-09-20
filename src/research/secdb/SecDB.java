@@ -17,19 +17,11 @@ public class SecDB
 	private static final int BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
 	private final IStore<Ref> store;
-	private final IEncryptor encryptor;
-	
-	
-	public SecDB(IStore store, IEncryptor enc)
-	{
-		this.store = store;
-		this.encryptor = enc;
-	}
 	
 	
 	public SecDB(IStore store)
 	{
-		this(store, IEncryptor.NONE);
+		this.store = store;
 	}
 	
 	
@@ -63,15 +55,7 @@ public class SecDB
 	protected BPlusTreeNode<SKey,DataHolder> readNode(IStream is) throws Exception
 	{
 		byte[] b = is.readBytes(NODE_SIZE_LIMIT);
-		byte[] dec = encryptor.decrypt(b);
-		try
-		{
-			return SecIO.read(store, dec);
-		}
-		finally
-		{
-			encryptor.zero(dec);
-		}
+		return SecIO.read(store, b);
 	}
 
 

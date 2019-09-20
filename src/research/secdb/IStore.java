@@ -13,7 +13,7 @@ public interface IStore<R>
 	
 	public void setRootRef(R ref) throws Exception;
 	
-	public R store(IStream in) throws Exception;
+	public R store(IStream in, boolean isTree) throws Exception;
 	
 	public IStream load(R ref) throws Exception;
 	

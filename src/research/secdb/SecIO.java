@@ -48,7 +48,7 @@ public class SecIO
 			}
 			
 			byte[] b = wr.toByteArray();
-			return store.store(new ByteArrayIStream(b));
+			return store.store(new ByteArrayIStream(b), true);
 		}
 		finally
 		{

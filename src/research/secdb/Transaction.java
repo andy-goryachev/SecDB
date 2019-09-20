@@ -58,7 +58,7 @@ public abstract class Transaction
 		else
 		{
 			// store value in a separate segment
-			Ref ref = store.store(in);
+			Ref ref = store.store(in, false);
 			h = new DataHolder.REF(store, ref);
 		}
 		

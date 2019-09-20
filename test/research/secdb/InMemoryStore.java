@@ -76,7 +76,7 @@ public class InMemoryStore
 	}
 
 
-	public synchronized Ref store(IStream in) throws Exception
+	public synchronized Ref store(IStream in, boolean isTree) throws Exception
 	{
 		long seq = sequence++;
 		long len = in.getLength(); 
