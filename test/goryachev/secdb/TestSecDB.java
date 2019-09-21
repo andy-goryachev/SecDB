@@ -8,6 +8,7 @@ import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.QueryClient;
 import goryachev.secdb.impl.DataHolder;
+import goryachev.secdb.util.ByteArrayIStream;
 
 
 /**

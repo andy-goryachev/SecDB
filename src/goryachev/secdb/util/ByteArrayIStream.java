@@ -1,11 +1,12 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb;
+package goryachev.secdb.util;
+import goryachev.secdb.IStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 
 /**
- * ByteArray IStream.
+ * Byte Array based IStream.
  */
 public class ByteArrayIStream
 	implements IStream
