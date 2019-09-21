@@ -1,8 +1,8 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package research.secdb;
+package goryachev.secdb;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
-import research.bplustree.BPlusTreeNode;
+import goryachev.secdb.bplustree.BPlusTreeNode;
 
 
 /**

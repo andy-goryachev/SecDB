@@ -1,12 +1,16 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package research.secdb;
+package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
-import research.bplustree.QueryClient;
+import goryachev.secdb.ByteArrayIStream;
+import goryachev.secdb.DataHolder;
+import goryachev.secdb.SecDB;
+import goryachev.secdb.Transaction;
+import goryachev.secdb.bplustree.QueryClient;
 
 
 /**

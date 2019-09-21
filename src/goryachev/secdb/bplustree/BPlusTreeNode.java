@@ -21,7 +21,7 @@
 //	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //	SOFTWARE.
 //
-package research.bplustree;
+package goryachev.secdb.bplustree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

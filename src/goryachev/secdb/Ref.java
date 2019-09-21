@@ -1,5 +1,5 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package research.secdb;
+package goryachev.secdb;
 import goryachev.common.util.CKit;
 import goryachev.common.util.FH;
 import goryachev.common.util.Hex;

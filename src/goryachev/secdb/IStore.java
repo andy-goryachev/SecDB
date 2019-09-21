@@ -1,5 +1,5 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package research.secdb;
+package goryachev.secdb;
 import java.io.IOException;
 
 
