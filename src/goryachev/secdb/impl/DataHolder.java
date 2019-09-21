@@ -1,5 +1,10 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb;
+package goryachev.secdb.impl;
+import goryachev.secdb.ByteArrayIStream;
+import goryachev.secdb.IStore;
+import goryachev.secdb.IStored;
+import goryachev.secdb.IStream;
+import goryachev.secdb.Ref;
 
 
 /**

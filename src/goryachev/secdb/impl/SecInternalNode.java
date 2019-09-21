@@ -1,7 +1,8 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb;
+package goryachev.secdb.impl;
 import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
+import goryachev.secdb.IStore;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 
 

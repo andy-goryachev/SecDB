@@ -1,7 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb;
-import goryachev.common.util.CList;
+package goryachev.secdb.impl;
 import goryachev.common.util.SKey;
+import goryachev.secdb.IStore;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 
 
@@ -20,7 +20,7 @@ public class SecLeafNode
 	}
 	
 	
-	protected SecLeafNode modified()
+	public SecLeafNode modified()
 	{
 		setModified();
 		return this;

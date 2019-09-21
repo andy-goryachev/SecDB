@@ -6,11 +6,8 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
-import goryachev.secdb.ByteArrayIStream;
-import goryachev.secdb.DataHolder;
-import goryachev.secdb.SecDB;
-import goryachev.secdb.Transaction;
 import goryachev.secdb.bplustree.QueryClient;
+import goryachev.secdb.impl.DataHolder;
 
 
 /**
@@ -76,7 +73,15 @@ public class TestSecDB
 				
 				public boolean acceptQueryResult(SKey key, DataHolder value)
 				{
-					D.print("    query:", key, Hex.toHexString(value.getBytes()));
+					try
+					{
+						byte[] b = value.getIStream().readBytes(Integer.MAX_VALUE);
+						D.print("    query:", key, Hex.toHexString(b));
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
 					return true;
 				}
 			});
