@@ -19,7 +19,7 @@ public class SecDB
 	private final IStore<Ref> store;
 	
 	
-	public SecDB(IStore store)
+	public SecDB(IStore<Ref> store)
 	{
 		this.store = store;
 	}
