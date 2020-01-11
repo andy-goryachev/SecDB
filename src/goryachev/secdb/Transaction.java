@@ -55,13 +55,13 @@ public abstract class Transaction
 		{
 			// store value inline
 			byte[] b = in.readBytes(SecIO.MAX_INLINE_SIZE);
-			h = new DataHolder.VAL(store, b);
+			h = new DataHolder.ValueHolder(store, b);
 		}
 		else
 		{
 			// store value in a separate segment
 			Ref ref = store.store(in, false);
-			h = new DataHolder.REF(store, ref);
+			h = new DataHolder.RefHolder(store, ref);
 		}
 		
 		BPlusTreeNode<SKey,DataHolder> newRoot = root.insertValue(root, key, h, branchingFactor);

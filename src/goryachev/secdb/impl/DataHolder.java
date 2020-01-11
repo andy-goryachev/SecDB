@@ -49,12 +49,12 @@ public abstract class DataHolder
 	//
 	
 	
-	public static class REF extends DataHolder
+	public static class RefHolder extends DataHolder
 	{
 		private final Ref ref;
 		
 		
-		public REF(IStore store, Ref ref)
+		public RefHolder(IStore store, Ref ref)
 		{
 			super(store);
 			this.ref = ref;
@@ -101,12 +101,12 @@ public abstract class DataHolder
 	//
 	
 	
-	public static class VAL extends DataHolder
+	public static class ValueHolder extends DataHolder
 	{
 		private final byte[] bytes;
 		
 		
-		public VAL(IStore store, byte[] bytes)
+		public ValueHolder(IStore store, byte[] bytes)
 		{
 			super(store);
 			this.bytes = bytes;

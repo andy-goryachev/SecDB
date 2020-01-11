@@ -221,13 +221,13 @@ public class SecIO
 		if(sz == REF_MARKER)
 		{
 			Ref ref = readRef(rd);
-			return new DataHolder.REF(store, ref);
+			return new DataHolder.RefHolder(store, ref);
 		}
 		else
 		{
 			// inline value
 			byte[] b = rd.readFully(sz);
-			return new DataHolder.VAL(store, b);
+			return new DataHolder.ValueHolder(store, b);
 		}
 	}
 }
