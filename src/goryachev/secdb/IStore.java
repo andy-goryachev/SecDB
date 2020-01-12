@@ -1,6 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
-import java.io.IOException;
+import goryachev.common.io.DReader;
+import goryachev.common.io.DWriter;
 
 
 /**
@@ -37,4 +38,10 @@ public interface IStore<R>
 	 * blocks at the same time.
 	 */
 	public IStream load(R ref) throws Exception;
+	
+	
+	public void writeRef(R ref, DWriter wr) throws Exception;
+
+	
+	public R readRef(DReader rd) throws Exception;
 }

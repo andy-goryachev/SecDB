@@ -1,7 +1,8 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.impl;
+package goryachev.secdb.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
+import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 
@@ -9,10 +10,10 @@ import goryachev.secdb.bplustree.BPlusTreeNode;
 /**
  * SecDB InternalNode.
  */
-public class SecInternalNode
-	extends BPlusTreeNode.InternalNode<SKey,DataHolder>
+public class SecInternalNode<R extends IRef>
+	extends BPlusTreeNode.InternalNode<SKey,DataHolder<R>>
 {
-	private final IStore store;
+	private final IStore<R> store;
 	protected final CList<NodeHolder> children = new CList();
 	
 	
@@ -29,7 +30,7 @@ public class SecInternalNode
 	}
 	
 	
-	protected void addChild(BPlusTreeNode<SKey,DataHolder> n)
+	protected void addChild(BPlusTreeNode<SKey,DataHolder<R>> n)
 	{
 		children.add(new NodeHolder(n));
 	}
@@ -41,7 +42,7 @@ public class SecInternalNode
 	}
 
 
-	protected BPlusTreeNode<SKey,DataHolder> childAt(int ix) throws Exception
+	protected BPlusTreeNode<SKey,DataHolder<R>> childAt(int ix) throws Exception
 	{
 		NodeHolder h = children.get(ix);
 		return h.getNode();
@@ -54,19 +55,19 @@ public class SecInternalNode
 	}
 
 
-	protected void setChild(int ix, BPlusTreeNode<SKey,DataHolder> n)
+	protected void setChild(int ix, BPlusTreeNode<SKey,DataHolder<R>> n)
 	{
 		children.set(ix, new NodeHolder(n));
 	}
 
 
-	protected void addChild(int ix, BPlusTreeNode<SKey,DataHolder> n)
+	protected void addChild(int ix, BPlusTreeNode<SKey,DataHolder<R>> n)
 	{
 		children.add(ix, new NodeHolder(n));
 	}
 	
 	
-	protected LeafNode<SKey,DataHolder> newLeafNode()
+	protected LeafNode<SKey,DataHolder<R>> newLeafNode()
 	{
 		return new SecLeafNode(store).modified();
 	}

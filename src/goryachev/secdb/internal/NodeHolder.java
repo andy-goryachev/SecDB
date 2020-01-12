@@ -1,32 +1,32 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.impl;
+package goryachev.secdb.internal;
 import goryachev.common.util.SKey;
-import goryachev.secdb.Ref;
+import goryachev.secdb.IRef;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 
 
 /**
  * Node Holder.
  */
-public class NodeHolder
+public class NodeHolder<R extends IRef>
 {
-	private DataHolder dataHolder;
-	private BPlusTreeNode<SKey,DataHolder> node;
+	private DataHolder<R> dataHolder;
+	private BPlusTreeNode<SKey,DataHolder<R>> node;
 
 	
-	public NodeHolder(DataHolder h)
+	public NodeHolder(DataHolder<R> h)
 	{
 		this.dataHolder = h;
 	}
 	
 
-	public NodeHolder(BPlusTreeNode<SKey,DataHolder> node)
+	public NodeHolder(BPlusTreeNode<SKey,DataHolder<R>> node)
 	{
 		this.node = node;
 	}
 
 	
-	public BPlusTreeNode<SKey,DataHolder> getNode() throws Exception
+	public BPlusTreeNode<SKey,DataHolder<R>> getNode() throws Exception
 	{
 		if(node == null)
 		{
@@ -37,7 +37,7 @@ public class NodeHolder
 	}
 
 
-	public Ref getRef()
+	public R getRef()
 	{
 		return dataHolder.getRef();
 	}

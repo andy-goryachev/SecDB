@@ -7,14 +7,14 @@ import goryachev.common.util.D;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.QueryClient;
-import goryachev.secdb.impl.DataHolder;
+import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.util.ByteArrayIStream;
 
 
 /**
- * Tests SecDB.
+ * Tests In Memory SecDB.
  */
-public class TestSecDB
+public class TestInMemorySecDB
 {
 	public static void main(String[] args)
 	{
@@ -26,7 +26,7 @@ public class TestSecDB
 	public void test() throws Exception
 	{
 		InMemoryStore store = new InMemoryStore();
-		SecDB db = new SecDB(store);
+		SecDB<InMemoryRef> db = new SecDB(store);
 
 		for(int i=0; i<10; i++)
 		{
@@ -38,7 +38,7 @@ public class TestSecDB
 				D.print();
 			}
 
-			db.execute(new Transaction()
+			db.execute(new Transaction<InMemoryRef>()
 			{
 				protected void body() throws Exception
 				{
@@ -64,7 +64,7 @@ public class TestSecDB
 			
 			D.print("query", start, end);
 			
-			db.query(start, true, end, true, new QueryClient<SKey,DataHolder>()
+			db.query(start, true, end, true, new QueryClient<SKey,DataHolder<InMemoryRef>>()
 			{
 				public void onError(Throwable err)
 				{
@@ -72,7 +72,7 @@ public class TestSecDB
 				}
 				
 				
-				public boolean acceptQueryResult(SKey key, DataHolder value)
+				public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value)
 				{
 					try
 					{

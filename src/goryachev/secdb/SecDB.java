@@ -4,30 +4,30 @@ import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.bplustree.QueryClient;
-import goryachev.secdb.impl.DataHolder;
-import goryachev.secdb.impl.SecIO;
-import goryachev.secdb.impl.SecLeafNode;
+import goryachev.secdb.internal.DataHolder;
+import goryachev.secdb.internal.SecIO;
+import goryachev.secdb.internal.SecLeafNode;
 
 
 /**
  * Secure Key-Value Store.
  */
-public class SecDB
+public class SecDB<R extends IRef>
 {
 	private static final int BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
-	private final IStore<Ref> store;
+	private final IStore<R> store;
 	
 	
-	public SecDB(IStore<Ref> store)
+	public SecDB(IStore<R> store)
 	{
 		this.store = store;
 	}
 	
 	
-	protected BPlusTreeNode<SKey,DataHolder> loadRoot() throws Exception
+	protected BPlusTreeNode<SKey,DataHolder<R>> loadRoot() throws Exception
 	{
-		Ref ref = store.getRootRef();
+		R ref = store.getRootRef();
 		if(ref == null)
 		{
 			return new SecLeafNode(store).modified();
@@ -40,7 +40,7 @@ public class SecDB
 	}
 	
 	
-	protected BPlusTreeNode<SKey,DataHolder> readNode(IStream is) throws Exception
+	protected BPlusTreeNode<SKey,DataHolder<R>> readNode(IStream is) throws Exception
 	{
 		byte[] b = is.readBytes(NODE_SIZE_LIMIT);
 		return SecIO.read(store, b);
@@ -59,22 +59,22 @@ public class SecDB
 	}
 
 	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder> client) throws Exception
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client) throws Exception
 	{
 		loadRoot().query(start, includeStart, end, includeEnd, client);
 	}
 
 
-	public synchronized void execute(Transaction tx)
+	public synchronized void execute(Transaction<R> tx)
 	{
 		try
 		{
-			BPlusTreeNode<SKey,DataHolder> root = loadRoot(); 
+			BPlusTreeNode<SKey,DataHolder<R>> root = loadRoot(); 
 			tx.setRoot(store, root, BRANCHING_FACTOR);
 			
 			tx.body();
 			
-			BPlusTreeNode<SKey,DataHolder> newRoot = tx.getRoot();
+			BPlusTreeNode<SKey,DataHolder<R>> newRoot = tx.getRoot();
 			if(newRoot != null)
 			{
 				commit(newRoot);
@@ -114,9 +114,9 @@ public class SecDB
 	}
 	
 
-	protected void commit(BPlusTreeNode<SKey,DataHolder> newRoot) throws Exception
+	protected void commit(BPlusTreeNode<SKey,DataHolder<R>> newRoot) throws Exception
 	{
-		Ref ref = SecIO.store(store, newRoot);
+		R ref = SecIO.store(store, newRoot);
 		store.setRootRef(ref);
 	}
 }

@@ -1,5 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
+import goryachev.common.io.DReader;
+import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
@@ -7,9 +9,6 @@ import goryachev.common.util.D;
 import goryachev.common.util.Dump;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
-import goryachev.secdb.IStore;
-import goryachev.secdb.IStream;
-import goryachev.secdb.Ref;
 import goryachev.secdb.util.ByteArrayIStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -20,11 +19,11 @@ import java.util.Comparator;
  * InMemory IStore.
  */
 public class InMemoryStore
-	implements IStore<Ref>
+	implements IStore<InMemoryRef>
 {
-	private Ref rootRef;
+	private InMemoryRef rootRef;
 	private long sequence;
-	private final CMap<Ref,byte[]> objects = new CMap();
+	private final CMap<InMemoryRef,byte[]> objects = new CMap();
 	
 	
 	public InMemoryStore()
@@ -39,21 +38,16 @@ public class InMemoryStore
 		sb.append("root=");
 		sb.append(rootRef);
 		
-		CList<Ref> keys = objects.keys();
-		Collections.sort(keys, new Comparator<Ref>()
+		CList<InMemoryRef> keys = objects.keys();
+		Collections.sort(keys, new Comparator<InMemoryRef>()
 		{
-			public int compare(Ref a, Ref b)
+			public int compare(InMemoryRef a, InMemoryRef b)
 			{
-				int d = CKit.compare(a.getSegment(), b.getSegment());
-				if(d == 0)
-				{
-					d = CKit.compare(a.getOffset(), b.getOffset());
-				}
-				return d;
+				return CKit.compare(a.getSeq(), b.getSeq());
 			}
 		});
 		
-		for(Ref k: keys)
+		for(InMemoryRef k: keys)
 		{
 			byte[] b = objects.get(k);
 			
@@ -66,25 +60,25 @@ public class InMemoryStore
 	}
 
 
-	public Ref getRootRef()
+	public InMemoryRef getRootRef()
 	{
 		D.print("getRootRef", rootRef); // FIX
 		return rootRef;
 	}
 
 
-	public void setRootRef(Ref ref) throws Exception
+	public void setRootRef(InMemoryRef ref) throws Exception
 	{
 		D.print("setRootRef", ref); // FIX
 		rootRef = ref;
 	}
 
 
-	public synchronized Ref store(IStream in, boolean isTree) throws Exception
+	public synchronized InMemoryRef store(IStream in, boolean isTree) throws Exception
 	{
 		long seq = sequence++;
 		long len = in.getLength(); 
-		Ref ref = new Ref(null, seq, len);
+		InMemoryRef ref = new InMemoryRef(seq, len);
 		
 		byte[] b = in.readBytes(Integer.MAX_VALUE);
 		objects.put(ref, b);
@@ -95,7 +89,7 @@ public class InMemoryStore
 	}
 
 
-	public IStream load(Ref ref) throws Exception
+	public IStream load(InMemoryRef ref) throws Exception
 	{
 		byte[] b = objects.get(ref);
 		D.print("load", ref, Dump.toHexString(b)); // FIX
@@ -117,5 +111,20 @@ public class InMemoryStore
 
 	public void close() throws IOException
 	{
+	}
+
+
+	public void writeRef(InMemoryRef ref, DWriter wr) throws Exception
+	{
+		wr.writeLong(ref.getSeq());
+		wr.writeLong(ref.getLength());
+	}
+
+
+	public InMemoryRef readRef(DReader rd) throws Exception
+	{
+		long seq = rd.readLong();
+		long length = rd.readLong();
+		return new InMemoryRef(seq, length);
 	}
 }

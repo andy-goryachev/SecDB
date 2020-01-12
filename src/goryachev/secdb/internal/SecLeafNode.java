@@ -1,6 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.impl;
+package goryachev.secdb.internal;
 import goryachev.common.util.SKey;
+import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 
@@ -8,8 +9,8 @@ import goryachev.secdb.bplustree.BPlusTreeNode;
 /**
  * SecDB LeafNode.
  */
-public class SecLeafNode
-	extends BPlusTreeNode.LeafNode<SKey,DataHolder>
+public class SecLeafNode<R extends IRef>
+	extends BPlusTreeNode.LeafNode<SKey,DataHolder<R>>
 {
 	private final IStore store;
 
@@ -27,7 +28,7 @@ public class SecLeafNode
 	}
 	
 	
-	protected LeafNode<SKey,DataHolder> newLeafNode()
+	protected LeafNode<SKey,DataHolder<R>> newLeafNode()
 	{
 		return new SecLeafNode(store).modified();
 	}

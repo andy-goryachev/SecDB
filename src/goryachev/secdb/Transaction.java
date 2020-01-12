@@ -3,14 +3,14 @@ package goryachev.secdb;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
-import goryachev.secdb.impl.DataHolder;
-import goryachev.secdb.impl.SecIO;
+import goryachev.secdb.internal.DataHolder;
+import goryachev.secdb.internal.SecIO;
 
 
 /**
  * Transaction.
  */
-public abstract class Transaction
+public abstract class Transaction<R extends IRef>
 {
 	protected abstract void body() throws Exception;
 	
@@ -22,8 +22,8 @@ public abstract class Transaction
 	
 	//
 	
-	private IStore<Ref> store;
-	private BPlusTreeNode<SKey,DataHolder> root;
+	private IStore<R> store;
+	private BPlusTreeNode<SKey,DataHolder<R>> root;
 	private int branchingFactor;
 	
 	
@@ -49,7 +49,7 @@ public abstract class Transaction
 	
 	public void insert(SKey key, IStream in) throws Exception
 	{
-		DataHolder h;
+		DataHolder<R> h;
 		
 		if(in.getLength() < SecIO.MAX_INLINE_SIZE)
 		{
@@ -60,11 +60,11 @@ public abstract class Transaction
 		else
 		{
 			// store value in a separate segment
-			Ref ref = store.store(in, false);
-			h = new DataHolder.RefHolder(store, ref);
+			R ref = store.store(in, false);
+			h = new DataHolder.RefHolder<R>(store, ref);
 		}
 		
-		BPlusTreeNode<SKey,DataHolder> newRoot = root.insertValue(root, key, h, branchingFactor);
+		BPlusTreeNode<SKey,DataHolder<R>> newRoot = root.insertValue(root, key, h, branchingFactor);
 		root = newRoot;
 	}
 	
@@ -75,7 +75,7 @@ public abstract class Transaction
 	}
 	
 	
-	protected void setRoot(IStore<Ref> store, BPlusTreeNode<SKey,DataHolder> root, int branchingFactor)
+	protected void setRoot(IStore<R> store, BPlusTreeNode<SKey,DataHolder<R>> root, int branchingFactor)
 	{
 		if(this.store == null)
 		{
@@ -90,7 +90,7 @@ public abstract class Transaction
 	}
 	
 	
-	protected BPlusTreeNode<SKey,DataHolder> getRoot()
+	protected BPlusTreeNode<SKey,DataHolder<R>> getRoot()
 	{
 		return root;
 	}

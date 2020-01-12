@@ -1,14 +1,16 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb;
+package goryachev.secdb.segmented;
 import goryachev.common.util.CKit;
 import goryachev.common.util.FH;
 import goryachev.common.util.Hex;
+import goryachev.secdb.IRef;
 
 
 /**
  * SecDB Stored Object Reference.
  */
 public class Ref
+	implements IRef
 {
 	private final String segment;
 	private final long offset;

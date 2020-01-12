@@ -1,12 +1,12 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.impl;
+package goryachev.secdb.internal;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
 import goryachev.common.io.DWriterBytes;
 import goryachev.common.util.CKit;
 import goryachev.common.util.SKey;
+import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
-import goryachev.secdb.Ref;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.util.ByteArrayIStream;
 
@@ -22,7 +22,7 @@ public class SecIO
 	public static final int MAX_INLINE_SIZE = REF_MARKER - 1;
 	
 	
-	public static Ref store(IStore<Ref> store, BPlusTreeNode<SKey,DataHolder> node) throws Exception
+	public static <R extends IRef> R store(IStore<R> store, BPlusTreeNode<SKey,DataHolder<R>> node) throws Exception
 	{
 		DWriterBytes wr = new DWriterBytes();
 		try
@@ -60,7 +60,7 @@ public class SecIO
 	}
 	
 	
-	public static BPlusTreeNode<SKey,DataHolder> read(IStore store, byte[] buf) throws Exception
+	public static <R extends IRef> BPlusTreeNode<SKey,DataHolder<R>> read(IStore<R> store, byte[] buf) throws Exception
 	{
 		DReader rd = new DReader(buf);
 		try
@@ -139,7 +139,7 @@ public class SecIO
 	}
 	
 	
-	private static void writeNodeRefs(IStore store, DWriter wr, SecInternalNode n) throws Exception
+	private static <R extends IRef> void writeNodeRefs(IStore<R> store, DWriter wr, SecInternalNode n) throws Exception
 	{
 		int sz = n.getChildCount();
 		wr.writeUInt8(sz);
@@ -149,18 +149,18 @@ public class SecIO
 			// data holder type = REF
 			wr.writeUInt8(REF_MARKER);
 			
-			NodeHolder h = n.nodeHolderAt(i);
+			NodeHolder<R> h = n.nodeHolderAt(i);
 			if(h.isModified())
 			{
 				// store node first
-				Ref ref = store(store, h.getNode());
-				writeRef(ref, wr);
+				R ref = store(store, h.getNode());
+				store.writeRef(ref, wr);
 			}
 			else
 			{
 				// store ref
-				Ref ref = h.getRef();
-				writeRef(ref, wr);
+				R ref = h.getRef();
+				store.writeRef(ref, wr);
 			}
 		}
 	}
@@ -177,29 +177,12 @@ public class SecIO
 	}
 	
 	
-	private static void writeRef(Ref ref, DWriter wr) throws Exception
-	{
-		wr.writeString(ref.getSegment());
-		wr.writeLong(ref.getOffset());
-		wr.writeLong(ref.getLength());
-	}
-
-
-	private static Ref readRef(DReader rd) throws Exception
-	{
-		String segment = rd.readString();
-		long offset = rd.readLong();
-		long length = rd.readLong();
-		return new Ref(segment, offset, length);
-	}
-	
-	
-	private static void writeDataHolder(IStore store, DataHolder d, DWriter wr) throws Exception
+	private static <R extends IRef> void writeDataHolder(IStore<R> store, DataHolder<R> d, DWriter wr) throws Exception
 	{
 		if(d.isRef())
 		{
 			wr.writeUInt8(REF_MARKER);
-			writeRef(d.getRef(), wr);
+			store.writeRef(d.getRef(), wr);
 		}
 		else
 		{
@@ -215,12 +198,12 @@ public class SecIO
 	}
 	
 	
-	private static DataHolder readDataHolder(IStore store, DReader rd) throws Exception
+	private static <R extends IRef> DataHolder<R> readDataHolder(IStore<R> store, DReader rd) throws Exception
 	{
 		int sz = rd.readUInt8();
 		if(sz == REF_MARKER)
 		{
-			Ref ref = readRef(rd);
+			R ref = store.readRef(rd);
 			return new DataHolder.RefHolder(store, ref);
 		}
 		else

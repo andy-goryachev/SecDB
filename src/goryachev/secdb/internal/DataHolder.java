@@ -1,9 +1,9 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.impl;
+package goryachev.secdb.internal;
+import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
-import goryachev.secdb.Ref;
 import goryachev.secdb.util.ByteArrayIStream;
 
 
@@ -13,7 +13,7 @@ import goryachev.secdb.util.ByteArrayIStream;
  * - BPlusTreeNode
  * - large object (reference only)
  */
-public abstract class DataHolder
+public abstract class DataHolder<R>
 	implements IStored
 {
 	public abstract boolean hasValue();
@@ -22,7 +22,7 @@ public abstract class DataHolder
 	
 	public abstract IStream getIStream() throws Exception;
 	
-	public abstract Ref getRef();
+	public abstract R getRef();
 	
 	public abstract boolean isRef();
 	
@@ -31,16 +31,16 @@ public abstract class DataHolder
 	
 	//
 	
-	private final IStore<Ref> store;
+	private final IStore<R> store;
 	
 	
-	public DataHolder(IStore<Ref> store)
+	public DataHolder(IStore<R> store)
 	{
 		this.store = store;
 	}
 	
 	
-	public IStore<Ref> getIStore()
+	public IStore<R> getIStore()
 	{
 		return store;
 	}
@@ -49,12 +49,12 @@ public abstract class DataHolder
 	//
 	
 	
-	public static class RefHolder extends DataHolder
+	public static class RefHolder<R extends IRef> extends DataHolder<R>
 	{
-		private final Ref ref;
+		private final R ref;
 		
 		
-		public RefHolder(IStore store, Ref ref)
+		public RefHolder(IStore store, R ref)
 		{
 			super(store);
 			this.ref = ref;
@@ -79,7 +79,7 @@ public abstract class DataHolder
 		}
 
 
-		public Ref getRef()
+		public R getRef()
 		{
 			return ref;
 		}
@@ -101,7 +101,7 @@ public abstract class DataHolder
 	//
 	
 	
-	public static class ValueHolder extends DataHolder
+	public static class ValueHolder<R extends IRef> extends DataHolder<R>
 	{
 		private final byte[] bytes;
 		
@@ -131,7 +131,7 @@ public abstract class DataHolder
 		}
 		
 		
-		public Ref getRef()
+		public R getRef()
 		{
 			return null;
 		}

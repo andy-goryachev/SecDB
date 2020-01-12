@@ -1,7 +1,11 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb;
+package goryachev.secdb.segmented;
+import goryachev.common.io.DReader;
+import goryachev.common.io.DWriter;
 import goryachev.common.util.CMap;
-import goryachev.secdb.impl.SegmentFile;
+import goryachev.secdb.IStore;
+import goryachev.secdb.IStream;
+import goryachev.secdb.internal.SegmentFile;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +16,6 @@ import java.io.IOException;
  * 
  * - stores encrypted blocks in append-only files named segments
  * - (long) data values are encrypted with a random key to enable sharing
- * 
  */
 public class SecStore
 	implements Closeable,IStore<Ref>
@@ -86,5 +89,22 @@ public class SecStore
 		// TODO need to explicitly clear the ref (because of the data key)
 		
 		return null;
+	}
+
+
+	public void writeRef(Ref ref, DWriter wr) throws Exception
+	{
+		wr.writeString(ref.getSegment());
+		wr.writeLong(ref.getOffset());
+		wr.writeLong(ref.getLength());
+	}
+
+
+	public Ref readRef(DReader rd) throws Exception
+	{
+		String segment = rd.readString();
+		long offset = rd.readLong();
+		long length = rd.readLong();
+		return new Ref(segment, offset, length);
 	}
 }
