@@ -1,8 +1,8 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.internal;
+import goryachev.secdb.IDataHolder;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
-import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.util.ByteArrayIStream;
 
@@ -14,7 +14,7 @@ import goryachev.secdb.util.ByteArrayIStream;
  * - large object (reference only)
  */
 public abstract class DataHolder<R>
-	implements IStored
+	implements IDataHolder
 {
 	public abstract boolean hasValue();
 	

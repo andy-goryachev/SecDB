@@ -1,6 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
+import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.internal.DataHolder;
 import java.io.Closeable;
@@ -23,6 +24,19 @@ public class SecDB
 	}
 	
 	
+	private SecDB(SecStore s)
+	{
+		store = s;
+	}
+	
+	
+	public static SecDB create(File dir, char[] passphrase) throws Exception
+	{
+		SecStore st = SecStore.create(dir, passphrase);
+		return new SecDB(st);
+	}
+	
+	
 	// TODO OpaqueString
 	public void open(char[] passphrase) throws Exception
 	{
@@ -36,7 +50,7 @@ public class SecDB
 	}
 	
 	
-	public DataHolder<Ref> getValue(SKey key) throws Exception
+	public IStream getValue(SKey key) throws Exception
 	{
 		// TODO
 		return null;

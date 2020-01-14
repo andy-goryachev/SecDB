@@ -30,6 +30,16 @@ public class SecStore
 	}
 	
 	
+	public static SecStore create(File dir, char[] passphrase) throws Exception
+	{
+		// TODO
+		// check permissions
+		// check existing installation
+		// create store
+		return null;
+	}
+	
+	
 	// TODO OpaqueString
 	public void open(char[] passphrase) throws Exception
 	{
@@ -96,6 +106,7 @@ public class SecStore
 		wr.writeString(ref.getSegment());
 		wr.writeLong(ref.getOffset());
 		wr.writeLong(ref.getLength());
+		wr.writeByteArray(ref.getDataKey());
 	}
 
 
@@ -104,6 +115,7 @@ public class SecStore
 		String segment = rd.readString();
 		long offset = rd.readLong();
 		long length = rd.readLong();
-		return new Ref(segment, offset, length);
+		byte[] dataKey = rd.readByteArray(1024);
+		return new Ref(segment, offset, length, dataKey);
 	}
 }

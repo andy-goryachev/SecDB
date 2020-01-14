@@ -15,13 +15,15 @@ public class Ref
 	private final String segment;
 	private final long offset;
 	private final long length;
+	private final byte[] dataKey;
 
 
-	public Ref(String segment, long offset, long length)
+	public Ref(String segment, long offset, long length, byte[] dataKey)
 	{
 		this.segment = segment;
 		this.offset = offset;
 		this.length = length;
+		this.dataKey = dataKey;
 	}
 	
 	
@@ -48,6 +50,12 @@ public class Ref
 		return length;
 	}
 	
+	
+	public byte[] getDataKey()
+	{
+		return dataKey;
+	}
+
 	
 	public int hashCode()
 	{
