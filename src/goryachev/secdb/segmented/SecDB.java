@@ -14,22 +14,25 @@ import java.io.IOException;
 public class SecDB
 	implements Closeable
 {
+	protected final SecStore store;
+	
+	
 	public SecDB(File dir)
 	{
-		
+		store = new SecStore(dir);
 	}
 	
 	
 	// TODO OpaqueString
 	public void open(char[] passphrase) throws Exception
 	{
-		
+		store.open(passphrase);
 	}
 	
 	
 	public void close() throws IOException
 	{
-		// TODO
+		store.close();
 	}
 	
 	
