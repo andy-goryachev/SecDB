@@ -6,7 +6,6 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
-import goryachev.secdb.bplustree.QueryClient;
 import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.util.ByteArrayIStream;
 

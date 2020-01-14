@@ -22,6 +22,7 @@
 //	SOFTWARE.
 //
 package goryachev.secdb.bplustree;
+import goryachev.secdb.QueryClient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -3,7 +3,6 @@ package goryachev.secdb;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
-import goryachev.secdb.bplustree.QueryClient;
 import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.internal.DBEngineIO;
 import goryachev.secdb.internal.DBLeafNode;
@@ -47,7 +46,7 @@ public class DBEngine<R extends IRef>
 	}
 
 
-	public DataHolder getValue(SKey key) throws Exception
+	public DataHolder<R> getValue(SKey key) throws Exception
 	{
 		return loadRoot().getValue(key);
 	}
