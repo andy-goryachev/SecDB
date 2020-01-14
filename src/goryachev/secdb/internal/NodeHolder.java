@@ -6,7 +6,7 @@ import goryachev.secdb.bplustree.BPlusTreeNode;
 
 
 /**
- * Node Holder.
+ * DBEngine Node Holder.
  */
 public class NodeHolder<R extends IRef>
 {
@@ -31,7 +31,7 @@ public class NodeHolder<R extends IRef>
 		if(node == null)
 		{
 			byte[] b = dataHolder.getIStream().readBytes(Integer.MAX_VALUE);
-			node = SecIO.read(dataHolder.getIStore(), b);
+			node = DBEngineIO.read(dataHolder.getIStore(), b);
 		}
 		return node;
 	}

@@ -5,7 +5,6 @@ import goryachev.common.io.DWriter;
 import goryachev.common.util.CMap;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
-import goryachev.secdb.internal.SegmentFile;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;

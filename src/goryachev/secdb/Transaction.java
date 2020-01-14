@@ -4,7 +4,7 @@ import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.internal.DataHolder;
-import goryachev.secdb.internal.SecIO;
+import goryachev.secdb.internal.DBEngineIO;
 
 
 /**
@@ -51,10 +51,10 @@ public abstract class Transaction<R extends IRef>
 	{
 		DataHolder<R> h;
 		
-		if(in.getLength() < SecIO.MAX_INLINE_SIZE)
+		if(in.getLength() < DBEngineIO.MAX_INLINE_SIZE)
 		{
 			// store value inline
-			byte[] b = in.readBytes(SecIO.MAX_INLINE_SIZE);
+			byte[] b = in.readBytes(DBEngineIO.MAX_INLINE_SIZE);
 			h = new DataHolder.ValueHolder(store, b);
 		}
 		else
@@ -69,7 +69,7 @@ public abstract class Transaction<R extends IRef>
 	}
 	
 	
-	public void execute(SecDB db)
+	public void execute(DBEngine db)
 	{		
 		db.execute(this);
 	}

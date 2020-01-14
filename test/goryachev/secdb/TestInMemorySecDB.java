@@ -26,7 +26,7 @@ public class TestInMemorySecDB
 	public void test() throws Exception
 	{
 		InMemoryStore store = new InMemoryStore();
-		SecDB<InMemoryRef> db = new SecDB(store);
+		DBEngine<InMemoryRef> db = new DBEngine(store);
 
 		for(int i=0; i<10; i++)
 		{

@@ -7,21 +7,21 @@ import goryachev.secdb.bplustree.BPlusTreeNode;
 
 
 /**
- * SecDB LeafNode.
+ * DBEngine LeafNode.
  */
-public class SecLeafNode<R extends IRef>
+public class DBLeafNode<R extends IRef>
 	extends BPlusTreeNode.LeafNode<SKey,DataHolder<R>>
 {
 	private final IStore store;
 
 	
-	public SecLeafNode(IStore store)
+	public DBLeafNode(IStore store)
 	{
 		this.store = store;
 	}
 	
 	
-	public SecLeafNode modified()
+	public DBLeafNode modified()
 	{
 		setModified();
 		return this;
@@ -30,13 +30,13 @@ public class SecLeafNode<R extends IRef>
 	
 	protected LeafNode<SKey,DataHolder<R>> newLeafNode()
 	{
-		return new SecLeafNode(store).modified();
+		return new DBLeafNode(store).modified();
 	}
 	
 	
 	protected InternalNode newInternalNode()
 	{
-		return new SecInternalNode(store).modified();
+		return new DBInternalNode(store).modified();
 	}
 
 

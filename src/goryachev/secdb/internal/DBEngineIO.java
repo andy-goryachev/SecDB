@@ -12,12 +12,12 @@ import goryachev.secdb.util.ByteArrayIStream;
 
 
 /**
- * SecDB serializer/deserializer.
+ * DBEngine serializer/deserializer.
  */
-public class SecIO
+public class DBEngineIO
 {
 	/** marks DataHolder.REF instead of DataHolder.VAL */
-	public static final int REF_MARKER = 255;
+	private static final int REF_MARKER = 255;
 	/** size threshold below which small values are stored in the leaf node */
 	public static final int MAX_INLINE_SIZE = REF_MARKER - 1;
 	
@@ -27,18 +27,18 @@ public class SecIO
 		DWriterBytes wr = new DWriterBytes();
 		try
 		{
-			if(node instanceof SecLeafNode)
+			if(node instanceof DBLeafNode)
 			{
-				SecLeafNode n = (SecLeafNode)node;
+				DBLeafNode n = (DBLeafNode)node;
 				int sz = n.size();
 				wr.writeXInt8(sz);
 				
 				writeKeys(wr, sz, n);
 				writeValues(store, wr, n);
 			}
-			else if(node instanceof SecInternalNode)
+			else if(node instanceof DBInternalNode)
 			{
-				SecInternalNode n = (SecInternalNode)node;
+				DBInternalNode n = (DBInternalNode)node;
 				int sz = n.size();
 				wr.writeXInt8(-sz);
 				
@@ -70,7 +70,7 @@ public class SecIO
 			if(sz > 0)
 			{
 				// leaf node
-				SecLeafNode n = new SecLeafNode(store);
+				DBLeafNode n = new DBLeafNode(store);
 				readKeys(rd, sz, n);
 				readValues(store, rd, n);
 				return n;
@@ -78,7 +78,7 @@ public class SecIO
 			else
 			{
 				// internal node
-				SecInternalNode n = new SecInternalNode(store);
+				DBInternalNode n = new DBInternalNode(store);
 				sz = -sz;
 				readKeys(rd, sz, n);
 				readNodeRefs(store, rd, n);
@@ -114,7 +114,7 @@ public class SecIO
 	}
 	
 	
-	private static void writeValues(IStore store, DWriter wr, SecLeafNode n) throws Exception
+	private static void writeValues(IStore store, DWriter wr, DBLeafNode n) throws Exception
 	{
 		int sz = n.getValueCount();
 		wr.writeUInt8(sz);
@@ -127,7 +127,7 @@ public class SecIO
 	}
 	
 	
-	private static void readValues(IStore store, DReader rd, SecLeafNode n) throws Exception
+	private static void readValues(IStore store, DReader rd, DBLeafNode n) throws Exception
 	{
 		int sz = rd.readUInt8();
 		
@@ -139,7 +139,7 @@ public class SecIO
 	}
 	
 	
-	private static <R extends IRef> void writeNodeRefs(IStore<R> store, DWriter wr, SecInternalNode n) throws Exception
+	private static <R extends IRef> void writeNodeRefs(IStore<R> store, DWriter wr, DBInternalNode n) throws Exception
 	{
 		int sz = n.getChildCount();
 		wr.writeUInt8(sz);
@@ -166,7 +166,7 @@ public class SecIO
 	}
 	
 	
-	private static void readNodeRefs(IStore store, DReader rd, SecInternalNode n) throws Exception
+	private static void readNodeRefs(IStore store, DReader rd, DBInternalNode n) throws Exception
 	{
 		int sz = rd.readUInt8();
 		for(int i=0; i<sz; i++)

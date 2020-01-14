@@ -5,21 +5,21 @@ import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.bplustree.QueryClient;
 import goryachev.secdb.internal.DataHolder;
-import goryachev.secdb.internal.SecIO;
-import goryachev.secdb.internal.SecLeafNode;
+import goryachev.secdb.internal.DBEngineIO;
+import goryachev.secdb.internal.DBLeafNode;
 
 
 /**
- * Secure Key-Value Store.
+ * Key-Value Database Engine.
  */
-public class SecDB<R extends IRef>
+public class DBEngine<R extends IRef>
 {
 	private static final int BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
 	private final IStore<R> store;
 	
 	
-	public SecDB(IStore<R> store)
+	public DBEngine(IStore<R> store)
 	{
 		this.store = store;
 	}
@@ -30,7 +30,7 @@ public class SecDB<R extends IRef>
 		R ref = store.getRootRef();
 		if(ref == null)
 		{
-			return new SecLeafNode(store).modified();
+			return new DBLeafNode(store).modified();
 		}
 		else
 		{
@@ -43,7 +43,7 @@ public class SecDB<R extends IRef>
 	protected BPlusTreeNode<SKey,DataHolder<R>> readNode(IStream is) throws Exception
 	{
 		byte[] b = is.readBytes(NODE_SIZE_LIMIT);
-		return SecIO.read(store, b);
+		return DBEngineIO.read(store, b);
 	}
 
 
@@ -116,7 +116,7 @@ public class SecDB<R extends IRef>
 
 	protected void commit(BPlusTreeNode<SKey,DataHolder<R>> newRoot) throws Exception
 	{
-		R ref = SecIO.store(store, newRoot);
+		R ref = DBEngineIO.store(store, newRoot);
 		store.setRootRef(ref);
 	}
 }
