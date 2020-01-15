@@ -1,8 +1,8 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.internal;
-import goryachev.secdb.IDataHolder;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
+import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.util.ByteArrayIStream;
 
@@ -14,17 +14,14 @@ import goryachev.secdb.util.ByteArrayIStream;
  * - large object (reference only)
  */
 public abstract class DataHolder<R>
-	implements IDataHolder
 {
 	public abstract boolean hasValue();
-	
-	public abstract long getLength();
-	
-	public abstract IStream getIStream() throws Exception;
 	
 	public abstract R getRef();
 	
 	public abstract boolean isRef();
+	
+	public abstract IStored getStoredValue();
 	
 	/** returns underlying byte array, internal method */
 	protected abstract byte[] getBytes();
@@ -51,7 +48,7 @@ public abstract class DataHolder<R>
 	
 	public static class RefHolder<R extends IRef> extends DataHolder<R>
 	{
-		private final R ref;
+		protected final R ref;
 		
 		
 		public RefHolder(IStore store, R ref)
@@ -65,17 +62,23 @@ public abstract class DataHolder<R>
 		{
 			return false;
 		}
-
-
-		public long getLength()
+		
+		
+		public IStored getStoredValue()
 		{
-			return ref.getLength();
-		}
+			return new IStored()
+			{
+				public long getLength()
+				{
+					return ref.getLength();
+				}
 
 
-		public IStream getIStream() throws Exception
-		{
-			return getIStore().load(ref);
+				public IStream getIStream() throws Exception
+				{
+					return getIStore().load(ref);
+				}
+			};
 		}
 
 
@@ -103,7 +106,7 @@ public abstract class DataHolder<R>
 	
 	public static class ValueHolder<R extends IRef> extends DataHolder<R>
 	{
-		private final byte[] bytes;
+		protected final byte[] bytes;
 		
 		
 		public ValueHolder(IStore store, byte[] bytes)
@@ -117,19 +120,25 @@ public abstract class DataHolder<R>
 		{
 			return true;
 		}
-
-
-		public long getLength()
-		{
-			return bytes.length;
-		}
-
-
-		public IStream getIStream()
-		{
-			return new ByteArrayIStream(bytes);
-		}
 		
+		
+		public IStored getStoredValue()
+		{
+			return new IStored()
+			{
+				public long getLength()
+				{
+					return bytes.length;
+				}
+
+
+				public IStream getIStream()
+				{
+					return new ByteArrayIStream(bytes);
+				}
+			};
+		}
+
 		
 		public R getRef()
 		{

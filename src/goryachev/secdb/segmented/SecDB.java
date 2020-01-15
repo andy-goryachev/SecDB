@@ -2,6 +2,7 @@
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
 import goryachev.secdb.DBEngine;
+import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.internal.DataHolder;
@@ -65,8 +66,21 @@ public class SecDB
 	// TODO store single value
 	
 	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<Ref>> client)
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
 	{
-		engine.query(start, includeStart, end, includeEnd, client);
+		engine.query(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
+		{
+			public void onError(Throwable err)
+			{
+				client.onError(err);
+			}
+			
+			
+			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h)
+			{
+				IStored v = h.getStoredValue();
+				return client.acceptQueryResult(key, v);
+			}
+		});
 	}
 }

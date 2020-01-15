@@ -7,9 +7,6 @@ package goryachev.secdb;
  */
 public interface IStored
 {
-	public boolean hasValue();
-	
-	
 	public long getLength();
 	
 	

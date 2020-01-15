@@ -50,7 +50,7 @@ public class TestInMemorySecDB
 					D.print("contains:", containsKey(k), "expecting true");
 					
 					DataHolder h = read(k);
-					byte[] rv = h.getIStream().readBytes(Integer.MAX_VALUE);
+					byte[] rv = h.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
 					D.print("success:", CKit.equals(v, rv));
 				}
 			});
@@ -75,7 +75,7 @@ public class TestInMemorySecDB
 				{
 					try
 					{
-						byte[] b = value.getIStream().readBytes(Integer.MAX_VALUE);
+						byte[] b = value.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
 						D.print("    query:", key, Hex.toHexString(b));
 					}
 					catch(Exception e)

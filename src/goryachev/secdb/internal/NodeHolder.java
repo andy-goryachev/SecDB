@@ -30,7 +30,7 @@ public class NodeHolder<R extends IRef>
 	{
 		if(node == null)
 		{
-			byte[] b = dataHolder.getIStream().readBytes(Integer.MAX_VALUE);
+			byte[] b = dataHolder.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
 			node = DBEngineIO.read(dataHolder.getIStore(), b);
 		}
 		return node;
