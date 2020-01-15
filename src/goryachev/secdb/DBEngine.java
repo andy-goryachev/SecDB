@@ -3,9 +3,9 @@ package goryachev.secdb;
 import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
-import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.internal.DBEngineIO;
 import goryachev.secdb.internal.DBLeafNode;
+import goryachev.secdb.internal.DataHolder;
 
 
 /**
@@ -58,9 +58,16 @@ public class DBEngine<R extends IRef>
 	}
 
 	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client) throws Exception
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client)
 	{
-		loadRoot().query(start, includeStart, end, includeEnd, client);
+		try
+		{
+			loadRoot().query(start, includeStart, end, includeEnd, client);
+		}
+		catch(Throwable e)
+		{
+			client.onError(e);
+		}
 	}
 
 

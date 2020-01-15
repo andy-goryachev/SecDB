@@ -1,6 +1,7 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
+import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.internal.DataHolder;
@@ -16,17 +17,20 @@ public class SecDB
 	implements Closeable
 {
 	protected final SecStore store;
+	protected final DBEngine<Ref> engine;
 	
 	
 	public SecDB(File dir)
 	{
 		store = new SecStore(dir);
+		engine = new DBEngine(store);
 	}
 	
 	
 	private SecDB(SecStore s)
 	{
 		store = s;
+		engine = new DBEngine(store);
 	}
 	
 	
@@ -61,9 +65,8 @@ public class SecDB
 	// TODO store single value
 	
 	
-	// TODO DataHolder -> IStored
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<Ref>> client) throws Exception
+	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<Ref>> client)
 	{
-		// TODO
+		engine.query(start, includeStart, end, includeEnd, client);
 	}
 }
