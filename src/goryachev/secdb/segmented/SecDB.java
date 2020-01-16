@@ -55,10 +55,10 @@ public class SecDB
 	}
 	
 	
-	public IStream getValue(SKey key) throws Exception
+	public IStored getValue(SKey key) throws Exception
 	{
-		// TODO
-		return null;
+		DataHolder<Ref> ref = engine.getValue(key);
+		return ref == null ? null : ref.getStoredValue();
 	}
 	
 	
