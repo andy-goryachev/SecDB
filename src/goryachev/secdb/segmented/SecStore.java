@@ -33,9 +33,13 @@ public class SecStore
 	public static SecStore create(File dir, char[] passphrase) throws Exception
 	{
 		// TODO
-		// check permissions
-		// check existing installation
-		// create store
+		// check dir: if exists && not empty: DIR_NOT_EMPTY
+		// writeable: DIR_READ_ONLY
+		// create dirs
+		// encrypt key
+		// generate log key
+		// write key
+		// write log
 		return null;
 	}
 	
