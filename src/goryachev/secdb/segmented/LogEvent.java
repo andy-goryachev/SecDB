@@ -5,13 +5,17 @@ package goryachev.secdb.segmented;
 /**
  * Log Events are written to LogFile.
  */
-public enum LogEvent
+public class LogEvent
 {
-	CLOSE,
-	HEAD,
-	OPEN,
-	STATE,
-	STORE,
-	STORE_OK,
-	STORE_DUP,
+	private final LogEventCode code;
+	private final long timestamp;
+	private final long sequence;
+	
+	
+	public LogEvent(LogEventCode code, long timestamp, long sequence)
+	{
+		this.code = code;
+		this.timestamp = timestamp;
+		this.sequence = sequence;
+	}
 }

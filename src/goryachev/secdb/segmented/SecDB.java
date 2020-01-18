@@ -21,13 +21,6 @@ public class SecDB
 	protected final DBEngine<Ref> engine;
 	
 	
-	public SecDB(File dir)
-	{
-		store = new SecStore(dir);
-		engine = new DBEngine(store);
-	}
-	
-	
 	private SecDB(SecStore s)
 	{
 		store = s;
@@ -43,9 +36,10 @@ public class SecDB
 	
 	
 	// TODO OpaqueString
-	public void open(char[] passphrase) throws Exception
+	public static SecDB open(File dir, char[] passphrase) throws Exception
 	{
-		store.open(passphrase);
+		SecStore st = SecStore.open(dir, passphrase);
+		return new SecDB(st);
 	}
 	
 	

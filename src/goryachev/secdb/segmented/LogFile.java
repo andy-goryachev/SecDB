@@ -5,6 +5,7 @@ import java.io.File;
 
 /**
  * The purpose of Log File is to
+ * 
  *   1. retain state between shutdowns
  *   2. assist in recovery
  */
@@ -16,5 +17,19 @@ public class LogFile
 	public LogFile(File dir)
 	{
 		this.dir = dir;
+	}
+	
+	
+	// TODO log key
+	public static LogFile create(File dir)
+	{
+		// TODO
+		return null;
+	}
+	
+	
+	public void appendCreatedEvent()
+	{
+		// TODO
 	}
 }

@@ -21,13 +21,15 @@ public class SecStore
 	implements Closeable,IStore<Ref>
 {
 	private final File dir;
+	private final LogFile logFile;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private Ref root;
 	
 	
-	public SecStore(File dir)
+	public SecStore(File dir, LogFile logFile)
 	{
 		this.dir = dir;
+		this.logFile = logFile;
 	}
 	
 	
@@ -73,19 +75,22 @@ public class SecStore
 		// TODO write key --> exception if unable
 		
 		// TODO write log
+		LogFile lf = LogFile.create(dir);
+		lf.appendCreatedEvent();
 		
-		return new SecStore(dir);
+		return new SecStore(dir, lf);
 	}
 	
 	
 	// TODO OpaqueString
-	public void open(char[] passphrase) throws Exception
+	public static SecStore open(File dir, char[] passphrase) throws Exception
 	{
 		// TODO unlock the key file
 		// load descriptor
 		// check segments
 		// read root ref
 		// load root node and do some checks
+		return null;
 	}
 
 
