@@ -3,6 +3,7 @@ package goryachev.secdb.segmented;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
 import goryachev.common.util.CMap;
+import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import java.io.Closeable;
@@ -30,17 +31,50 @@ public class SecStore
 	}
 	
 	
+	/** likely to throw DbException which contains error code and additional information */
 	public static SecStore create(File dir, char[] passphrase) throws Exception
 	{
-		// TODO
-		// check dir: if exists && not empty: DIR_NOT_EMPTY
-		// writeable: DIR_READ_ONLY
+		if(!dir.exists())
+		{
+			dir.mkdirs();
+			if(!dir.exists())
+			{
+				throw new DBException(DBErrorCode.DIR_UNABLE_TO_CREATE, dir);
+			}
+		}
+		
+		if(dir.exists())
+		{
+			if(!Utils.isEmptyDir(dir))
+			{
+				throw new DBException(DBErrorCode.DIR_NOT_EMPTY, dir);
+			}
+		}
+		
 		// create dirs
-		// encrypt key
-		// generate log key
-		// write key
-		// write log
-		return null;
+		for(int i=0; i<0x100; i++)
+		{
+			File d = getSegmentDir(dir, i);
+			d.mkdir();
+		}
+		
+		// check dirs
+		for(int i=0; i<0x100; i++)
+		{
+			File d = getSegmentDir(dir, i);
+			if(!d.isDirectory() || !d.exists())
+			{
+				throw new DBException(DBErrorCode.DIR_UNABLE_TO_CREATE, d);
+			}
+		}
+		
+		// TODO encrypt key
+		// TODO generate log key
+		// TODO write key --> exception if unable
+		
+		// TODO write log
+		
+		return new SecStore(dir);
 	}
 	
 	
@@ -121,5 +155,11 @@ public class SecStore
 		long length = rd.readLong();
 		byte[] dataKey = rd.readByteArray(1024);
 		return new Ref(segment, offset, length, dataKey);
+	}
+	
+	
+	protected static File getSegmentDir(File dir, int x)
+	{
+		return new File(dir, Hex.toHexByte(x));
 	}
 }
