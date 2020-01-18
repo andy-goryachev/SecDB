@@ -55,22 +55,23 @@ public class SecStore
 			}
 		}
 		
-		// create dirs
-		for(int i=0; i<0x100; i++)
-		{
-			File d = getSegmentDir(dir, i);
-			d.mkdir();
-		}
-		
-		// check dirs
-		for(int i=0; i<0x100; i++)
-		{
-			File d = getSegmentDir(dir, i);
-			if(!d.isDirectory() || !d.exists())
-			{
-				throw new DBException(DBErrorCode.DIR_UNABLE_TO_CREATE, d);
-			}
-		}
+		// TODO 16 dirs?  on demand?
+//		// create dirs
+//		for(int i=0; i<0x100; i++)
+//		{
+//			File d = getSegmentDir(dir, i);
+//			d.mkdir();
+//		}
+//		
+//		// check dirs
+//		for(int i=0; i<0x100; i++)
+//		{
+//			File d = getSegmentDir(dir, i);
+//			if(!d.isDirectory() || !d.exists())
+//			{
+//				throw new DBException(DBErrorCode.DIR_UNABLE_TO_CREATE, d);
+//			}
+//		}
 		
 		// TODO encrypt key
 		// TODO generate log key

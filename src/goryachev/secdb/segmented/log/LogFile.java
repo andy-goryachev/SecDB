@@ -36,7 +36,7 @@ public class LogFile
 	// TODO log key
 	public static LogFile create(File dir) throws Exception
 	{
-		File f = File.createTempFile(NAME_PREFIX, null, dir); 
+		File f = File.createTempFile(NAME_PREFIX, "", dir); 
 		FileOutputStream out = new FileOutputStream(f);
 		return new LogFile(f, out);
 	}
