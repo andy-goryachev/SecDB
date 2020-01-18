@@ -11,9 +11,9 @@ import goryachev.secdb.util.ByteArrayIStream;
 
 
 /**
- * Tests In Memory SecDB.
+ * Tests InMemoryStore.
  */
-public class TestInMemorySecDB
+public class TestInMemoryStore
 {
 	public static void main(String[] args)
 	{

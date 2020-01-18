@@ -1,10 +1,12 @@
-// Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.segmented;
+// Copyright © 2020 Andy Goryachev <andy@goryachev.com>
+package goryachev.secdb.segmented.log;
+import goryachev.common.util.Keep;
 
 
 /**
  * Log Events are written to LogFile.
  */
+@Keep
 public enum LogEventCode
 {
 	CREATED,

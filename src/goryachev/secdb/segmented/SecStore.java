@@ -6,6 +6,8 @@ import goryachev.common.util.CMap;
 import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
+import goryachev.secdb.segmented.log.CreatedEvent;
+import goryachev.secdb.segmented.log.LogFile;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +78,7 @@ public class SecStore
 		
 		// TODO write log
 		LogFile lf = LogFile.create(dir);
-		lf.appendCreatedEvent();
+		lf.appendEvent(new CreatedEvent());
 		
 		return new SecStore(dir, lf);
 	}
