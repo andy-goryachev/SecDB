@@ -1,11 +1,14 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.log;
-import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
+import goryachev.common.util.CList;
 import goryachev.common.util.SB;
-import java.io.ByteArrayOutputStream;
+import goryachev.secdb.segmented.DBErrorCode;
+import goryachev.secdb.segmented.DBException;
+import goryachev.secdb.segmented.Ref;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -34,11 +37,52 @@ public class LogFile
 	
 	/** creates an empty log file.  assumes the directory exists */
 	// TODO log key
-	public static LogFile create(File dir) throws Exception
+	public static LogFile create(File dir, byte[] key) throws Exception
 	{
 		File f = File.createTempFile(NAME_PREFIX, "", dir); 
 		FileOutputStream out = new FileOutputStream(f);
 		return new LogFile(f, out);
+	}
+	
+	
+	/** creates an empty log file.  assumes the directory exists */
+	// TODO log key
+	public static LogFile open(File dir, byte[] key) throws Exception
+	{
+		// pick the oldest log file
+		
+		File[] fs = dir.listFiles(new FileFilter()
+		{
+			public boolean accept(File f)
+			{
+				return f.isFile() && f.getName().startsWith(NAME_PREFIX);
+			}
+		});
+		
+		if((fs == null) || (fs.length == 0))
+		{
+			throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
+		}
+		
+		CList<LogFile> lfs = new CList();
+		for(File f: fs)
+		{
+			LogFile lf = LogFile.openPrivate(f); // or load
+			lfs.add(lf);
+		}
+		
+		// TODO sort latest first
+		
+		// TODO
+		// check for unexpected shutdown
+		throw new Error("todo");
+	}
+	
+	
+	protected static LogFile openPrivate(File f) throws Exception
+	{
+		// TODO
+		return null;
 	}
 	
 	
@@ -61,5 +105,19 @@ public class LogFile
 	public static long getSequence()
 	{
 		return sequence;
+	}
+	
+	
+	public boolean isRecoveryNeeded()
+	{
+		// TODO
+		return false;
+	}
+
+
+	public Ref getRootRef()
+	{
+		// TODO
+		return null;
 	}
 }

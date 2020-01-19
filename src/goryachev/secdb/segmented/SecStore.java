@@ -8,6 +8,7 @@ import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.log.CreatedEvent;
 import goryachev.secdb.segmented.log.LogFile;
+import goryachev.secdb.segmented.log.OpenEvent;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +29,11 @@ public class SecStore
 	private Ref root;
 	
 	
-	public SecStore(File dir, LogFile logFile)
+	public SecStore(File dir, LogFile logFile, Ref root)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
+		this.root = root;
 	}
 	
 	
@@ -75,25 +77,52 @@ public class SecStore
 		
 		// TODO encrypt key
 		// TODO generate log key
+		byte[] logKey = null;
 		// TODO write key --> exception if unable
 		
 		// TODO write log
-		LogFile lf = LogFile.create(dir);
+		LogFile lf = LogFile.create(dir, logKey);
 		lf.appendEvent(new CreatedEvent());
 		
-		return new SecStore(dir, lf);
+		return new SecStore(dir, lf, null);
 	}
 	
 	
 	// TODO OpaqueString
 	public static SecStore open(File dir, char[] passphrase) throws Exception
 	{
-		// TODO unlock the key file
-		// load descriptor
-		// check segments
+		// check directories
+		if(!dir.exists() || !dir.isDirectory())
+		{
+			throw new DBException(DBErrorCode.DIR_NOT_FOUND, dir);
+		}
+		
+		// TODO
+		// decrypt key -> missing key file, passphrase error
+		
+		
+		// read all logs
+		// check if recovery is needed
+		//   (perform recovery)
+		// check version?
+		LogFile lf = LogFile.open(dir, null);
+		if(lf.isRecoveryNeeded())
+		{
+			// TODO
+		}
+		
+		// write new log
+		lf.appendEvent(new OpenEvent());
+		
+		// delete old logs
+		
 		// read root ref
+		Ref root = lf.getRootRef();
+		
+		// TODO
 		// load root node and do some checks
-		return null;
+		
+		return new SecStore(dir, lf, root);
 	}
 
 

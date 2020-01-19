@@ -6,7 +6,7 @@ import java.io.File;
 
 
 /**
- * TestSecDB.
+ * Test SecDB.
  */
 public class TestSecDB
 {
