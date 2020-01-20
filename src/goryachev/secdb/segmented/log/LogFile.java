@@ -1,16 +1,18 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.log;
+import goryachev.common.io.CReader;
+import goryachev.common.util.CComparator;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
-import goryachev.secdb.segmented.DBErrorCode;
-import goryachev.secdb.segmented.DBException;
 import goryachev.secdb.segmented.Ref;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -24,13 +26,19 @@ public class LogFile
 {
 	protected static final String NAME_PREFIX = "log.";
 	protected final File file;
+	protected final byte[] key;
 	private FileOutputStream out;
+	private boolean error;
+	private CList<LogEvent> events;
+	private long lastTime;
+	private long lastSequence;
 	private static long sequence;
 	
 	
-	public LogFile(File f, FileOutputStream out)
+	public LogFile(File f, byte[] key, FileOutputStream out)
 	{
 		this.file = f;
+		this.key = key;
 		this.out = out;
 	}
 	
@@ -41,13 +49,16 @@ public class LogFile
 	{
 		File f = File.createTempFile(NAME_PREFIX, "", dir); 
 		FileOutputStream out = new FileOutputStream(f);
-		return new LogFile(f, out);
+		return new LogFile(f, key, out);
 	}
 	
 	
-	/** creates an empty log file.  assumes the directory exists */
+	/** 
+	 * returns a list of all log files found in the base directory,
+	 * sorted most recent first.
+	 */
 	// TODO log key
-	public static LogFile open(File dir, byte[] key) throws Exception
+	public static List<LogFile> open(File dir, byte[] key) throws Exception
 	{
 		// pick the oldest log file
 		
@@ -59,30 +70,76 @@ public class LogFile
 			}
 		});
 		
-		if((fs == null) || (fs.length == 0))
-		{
-			throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
-		}
-		
 		CList<LogFile> lfs = new CList();
-		for(File f: fs)
+		if(fs != null)
 		{
-			LogFile lf = LogFile.openPrivate(f); // or load
-			lfs.add(lf);
+			for(File f: fs)
+			{
+				LogFile lf = LogFile.load(f, key);
+				lfs.add(lf);
+			}
 		}
 		
-		// TODO sort latest first
+		Collections.sort(lfs, new CComparator<LogFile>()
+		{
+			public int compare(LogFile a, LogFile b)
+			{
+				int d = compareLong(a.getLastSequence(), b.getLastSequence());
+				if(d != 0)
+				{
+					d = compareLong(a.getLastTime(), b.getLastTime());
+				}
+				return d;
+			}
+		});
 		
-		// TODO
-		// check for unexpected shutdown
-		throw new Error("todo");
+		return lfs;
 	}
 	
 	
-	protected static LogFile openPrivate(File f) throws Exception
+	protected long getLastTime()
 	{
-		// TODO
-		return null;
+		return lastTime;
+	}
+
+
+	protected long getLastSequence()
+	{
+		return lastSequence;
+	}
+
+
+	protected static LogFile load(File f, byte[] key) throws Exception
+	{
+		FileOutputStream out = new FileOutputStream(f, true);
+		LogFile lf = new LogFile(f, key, out);
+		lf.load();
+		return lf;
+	}
+	
+	
+	protected void load() throws Exception
+	{
+		events = new CList();
+		CReader rd = new CReader(file);
+		try
+		{
+			String line;
+			while((line = rd.readLine()) != null)
+			{
+				LogEvent ev = LogEvent.parse(line);
+				// TODO
+				events.add(ev);
+			}
+		}
+		catch(Exception e)
+		{
+			error = true;
+		}
+		finally
+		{
+			CKit.close(rd);
+		}
 	}
 	
 	

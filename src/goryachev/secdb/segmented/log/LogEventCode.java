@@ -16,5 +16,19 @@ public enum LogEventCode
 	STATE,
 	STORE,
 	STORE_OK,
-	STORE_DUP,
+	STORE_DUP;
+
+	//
+	
+	public static LogEventCode parse(String text) throws Exception
+	{
+		for(LogEventCode c: values())
+		{
+			if(c.toString().equals(text))
+			{
+				return c;
+			}
+		}
+		throw new Exception("?" + text);
+	}
 }

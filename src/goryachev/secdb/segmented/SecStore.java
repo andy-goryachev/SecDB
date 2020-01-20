@@ -6,12 +6,13 @@ import goryachev.common.util.CMap;
 import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
-import goryachev.secdb.segmented.log.CreatedEvent;
+import goryachev.secdb.segmented.log.LogEvent;
+import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
-import goryachev.secdb.segmented.log.OpenEvent;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -82,7 +83,7 @@ public class SecStore
 		
 		// TODO write log
 		LogFile lf = LogFile.create(dir, logKey);
-		lf.appendEvent(new CreatedEvent());
+		lf.appendEvent(new LogEvent(LogEventCode.CREATED));
 		
 		return new SecStore(dir, lf, null);
 	}
@@ -105,16 +106,29 @@ public class SecStore
 		// check if recovery is needed
 		//   (perform recovery)
 		// check version?
-		LogFile lf = LogFile.open(dir, null);
-		if(lf.isRecoveryNeeded())
+		List<LogFile> lfs = LogFile.open(dir, null);
+		if(lfs.size() == 0)
 		{
-			// TODO
+			throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
 		}
 		
-		// write new log
-		lf.appendEvent(new OpenEvent());
+		// TODO two or more files means unsuccessfull recovery
+		// TODO check if recovery is needed
+//		if(lf.isRecoveryNeeded())
+//		{
+//			// TODO recover
+//		}
+//		else
+//		{
+//			// TODO is recovery is not needed, create a new log file and delete all	
+//		}
 		
-		// delete old logs
+		LogFile lf = lfs.get(0);
+		
+		// TODO 
+		
+		// write new log
+		lf.appendEvent(new LogEvent(LogEventCode.OPENED));
 		
 		// read root ref
 		Ref root = lf.getRootRef();
