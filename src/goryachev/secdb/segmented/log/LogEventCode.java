@@ -10,13 +10,14 @@ import goryachev.common.util.Keep;
 public enum LogEventCode
 {
 	CREATED,
-	CLOSED,
+//	CLOSED,
 	HEAD,
 	OPENED,
-	STATE,
-	STORE,
-	STORE_OK,
-	STORE_DUP;
+//	STATE,
+//	STORE,
+//	STORE_OK,
+//	STORE_DUP
+	;
 
 	//
 	

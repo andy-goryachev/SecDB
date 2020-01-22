@@ -12,6 +12,7 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 
@@ -27,9 +28,10 @@ public class LogFile
 	protected static final String NAME_PREFIX = "log.";
 	protected final File file;
 	protected final byte[] key;
+	protected final EnumMap<LogEventCode,LogEvent> events = new EnumMap<>(LogEventCode.class);
 	private FileOutputStream out;
 	private boolean error;
-	private CList<LogEvent> events;
+	// TODO TStamp
 	private long lastTime;
 	private long lastSequence;
 	private static long sequence;
@@ -120,7 +122,6 @@ public class LogFile
 	
 	protected void load() throws Exception
 	{
-		events = new CList();
 		CReader rd = new CReader(file);
 		try
 		{
@@ -128,8 +129,7 @@ public class LogFile
 			while((line = rd.readLine()) != null)
 			{
 				LogEvent ev = LogEvent.parse(line);
-				// TODO
-				events.add(ev);
+				events.put(ev.getCode(), ev);
 			}
 		}
 		catch(Exception e)
