@@ -30,16 +30,16 @@ public class LogFile
 	protected final File file;
 	protected final byte[] key;
 	protected final EnumMap<LogEventCode,LogEvent> events = new EnumMap<>(LogEventCode.class);
+	private LogEvent lastEvent;
 	private FileOutputStream out;
 	private boolean error;
 	private long lastTime;
 	
 	
-	public LogFile(File f, byte[] key, FileOutputStream out)
+	public LogFile(File f, byte[] key)
 	{
 		this.file = f;
 		this.key = key;
-		this.out = out;
 	}
 	
 	
@@ -48,8 +48,7 @@ public class LogFile
 	public static LogFile create(File dir, byte[] key) throws Exception
 	{
 		File f = File.createTempFile(NAME_PREFIX, "", dir); 
-		FileOutputStream out = new FileOutputStream(f);
-		return new LogFile(f, key, out);
+		return new LogFile(f, key);
 	}
 	
 	
@@ -80,11 +79,12 @@ public class LogFile
 			}
 		}
 		
+		// recent first
 		Collections.sort(lfs, new CComparator<LogFile>()
 		{
 			public int compare(LogFile a, LogFile b)
 			{
-				return compareLong(a.getLastTime(), b.getLastTime());
+				return compareLong(b.getLastTime(), a.getLastTime());
 			}
 		});
 		
@@ -100,9 +100,14 @@ public class LogFile
 
 	protected static LogFile load(File f, byte[] key) throws Exception
 	{
-		FileOutputStream out = new FileOutputStream(f, true);
-		LogFile lf = new LogFile(f, key, out);
+		LogFile lf = new LogFile(f, key);
 		lf.load();
+		
+		if(lf.lastEvent != null)
+		{
+			lf.lastTime = lf.lastEvent.getTimeStamp();
+		}
+		
 		return lf;
 	}
 	
@@ -117,6 +122,7 @@ public class LogFile
 			{
 				LogEvent ev = LogEvent.parse(line);
 				events.put(ev.getCode(), ev);
+				lastEvent = ev;
 			}
 		}
 		catch(Exception e)
@@ -136,6 +142,10 @@ public class LogFile
 		ev.write(sb);
 		byte[] b = sb.toString().getBytes(CKit.CHARSET_UTF8);
 
+		if(out == null)
+		{
+			out = new FileOutputStream(file, true);
+		}
 		out.write(b);
 	}
 
@@ -143,6 +153,7 @@ public class LogFile
 	public void close() throws IOException
 	{
 		CKit.close(out);
+		out = null;
 	}
 
 
@@ -154,8 +165,18 @@ public class LogFile
 	
 	public boolean isRecoveryNeeded()
 	{
-		// TODO
-		return false;
+		if(lastEvent == null)
+		{
+			return true;
+		}
+		
+		switch(lastEvent.getCode())
+		{
+		case CLOSED:
+			return false;
+		}
+		
+		return true;
 	}
 
 

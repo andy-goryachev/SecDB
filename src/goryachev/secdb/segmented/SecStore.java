@@ -128,7 +128,7 @@ public class SecStore
 		// TODO 
 		
 		// write new log
-		lf.appendEvent(new LogEvent(LogEventCode.OPENED));
+		//lf.appendEvent(new LogEvent(LogEventCode.OPENED));
 		
 		// read root ref
 		Ref root = lf.getRootRef();

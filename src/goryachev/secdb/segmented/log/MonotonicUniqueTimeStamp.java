@@ -14,30 +14,30 @@ public class MonotonicUniqueTimeStamp
 	public MonotonicUniqueTimeStamp()
 	{
 	}
+	
+	
+	public MonotonicUniqueTimeStamp(long initialValue)
+	{
+		lastTime.set(initialValue);
+	}
 
 	
 	public long nextTimeStamp()
 	{
-		long now = System.currentTimeMillis() * 1000;
+		long t = System.currentTimeMillis() * 1000;
 		
 		for(;;)
 		{
 			long last = lastTime.get();
-			if(now < last)
+			if(t < last)
 			{
-				now = last + 1;
+				t = last + 1;
 			}
 			
-			if(lastTime.compareAndSet(last, now))
+			if(lastTime.compareAndSet(last, t))
 			{
-				return now;
+				return t;
 			}
 		}
-	}
-	
-	
-	public void initialize(long ms)
-	{
-		lastTime.set(ms + 1);
 	}
 }

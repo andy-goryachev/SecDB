@@ -12,8 +12,8 @@ public final class LogEvent
 {
 	protected static final String SEP = "|";
 	private final LogEventCode code;
-	private final long timestamp;
 	private final String[] data;
+	private long timestamp;
 	
 	
 	public LogEvent(LogEventCode code)
@@ -61,13 +61,27 @@ public final class LogEvent
 	{
 		return code;
 	}
+	
+	
+	public long getTimeStamp()
+	{
+		// TODO different between loaded and created
+		if(timestamp == 0)
+		{
+			if(data != null)
+			{
+				timestamp = Long.parseLong(data[1]);
+			}
+		}
+		return timestamp;
+	}
 
 
 	public void write(SB sb) throws Exception
 	{
-		sb.append(timestamp);
-		sb.append(SEP);
 		sb.append(code);
+		sb.append(SEP);
+		sb.append(timestamp);
 		sb.append(SEP);
 		
 		switch(code)
