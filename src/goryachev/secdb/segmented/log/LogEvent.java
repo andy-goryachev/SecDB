@@ -12,17 +12,17 @@ public final class LogEvent
 {
 	protected static final String SEP = "|";
 	private final LogEventCode code;
-	private final TStamp timestamp;
+	private final long timestamp;
 	private final String[] data;
 	
 	
 	public LogEvent(LogEventCode code)
 	{
-		this(code, new TStamp(LogFile.getSequence(), System.currentTimeMillis()), null);
+		this(code, LogFile.timestamp(), null);
 	}
 	
 	
-	protected LogEvent(LogEventCode code, TStamp t, String[] data)
+	protected LogEvent(LogEventCode code, long t, String[] data)
 	{
 		this.code = code;
 		this.timestamp = t;
@@ -36,8 +36,7 @@ public final class LogEvent
 		if(ss.length >= 4)
 		{
 			long time = Parsers.parseLong(ss[0]);
-			long seq = Parsers.parseLong(ss[1]);
-			LogEventCode code = LogEventCode.parse(ss[2]);
+			LogEventCode code = LogEventCode.parse(ss[1]);
 			
 //			switch(code)
 //			{
@@ -51,7 +50,7 @@ public final class LogEvent
 //			case STORE_OK:
 //			}
 			
-			return new LogEvent(code, new TStamp(seq, time), ss);
+			return new LogEvent(code, time, ss);
 		}
 		
 		throw new Exception("failed to parse LogEvent: [" + text + "]");
@@ -66,9 +65,7 @@ public final class LogEvent
 
 	public void write(SB sb) throws Exception
 	{
-		sb.append(timestamp.sequence);
-		sb.append(SEP);
-		sb.append(timestamp.time);
+		sb.append(timestamp);
 		sb.append(SEP);
 		sb.append(code);
 		sb.append(SEP);

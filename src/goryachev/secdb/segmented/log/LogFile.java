@@ -26,15 +26,13 @@ public class LogFile
 	implements Closeable
 {
 	protected static final String NAME_PREFIX = "log.";
+	protected static final MonotonicUniqueTimeStamp tstamp = new MonotonicUniqueTimeStamp();
 	protected final File file;
 	protected final byte[] key;
 	protected final EnumMap<LogEventCode,LogEvent> events = new EnumMap<>(LogEventCode.class);
 	private FileOutputStream out;
 	private boolean error;
-	// TODO TStamp
 	private long lastTime;
-	private long lastSequence;
-	private static long sequence;
 	
 	
 	public LogFile(File f, byte[] key, FileOutputStream out)
@@ -86,12 +84,7 @@ public class LogFile
 		{
 			public int compare(LogFile a, LogFile b)
 			{
-				int d = compareLong(a.getLastSequence(), b.getLastSequence());
-				if(d != 0)
-				{
-					d = compareLong(a.getLastTime(), b.getLastTime());
-				}
-				return d;
+				return compareLong(a.getLastTime(), b.getLastTime());
 			}
 		});
 		
@@ -102,12 +95,6 @@ public class LogFile
 	protected long getLastTime()
 	{
 		return lastTime;
-	}
-
-
-	protected long getLastSequence()
-	{
-		return lastSequence;
 	}
 
 
@@ -159,9 +146,9 @@ public class LogFile
 	}
 
 
-	public static long getSequence()
+	public static long timestamp()
 	{
-		return sequence;
+		return tstamp.nextTimeStamp();
 	}
 	
 	

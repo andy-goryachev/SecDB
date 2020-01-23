@@ -6,17 +6,17 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Monotonic Time Stamp.
  */
-public class MonotonicTimeStamp
+public class MonotonicUniqueTimeStamp
 {
 	private final AtomicLong lastTime = new AtomicLong();
 	
 	
-	public MonotonicTimeStamp()
+	public MonotonicUniqueTimeStamp()
 	{
 	}
 
 	
-	public long monotonicTimeStamp()
+	public long nextTimeStamp()
 	{
 		long now = System.currentTimeMillis() * 1000;
 		
