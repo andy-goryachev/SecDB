@@ -136,7 +136,19 @@ public class LogFile
 	}
 	
 	
-	public void appendEvent(LogEvent ev) throws Exception
+	public void appendEvent(LogEventCode cd) throws Exception
+	{
+		appendEvent(new LogEvent.Save(cd, null));
+	}
+	
+	
+	public void appendEvent(LogEventCode cd, Object data) throws Exception
+	{
+		appendEvent(new LogEvent.Save(cd, data));
+	}
+	
+	
+	protected void appendEvent(LogEvent ev) throws Exception
 	{
 		SB sb = new SB(256);
 		ev.write(sb);

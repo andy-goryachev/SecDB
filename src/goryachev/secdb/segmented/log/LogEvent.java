@@ -8,35 +8,31 @@ import goryachev.common.util.SB;
 /**
  * Log Events are written to LogFile.
  */
-public final class LogEvent
+public abstract class LogEvent
 {
+	public abstract void write(SB sb) throws Exception;
+	
+	//
+	
 	protected static final String SEP = "|";
-	private final LogEventCode code;
-	private final String[] data;
-	private long timestamp;
+	protected final LogEventCode code;
+	protected final long timestamp;
 	
 	
-	public LogEvent(LogEventCode code)
-	{
-		this(code, LogFile.timestamp(), null);
-	}
-	
-	
-	protected LogEvent(LogEventCode code, long t, String[] data)
+	public LogEvent(LogEventCode code, long timestamp)
 	{
 		this.code = code;
-		this.timestamp = t;
-		this.data = data;
+		this.timestamp = timestamp;
 	}
 	
 	
 	public static LogEvent parse(String text) throws Exception
 	{
 		String[] ss = CKit.split(text, '|');
-		if(ss.length >= 4)
+		if(ss.length >= 3)
 		{
-			long time = Parsers.parseLong(ss[0]);
-			LogEventCode code = LogEventCode.parse(ss[1]);
+			LogEventCode code = LogEventCode.parse(ss[0]);
+			long time = Parsers.parseLong(ss[1]);
 			
 //			switch(code)
 //			{
@@ -50,7 +46,7 @@ public final class LogEvent
 //			case STORE_OK:
 //			}
 			
-			return new LogEvent(code, time, ss);
+			return new LogEvent.Read(code, time, ss);
 		}
 		
 		throw new Exception("failed to parse LogEvent: [" + text + "]");
@@ -65,28 +61,58 @@ public final class LogEvent
 	
 	public long getTimeStamp()
 	{
-		// TODO different between loaded and created
-		if(timestamp == 0)
-		{
-			if(data != null)
-			{
-				timestamp = Long.parseLong(data[1]);
-			}
-		}
 		return timestamp;
 	}
-
-
-	public void write(SB sb) throws Exception
+	
+	
+	//
+	
+	
+	public static class Read extends LogEvent
 	{
-		sb.append(code);
-		sb.append(SEP);
-		sb.append(timestamp);
-		sb.append(SEP);
+		private final String[] data;
+
 		
-		switch(code)
+		public Read(LogEventCode code, long timestamp, String[] data)
 		{
-		// TODO
+			super(code, timestamp);
+			this.data = data;
+		}
+		
+		
+		public void write(SB sb) throws Exception
+		{
+			throw new Error();
+		}
+	}
+	
+	
+	//
+	
+	
+	public static class Save extends LogEvent
+	{
+		private final Object data;
+		
+		
+		public Save(LogEventCode code, Object data)
+		{
+			super(code, LogFile.timestamp());
+			this.data = data;
+		}
+		
+		
+		public void write(SB sb) throws Exception
+		{
+			sb.append(code);
+			sb.append(SEP);
+			sb.append(timestamp);
+			sb.append(SEP);
+			
+			switch(code)
+			{
+			// TODO
+			}
 		}
 	}
 }
