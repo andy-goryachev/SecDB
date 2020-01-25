@@ -194,7 +194,11 @@ public class LogFile
 
 	public Ref getRootRef()
 	{
-		// TODO
+		LogEvent ev = events.get(LogEventCode.HEAD);
+		if(ev != null)
+		{
+			return ev.getRefData();
+		}
 		return null;
 	}
 }

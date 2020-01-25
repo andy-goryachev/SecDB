@@ -9,7 +9,6 @@ import goryachev.common.util.Keep;
 @Keep
 public enum LogEventCode
 {
-	CREATED,
 	CLOSED,
 	HEAD,
 //	OPENED, not needed

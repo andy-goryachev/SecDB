@@ -3,6 +3,7 @@ package goryachev.secdb.segmented.log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.Parsers;
 import goryachev.common.util.SB;
+import goryachev.secdb.segmented.Ref;
 
 
 /**
@@ -11,6 +12,8 @@ import goryachev.common.util.SB;
 public abstract class LogEvent
 {
 	public abstract void write(SB sb) throws Exception;
+	
+	public abstract Ref getRefData();
 	
 	//
 	
@@ -84,6 +87,19 @@ public abstract class LogEvent
 		{
 			throw new Error();
 		}
+
+
+		public Ref getRefData()
+		{
+			try
+			{
+				return Ref.parse(data[2]);
+			}
+			catch(Throwable e)
+			{
+				return null;
+			}
+		}
 	}
 	
 	
@@ -104,15 +120,33 @@ public abstract class LogEvent
 		
 		public void write(SB sb) throws Exception
 		{
-			sb.append(code);
-			sb.append(SEP);
-			sb.append(timestamp);
-			sb.append(SEP);
+			sb.a(code);
+			sb.a(SEP);
+			sb.a(timestamp);
+			sb.a(SEP);
 			
 			switch(code)
 			{
-			// TODO
+			case HEAD:
+				Ref ref = getRefData();
+				if(ref != null)
+				{
+					sb.a(ref.toPersistentString());
+				}
+				break;
 			}
+			
+			sb.nl();
+		}
+		
+		
+		public Ref getRefData()
+		{
+			if(data instanceof Ref)
+			{
+				return (Ref)data;
+			}
+			return null;
 		}
 	}
 }

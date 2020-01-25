@@ -82,7 +82,8 @@ public class SecStore
 		
 		// TODO write log
 		LogFile lf = LogFile.create(dir, logKey);
-		lf.appendEvent(LogEventCode.CREATED);
+		lf.appendEvent(LogEventCode.HEAD, null);
+		lf.appendEvent(LogEventCode.CLOSED);
 		
 		return new SecStore(dir, lf, null);
 	}
