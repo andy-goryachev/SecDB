@@ -2,6 +2,7 @@
 package goryachev.secdb.segmented;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
+import goryachev.common.util.CFileLock;
 import goryachev.common.util.CMap;
 import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
@@ -23,22 +24,25 @@ import java.util.List;
 public class SecStore
 	implements Closeable,IStore<Ref>
 {
+	protected static final String LOCK_FILE = "lock";
 	private final File dir;
+	private final CFileLock lock;
 	private final LogFile logFile;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private Ref root;
 	
 	
-	public SecStore(File dir, LogFile logFile, Ref root)
+	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
 		this.root = root;
+		this.lock = lock;
 	}
 	
 	
 	/** likely to throw DbException which contains error code and additional information */
-	public static SecStore create(File dir, char[] passphrase) throws Exception
+	public static void create(File dir, char[] passphrase) throws Exception
 	{
 		if(!dir.exists())
 		{
@@ -84,8 +88,6 @@ public class SecStore
 		LogFile lf = LogFile.create(dir, logKey);
 		lf.appendEvent(LogEventCode.HEAD, null);
 		lf.appendEvent(LogEventCode.CLOSED);
-		
-		return new SecStore(dir, lf, null);
 	}
 	
 	
@@ -98,45 +100,55 @@ public class SecStore
 			throw new DBException(DBErrorCode.DIR_NOT_FOUND, dir);
 		}
 		
-		// TODO
-		// decrypt key -> missing key file, passphrase error
-		
-		
-		// read all logs
-		// check if recovery is needed
-		//   (perform recovery)
-		// check version?
-		List<LogFile> lfs = LogFile.open(dir, null);
-		if(lfs.size() == 0)
+		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
+		lock.checkLock();
+		try
 		{
-			throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
+			// TODO
+			// decrypt key -> missing key file, passphrase error
+			
+			
+			// read all logs
+			// check if recovery is needed
+			//   (perform recovery)
+			// check version?
+			List<LogFile> lfs = LogFile.open(dir, null);
+			if(lfs.size() == 0)
+			{
+				throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
+			}
+			
+			// TODO two or more files means unsuccessfull recovery
+			// TODO check if recovery is needed
+	//		if(lf.isRecoveryNeeded())
+	//		{
+	//			// TODO recover
+	//		}
+	//		else
+	//		{
+	//			// TODO is recovery is not needed, create a new log file and delete all	
+	//		}
+			
+			LogFile lf = lfs.get(0);
+			
+			// TODO 
+			
+			// write new log
+			//lf.appendEvent(new LogEvent(LogEventCode.OPENED));
+			
+			// read root ref
+			Ref root = lf.getRootRef();
+			
+			// TODO
+			// load root node and do some checks
+			
+			return new SecStore(dir, lock, lf, root);
 		}
-		
-		// TODO two or more files means unsuccessfull recovery
-		// TODO check if recovery is needed
-//		if(lf.isRecoveryNeeded())
-//		{
-//			// TODO recover
-//		}
-//		else
-//		{
-//			// TODO is recovery is not needed, create a new log file and delete all	
-//		}
-		
-		LogFile lf = lfs.get(0);
-		
-		// TODO 
-		
-		// write new log
-		//lf.appendEvent(new LogEvent(LogEventCode.OPENED));
-		
-		// read root ref
-		Ref root = lf.getRootRef();
-		
-		// TODO
-		// load root node and do some checks
-		
-		return new SecStore(dir, lf, root);
+		catch(Exception e)
+		{
+			lock.unlock();
+			throw e;
+		}
 	}
 
 
@@ -145,6 +157,8 @@ public class SecStore
 		// TODO
 		// zero out the main key
 		// clear all buffers
+		
+		lock.unlock();
 	}
 
 

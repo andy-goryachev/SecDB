@@ -112,15 +112,24 @@ public class LogFile
 	}
 	
 	
+	@SuppressWarnings("resource") // compiler is wrong
 	protected void load() throws Exception
 	{
 		CReader rd = new CReader(file);
+		long time = 0;
+		
 		try
 		{
 			String line;
 			while((line = rd.readLine()) != null)
 			{
 				LogEvent ev = LogEvent.parse(line);
+				if(ev.getTimeStamp() < time)
+				{
+					throw new Exception("timestamp jump: last=" + time + " loading=" + ev);
+				}
+				time = ev.getTimeStamp();
+
 				events.put(ev.getCode(), ev);
 				lastEvent = ev;
 			}

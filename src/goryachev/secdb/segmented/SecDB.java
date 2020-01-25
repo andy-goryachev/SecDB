@@ -3,7 +3,6 @@ package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
-import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.internal.DataHolder;
 import java.io.Closeable;
@@ -28,10 +27,9 @@ public class SecDB
 	}
 	
 	
-	public static SecDB create(File dir, char[] passphrase) throws Exception
+	public static void create(File dir, char[] passphrase) throws Exception
 	{
-		SecStore st = SecStore.create(dir, passphrase);
-		return new SecDB(st);
+		SecStore.create(dir, passphrase);
 	}
 	
 	

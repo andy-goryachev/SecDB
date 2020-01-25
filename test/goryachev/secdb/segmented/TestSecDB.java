@@ -10,16 +10,26 @@ import java.io.File;
  */
 public class TestSecDB
 {
+	private static final File DIR = new File("user.home/db-test");
+	
+	
 	public static void main(String[] args)
 	{
 		TF.run();
 	}
 	
 	
-	@Test
-	public void test() throws Exception
+//	@Test
+	public void testCreate() throws Exception
 	{
-		File dir = new File("user.home/db-test");
-		SecDB.create(dir, null);
+		SecDB.create(DIR, null);
+	}
+	
+	
+	@Test
+	public void testOpen() throws Exception
+	{
+		SecDB db = SecDB.open(DIR, null);
+		db.close();
 	}
 }
