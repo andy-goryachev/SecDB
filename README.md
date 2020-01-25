@@ -5,7 +5,8 @@ Secure Local Key-Value Store with locally managed keys.
 
 ## Features
 
-- Simple embeddable key-value store with range queries
+- Simple key-value store
+- Range queries
 - Encrypted at rest
 
 
@@ -18,4 +19,9 @@ This database will be used in the following projects:
 
 - [Access Panel](https://github.com/andy-goryachev/AccessPanelPublic)
 - Secure Digital Archive
-- Security and Elderly-oriented email client
+- Secure, simple, elderly-oriented email client
+
+
+## Similar Projects
+
+Could not find any.
