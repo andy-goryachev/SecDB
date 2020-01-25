@@ -4,6 +4,7 @@ import goryachev.common.util.SKey;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
 import goryachev.secdb.QueryClient;
+import goryachev.secdb.DBTransaction;
 import goryachev.secdb.internal.DataHolder;
 import java.io.Closeable;
 import java.io.File;
@@ -54,10 +55,17 @@ public class SecDB
 	}
 	
 	
+	public void execute(DBTransaction<Ref> tx)
+	{
+		engine.execute(tx);
+	}
+	
+	
 	// TODO transaction
 	// TODO store single value
 	
 	
+	/** range query.  'start' may be less than, greater than, or equal to 'end' */
 	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
 	{
 		engine.query(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
@@ -74,5 +82,12 @@ public class SecDB
 				return client.acceptQueryResult(key, v);
 			}
 		});
+	}
+	
+	
+	/** simplified range query [start,end[ */
+	public void query(SKey start, SKey end, QueryClient<SKey,IStored> client)
+	{
+		query(start, true, end, false, client);
 	}
 }

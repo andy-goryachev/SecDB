@@ -37,7 +37,7 @@ public class TestInMemoryStore
 				D.print();
 			}
 
-			db.execute(new Transaction<InMemoryRef>()
+			db.execute(new DBTransaction<InMemoryRef>()
 			{
 				protected void body() throws Exception
 				{

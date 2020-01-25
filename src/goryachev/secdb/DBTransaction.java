@@ -8,9 +8,9 @@ import goryachev.secdb.internal.DBEngineIO;
 
 
 /**
- * Transaction.
+ * Transaction base class.
  */
-public abstract class Transaction<R extends IRef>
+public abstract class DBTransaction<R extends IRef>
 {
 	protected abstract void body() throws Exception;
 	
@@ -27,7 +27,7 @@ public abstract class Transaction<R extends IRef>
 	private int branchingFactor;
 	
 	
-	public Transaction()
+	public DBTransaction()
 	{
 	}
 	
@@ -45,6 +45,12 @@ public abstract class Transaction<R extends IRef>
 	{
 		return root.containsKey(key);
 	}
+	
+	
+//	public void insert(SKey key, byte[] bytes) throws Exception
+//	{
+//		// TODO maybe
+//	}
 	
 	
 	public void insert(SKey key, IStream in) throws Exception
@@ -66,12 +72,6 @@ public abstract class Transaction<R extends IRef>
 		
 		BPlusTreeNode<SKey,DataHolder<R>> newRoot = root.insertValue(root, key, h, branchingFactor);
 		root = newRoot;
-	}
-	
-	
-	public void execute(DBEngine db)
-	{		
-		db.execute(this);
 	}
 	
 	

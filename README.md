@@ -1,11 +1,13 @@
 # SecDB
 
-Secure Local Key-Value Store
+Secure Local Key-Value Store with locally managed keys.
+
 
 ## Features
 
 - Simple embeddable key-value store with range queries
 - Encrypted at rest
+
 
 ## Why
 
@@ -16,3 +18,4 @@ This database will be used in the following projects:
 
 - [Access Panel](https://github.com/andy-goryachev/AccessPanelPublic)
 - Secure Digital Archive
+- Security and Elderly-oriented email client

@@ -188,7 +188,8 @@ public class SecStore
 		// on failure: reset heads?
 		// store data key in the ref
 		
-		return null;
+		// TODO
+		throw new Error();
 	}
 
 
@@ -200,7 +201,8 @@ public class SecStore
 		// TODO data key
 		// TODO need to explicitly clear the ref (because of the data key)
 		
-		return null;
+		// TODO
+		throw new Error();
 	}
 
 
