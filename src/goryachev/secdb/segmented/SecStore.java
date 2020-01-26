@@ -12,6 +12,7 @@ import goryachev.secdb.segmented.log.LogFile;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -29,6 +30,8 @@ public class SecStore
 	private final CFileLock lock;
 	private final LogFile logFile;
 	private final CMap<String,SegmentFile> segments = new CMap();
+	private SegmentFile treeSegment;
+	private SegmentFile dataSegment;
 	private Ref root;
 	
 	
@@ -177,19 +180,43 @@ public class SecStore
 
 	public Ref store(IStream in, boolean isTree) throws Exception
 	{
-		long len = in.getLength();
+		InputStream is = in.getStream();
 		
-		// TODO pick a segment
-		// get offset
-		// nonce = segment + offset
 		// if isTree, use the main key
 		// if !isTree, generate a random data key
-		// TODO write, update heads
-		// on failure: reset heads?
-		// store data key in the ref
+		byte[] key = null; // TODO
+		// TODO nonce = segment + offset
+
+		long len = in.getLength();
+		Ref ref = null;
 		
-		// TODO
-		throw new Error();
+		for(;;)
+		{
+			SegmentFile sf = segmentForLength(len, isTree);
+			String name = sf.getName();
+			long off = sf.getLength();
+			
+			if(ref == null)
+			{
+				ref = new Ref.Single(name, off, len, key);
+			}
+			else
+			{
+				ref = ref.addSegment(name, off);
+			}
+
+			len = sf.write(is, key); 
+			if(len == 0)
+			{
+				return ref;
+			}
+		}
+	}
+
+
+	protected SegmentFile segmentForLength(long length, boolean isTree)
+	{
+		return null;
 	}
 
 
@@ -208,6 +235,7 @@ public class SecStore
 
 	public void writeRef(Ref ref, DWriter wr) throws Exception
 	{
+		// TODO delegate to Ref
 		wr.writeString(ref.getSegment());
 		wr.writeLong(ref.getOffset());
 		wr.writeLong(ref.getLength());
@@ -217,11 +245,14 @@ public class SecStore
 
 	public Ref readRef(DReader rd) throws Exception
 	{
+		// TODO multiple segments
+		// TODO reuse text version maybe?
 		String segment = rd.readString();
 		long offset = rd.readLong();
 		long length = rd.readLong();
 		byte[] dataKey = rd.readByteArray(1024);
-		return new Ref(segment, offset, length, dataKey);
+		
+		return new Ref.Single(segment, offset, length, dataKey);
 	}
 	
 	
