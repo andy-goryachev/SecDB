@@ -1,6 +1,8 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import java.io.File;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 
 /**
@@ -8,12 +10,16 @@ import java.io.InputStream;
  */
 public class SegmentFile
 {
+	protected final File file;
 	protected final String name;
 	private long length;
+	// TODO or use MappedByteBuffer?
+	private RandomAccessFile raf;
 	
 	
-	public SegmentFile(String name)
+	public SegmentFile(File file, String name)
 	{
+		this.file = file;
 		this.name = name;
 	}
 	

@@ -4,6 +4,7 @@ import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
 import goryachev.common.util.CFileLock;
 import goryachev.common.util.CMap;
+import goryachev.common.util.GUID256;
 import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
@@ -30,8 +31,7 @@ public class SecStore
 	private final CFileLock lock;
 	private final LogFile logFile;
 	private final CMap<String,SegmentFile> segments = new CMap();
-	private SegmentFile treeSegment;
-	private SegmentFile dataSegment;
+	private SegmentFile currentSegment;
 	private Ref root;
 	
 	
@@ -212,12 +212,28 @@ public class SecStore
 			}
 		}
 	}
+	
+	
+	protected SegmentFile newSegmentFile()
+	{
+		String name = GUID256.generateHexString();
+		String subdir = name.substring(0, 2);
+		File f = new File(dir, subdir + "/" + name);
+		f.mkdirs();
+		
+		SegmentFile sf =  new SegmentFile(f, name);
+		segments.put(name, sf); 
+		return sf;
+	}
 
 
 	protected SegmentFile segmentForLength(long length, boolean isTree)
 	{
-		// TODO
-		throw new Error();
+		if(currentSegment == null)
+		{
+			currentSegment = newSegmentFile();
+		}
+		return currentSegment;
 	}
 
 
