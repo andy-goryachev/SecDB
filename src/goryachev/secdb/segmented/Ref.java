@@ -1,5 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.io.DReader;
+import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
 import goryachev.common.util.FH;
 import goryachev.common.util.Hex;
@@ -36,6 +38,8 @@ public abstract class Ref
 	/** used to persist the reference.  the resulting string can be parsed by Ref.parse() */
 	public abstract String toPersistentString();
 	
+	public abstract void write(DWriter wr) throws Exception;
+	
 	//
 	
 	protected static final String MULTIPLE = "M";
@@ -71,6 +75,39 @@ public abstract class Ref
 		}
 	}
 	
+
+	public static Ref read(DReader rd) throws Exception
+	{
+		int sz = rd.readShort();
+		if(sz <= 0)
+		{
+			throw new Exception("invalid segment count: " + sz);
+		}
+
+		long len = rd.readLong();
+		byte[] dataKey = rd.readByteArray(512);
+
+		if(sz == 1)
+		{
+			String segment = rd.readString();
+			long offset = rd.readLong();
+			return new Single(len, dataKey, segment, offset);
+		}
+		else
+		{
+			String[] segments = new String[sz];
+			long[] offsets = new long[sz];
+			
+			for(int i=0; i<sz; i++)
+			{
+				segments[i] = rd.readString();
+				offsets[i] = rd.readLong();
+			}
+			
+			return new Multiple(len, dataKey, segments, offsets);
+		}
+	}
+	
 	
 	public long getLength()
 	{
@@ -94,7 +131,7 @@ public abstract class Ref
 		private final long offset;
 
 		
-		public Single(String segment, long offset, long length, byte[] dataKey)
+		public Single(long length, byte[] dataKey, String segment, long offset)
 		{
 			super(length, dataKey);
 			this.segment = segment;
@@ -119,7 +156,7 @@ public abstract class Ref
 			byte[] key = Parsers.parseByteArray(ss[1]);
 			String seg = ss[2];
 			long off = Long.parseLong(ss[3]);
-			return new Single(seg, off, len, key);
+			return new Single(len, key, seg, off);
 		}
 
 		
@@ -137,6 +174,16 @@ public abstract class Ref
 			sb.a(SEP);
 			sb.a(offset);
 			return sb.toString();
+		}
+		
+		
+		public void write(DWriter wr) throws Exception
+		{
+			wr.writeShort(1);
+			wr.writeLong(length);
+			wr.writeByteArray(dataKey);
+			wr.writeString(segment);
+			wr.writeLong(offset);
 		}
 		
 
@@ -312,6 +359,21 @@ public abstract class Ref
 		}
 		
 
+		public void write(DWriter wr) throws Exception
+		{
+			int sz = getSegmentCount();
+			wr.writeShort(sz);
+			wr.writeLong(length);
+			wr.writeByteArray(dataKey);
+			
+			for(int i=0; i<sz; i++)
+			{
+				wr.writeString(getSegment(i));
+				wr.writeLong(getOffset(i));
+			}
+		}
+		
+		
 		public boolean isSingleSegment()
 		{
 			return false;

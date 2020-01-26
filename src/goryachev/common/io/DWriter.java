@@ -69,7 +69,7 @@ public class DWriter
 	}
 	
 
-	public void writeShort(short x) throws IOException
+	public void writeShort(int x) throws IOException
 	{
 		out.write(x >>> 8);
 		out.write(x);

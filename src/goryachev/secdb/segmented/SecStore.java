@@ -198,7 +198,7 @@ public class SecStore
 			
 			if(ref == null)
 			{
-				ref = new Ref.Single(name, off, len, key);
+				ref = new Ref.Single(len, key, name, off);
 			}
 			else
 			{
@@ -216,18 +216,19 @@ public class SecStore
 
 	protected SegmentFile segmentForLength(long length, boolean isTree)
 	{
-		return null;
+		// TODO
+		throw new Error();
 	}
 
 
 	public IStream load(Ref ref) throws Exception
 	{
-		String seg = ref.getSegment();
-		long off = ref.getOffset();
-		long len = ref.getLength();
+//		String seg = ref.getSegment();
+//		long off = ref.getOffset();
+//		long len = ref.getLength();
 		// TODO data key
 		// TODO need to explicitly clear the ref (because of the data key)
-		
+
 		// TODO
 		throw new Error();
 	}
@@ -235,24 +236,13 @@ public class SecStore
 
 	public void writeRef(Ref ref, DWriter wr) throws Exception
 	{
-		// TODO delegate to Ref
-		wr.writeString(ref.getSegment());
-		wr.writeLong(ref.getOffset());
-		wr.writeLong(ref.getLength());
-		wr.writeByteArray(ref.getDataKey());
+		ref.write(wr);
 	}
 
 
 	public Ref readRef(DReader rd) throws Exception
 	{
-		// TODO multiple segments
-		// TODO reuse text version maybe?
-		String segment = rd.readString();
-		long offset = rd.readLong();
-		long length = rd.readLong();
-		byte[] dataKey = rd.readByteArray(1024);
-		
-		return new Ref.Single(segment, offset, length, dataKey);
+		return Ref.read(rd);
 	}
 	
 	
