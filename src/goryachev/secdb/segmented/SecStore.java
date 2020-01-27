@@ -196,7 +196,7 @@ public class SecStore
 			
 			if(ref == null)
 			{
-				ref = new Ref.Single(len, key, name, off);
+				ref = new Ref.SingleSegment(len, key, name, off);
 			}
 			else
 			{
@@ -220,8 +220,20 @@ public class SecStore
 		File f = new File(dir, subdir + "/" + name);
 		
 		SegmentFile sf =  new SegmentFile(f, name);
-		segments.put(name, sf); 
+		synchronized(segments)
+		{
+			segments.put(name, sf);
+		}
 		return sf;
+	}
+	
+	
+	protected SegmentFile getSegmentFile(String name)
+	{
+		synchronized(segments)
+		{
+			return segments.get(name);
+		}
 	}
 
 

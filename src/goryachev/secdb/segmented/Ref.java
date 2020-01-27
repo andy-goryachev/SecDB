@@ -33,7 +33,7 @@ public abstract class Ref
 	public abstract long getOffset(int ix);
 	
 	/** appends a segment.  returns a new instance of Ref.Multiple */
-	public abstract Ref.Multiple addSegment(String segment, long offset);
+	public abstract Ref.MultiSegment addSegment(String segment, long offset);
 	
 	/** used to persist the reference.  the resulting string can be parsed by Ref.parse() */
 	public abstract String toPersistentString();
@@ -66,12 +66,12 @@ public abstract class Ref
 		if(text.startsWith(MULTIPLE))
 		{
 			// multi-segment Ref
-			return Multiple.parseMultiSegment(text);
+			return MultiSegment.parseMultiSegment(text);
 		}
 		else
 		{
 			// single segment Ref
-			return Single.parseSingleSegment(text);
+			return SingleSegment.parseSingleSegment(text);
 		}
 	}
 	
@@ -91,7 +91,7 @@ public abstract class Ref
 		{
 			String segment = rd.readString();
 			long offset = rd.readLong();
-			return new Single(len, dataKey, segment, offset);
+			return new SingleSegment(len, dataKey, segment, offset);
 		}
 		else
 		{
@@ -104,7 +104,7 @@ public abstract class Ref
 				offsets[i] = rd.readLong();
 			}
 			
-			return new Multiple(len, dataKey, segments, offsets);
+			return new MultiSegment(len, dataKey, segments, offsets);
 		}
 	}
 	
@@ -125,13 +125,13 @@ public abstract class Ref
 	
 	
 	/** single-segment reference */
-	public static class Single extends Ref
+	public static class SingleSegment extends Ref
 	{
 		private final String segment;
 		private final long offset;
 
 		
-		public Single(long length, byte[] dataKey, String segment, long offset)
+		public SingleSegment(long length, byte[] dataKey, String segment, long offset)
 		{
 			super(length, dataKey);
 			this.segment = segment;
@@ -139,7 +139,7 @@ public abstract class Ref
 		}
 		
 		
-		protected static Single parseSingleSegment(String text) throws Exception
+		protected static SingleSegment parseSingleSegment(String text) throws Exception
 		{
 			String[] ss = CKit.split(text, SEP);
 			if(ss.length != 4)
@@ -156,7 +156,7 @@ public abstract class Ref
 			byte[] key = Parsers.parseByteArray(ss[1]);
 			String seg = ss[2];
 			long off = Long.parseLong(ss[3]);
-			return new Single(len, key, seg, off);
+			return new SingleSegment(len, key, seg, off);
 		}
 
 		
@@ -233,7 +233,7 @@ public abstract class Ref
 		
 		public int hashCode()
 		{
-			int h = FH.hash(Single.class);
+			int h = FH.hash(SingleSegment.class);
 			h = FH.hash(h, segment);
 			h = FH.hash(h, offset);
 			return FH.hash(h, length);
@@ -246,9 +246,9 @@ public abstract class Ref
 			{
 				return true;
 			}
-			else if(x instanceof Single)
+			else if(x instanceof SingleSegment)
 			{
-				Single r = (Single)x;
+				SingleSegment r = (SingleSegment)x;
 				return
 					(offset == r.offset) &&
 					(length == r.length) &&
@@ -261,7 +261,7 @@ public abstract class Ref
 		}
 		
 
-		public Ref.Multiple addSegment(String segment, long offset)
+		public Ref.MultiSegment addSegment(String segment, long offset)
 		{
 			// TODO append a segment
 			throw new Error();
@@ -279,13 +279,13 @@ public abstract class Ref
 	
 	
 	/** multi-segment reference */
-	public static class Multiple extends Ref
+	public static class MultiSegment extends Ref
 	{
 		private final String[] segments;
 		private final long[] offsets;
 		
 		
-		public Multiple(long length, byte[] dataKey, String[] segments, long[] offsets)
+		public MultiSegment(long length, byte[] dataKey, String[] segments, long[] offsets)
 		{
 			super(length, dataKey);
 			
@@ -294,7 +294,7 @@ public abstract class Ref
 		}
 		
 		
-		protected static Multiple parseMultiSegment(String text) throws Exception
+		protected static MultiSegment parseMultiSegment(String text) throws Exception
 		{
 			String[] ss = CKit.split(text, SEP);
 			int ix = 0;
@@ -327,7 +327,7 @@ public abstract class Ref
 				offsets[i] = Parsers.parseLong(ss[ix++]);
 			}
 
-			return new Multiple(len, key, segments, offsets);
+			return new MultiSegment(len, key, segments, offsets);
 		}
 
 
@@ -412,7 +412,7 @@ public abstract class Ref
 		
 		public int hashCode()
 		{
-			int h = FH.hash(Single.class);
+			int h = FH.hash(SingleSegment.class);
 			h = FH.hash(h, segments);
 			h = FH.hash(h, offsets);
 			return FH.hash(h, length);
@@ -425,9 +425,9 @@ public abstract class Ref
 			{
 				return true;
 			}
-			else if(x instanceof Multiple)
+			else if(x instanceof MultiSegment)
 			{
-				Multiple r = (Multiple)x;
+				MultiSegment r = (MultiSegment)x;
 				return
 					(length == r.length) &&
 					CKit.equals(offsets, r.offsets) &&
@@ -440,7 +440,7 @@ public abstract class Ref
 		}
 		
 		
-		public Ref.Multiple addSegment(String segment, long offset)
+		public Ref.MultiSegment addSegment(String segment, long offset)
 		{
 			// TODO append a segment
 			throw new Error();

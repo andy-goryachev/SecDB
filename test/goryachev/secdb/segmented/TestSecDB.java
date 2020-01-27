@@ -2,11 +2,14 @@
 package goryachev.secdb.segmented;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
+import goryachev.common.util.CKit;
 import goryachev.common.util.D;
+import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.util.ByteArrayIStream;
+import goryachev.secdb.util.Utils;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -48,8 +51,17 @@ public class TestSecDB
 				}
 			});
 			
+			db.execute(new Transaction()
+			{
+				protected void body() throws Exception
+				{
+					insert(new SKey("1"), new ByteArrayIStream("2".getBytes()));
+					insert(new SKey("2"), new ByteArrayIStream("3".getBytes()));
+				}
+			});
+			
 			int ct = query(db, "0", "9");
-			TF.eq(ct, 2);
+			TF.eq(ct, 3);
 		}
 		finally
 		{
@@ -67,9 +79,23 @@ public class TestSecDB
 		{
 			public boolean acceptQueryResult(SKey key, IStored value)
 			{
-				D.print(key, value);
+				String res = printValue(value);
+				D.print(key, res);
 				ct.incrementAndGet();
 				return true;
+			}
+
+			protected String printValue(IStored is)
+			{
+				try
+				{
+					byte[] b = Utils.readBytes(is.getIStream(), Integer.MAX_VALUE);
+					return Hex.toHexString(b);
+				}
+				catch(Exception e)
+				{
+					return CKit.stackTrace(e);
+				}
 			}
 
 			public void onError(Throwable err)

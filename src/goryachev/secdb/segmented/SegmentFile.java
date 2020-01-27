@@ -67,5 +67,18 @@ public class SegmentFile
 		writer.seek(len);
 		
 		return Utils.copy(in.getStream(), writer, buf, Math.min(max, size));
+		
+		// TODO don't forget to close the writer
+	}
+
+
+	public int read(byte[] buffer, int offset, int length) throws Exception
+	{
+		if(reader == null)
+		{
+			reader = new RandomAccessFile(file, "r");
+		}
+		
+		return reader.read(buffer, offset, length);
 	}
 }
