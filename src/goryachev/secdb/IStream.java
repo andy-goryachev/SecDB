@@ -12,7 +12,4 @@ public interface IStream
 	
 	
 	public long getLength();
-
-
-	public byte[] readBytes(int limit) throws Exception;
 }

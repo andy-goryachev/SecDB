@@ -30,17 +30,4 @@ public class ByteArrayIStream
 	{
 		return bytes.length;
 	}
-
-
-	public byte[] readBytes(int limit) throws Exception
-	{
-		if(limit > bytes.length)
-		{
-			return bytes.clone();
-		}
-		else
-		{
-			throw new Exception("object is too large (" + bytes.length + ") for specified limit " + limit);
-		}
-	}
 }

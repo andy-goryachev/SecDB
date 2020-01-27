@@ -37,20 +37,24 @@ public class TestSecDB
 	public void testOpen() throws Exception
 	{
 		SecDB db = SecDB.open(DIR, null);
-		
-		db.execute(new Transaction()
+		try
 		{
-			protected void body() throws Exception
+			db.execute(new Transaction()
 			{
-				insert(new SKey("0"), new ByteArrayIStream("0".getBytes()));
-				insert(new SKey("0"), new ByteArrayIStream("1".getBytes()));
-			}
-		});
-		
-		int ct = query(db, "0", "9");
-		TF.eq(ct, 2);
-		
-		db.close();
+				protected void body() throws Exception
+				{
+					insert(new SKey("0"), new ByteArrayIStream("0".getBytes()));
+					insert(new SKey("1"), new ByteArrayIStream("1".getBytes()));
+				}
+			});
+			
+			int ct = query(db, "0", "9");
+			TF.eq(ct, 2);
+		}
+		finally
+		{
+			db.close();
+		}
 	}
 	
 	

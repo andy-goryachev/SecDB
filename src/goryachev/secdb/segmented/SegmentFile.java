@@ -2,6 +2,7 @@
 package goryachev.secdb.segmented;
 import goryachev.common.util.CKit;
 import goryachev.secdb.IStream;
+import goryachev.secdb.util.Utils;
 import java.io.File;
 import java.io.RandomAccessFile;
 

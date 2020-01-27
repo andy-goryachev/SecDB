@@ -17,5 +17,10 @@ public enum DBErrorCode
 	DIR_UNABLE_TO_CREATE,
 	
 	/** open: no log file(s) found */
-	MISSING_LOG_FILE
+	MISSING_LOG_FILE,
+	
+	/** open: database may need recovery */
+	RECOVERY_REQUIRED,
+	
+	;
 }

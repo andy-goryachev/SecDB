@@ -8,6 +8,7 @@ import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.util.ByteArrayIStream;
+import goryachev.secdb.util.Utils;
 
 
 /**
@@ -50,7 +51,7 @@ public class TestInMemoryStore
 					D.print("contains:", containsKey(k), "expecting true");
 					
 					DataHolder h = read(k);
-					byte[] rv = h.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
+					byte[] rv = Utils.readBytes(h.getStoredValue().getIStream(), Integer.MAX_VALUE);
 					D.print("success:", CKit.equals(v, rv));
 				}
 			});
@@ -75,7 +76,7 @@ public class TestInMemoryStore
 				{
 					try
 					{
-						byte[] b = value.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
+						byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
 						D.print("    query:", key, Hex.toHexString(b));
 					}
 					catch(Exception e)

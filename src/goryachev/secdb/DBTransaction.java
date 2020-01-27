@@ -4,6 +4,7 @@ import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.internal.DataHolder;
+import goryachev.secdb.util.Utils;
 import goryachev.secdb.internal.DBEngineIO;
 
 
@@ -60,7 +61,7 @@ public abstract class DBTransaction<R extends IRef>
 		if(in.getLength() < DBEngineIO.MAX_INLINE_SIZE)
 		{
 			// store value inline
-			byte[] b = in.readBytes(DBEngineIO.MAX_INLINE_SIZE);
+			byte[] b = Utils.readBytes(in, DBEngineIO.MAX_INLINE_SIZE);
 			h = new DataHolder.ValueHolder(store, b);
 		}
 		else

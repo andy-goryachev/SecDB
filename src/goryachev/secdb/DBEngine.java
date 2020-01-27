@@ -6,6 +6,7 @@ import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.internal.DBEngineIO;
 import goryachev.secdb.internal.DBLeafNode;
 import goryachev.secdb.internal.DataHolder;
+import goryachev.secdb.util.Utils;
 
 
 /**
@@ -41,7 +42,7 @@ public class DBEngine<R extends IRef>
 	
 	protected BPlusTreeNode<SKey,DataHolder<R>> readNode(IStream is) throws Exception
 	{
-		byte[] b = is.readBytes(NODE_SIZE_LIMIT);
+		byte[] b = Utils.readBytes(is, NODE_SIZE_LIMIT);
 		return DBEngineIO.read(store, b);
 	}
 

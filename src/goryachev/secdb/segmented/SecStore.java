@@ -10,6 +10,7 @@ import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
+import goryachev.secdb.util.Utils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -121,23 +122,19 @@ public class SecStore
 				throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
 			}
 			
-			// TODO two or more files means unsuccessfull recovery
-			// TODO check if recovery is needed
-	//		if(lf.isRecoveryNeeded())
-	//		{
-	//			// TODO recover
-	//		}
-	//		else
-	//		{
-	//			// TODO is recovery is not needed, create a new log file and delete all	
-	//		}
-			
 			LogFile lf = lfs.get(0);
 			
-			// TODO 
-			
-			// write new log
-			//lf.appendEvent(new LogEvent(LogEventCode.OPENED));
+			// TODO two or more files means unsuccessfull recovery
+			// TODO check if recovery is needed
+			if(lf.isRecoveryNeeded())
+			{
+				// TODO recover
+				throw new DBException(DBErrorCode.RECOVERY_REQUIRED, lf.getName());
+			}
+			else
+			{
+				// TODO is recovery is not needed, create a new log file and delete all	
+			}
 			
 			// read root ref
 			Ref root = lf.getRootRef();
@@ -176,6 +173,8 @@ public class SecStore
 		// TODO synchronize?
 		// TODO log HEAD
 		root = ref;
+		
+		logFile.appendEvent(LogEventCode.HEAD, ref);
 	}
 
 
@@ -238,14 +237,20 @@ public class SecStore
 
 	public IStream load(Ref ref) throws Exception
 	{
-//		String seg = ref.getSegment();
-//		long off = ref.getOffset();
-//		long len = ref.getLength();
 		// TODO data key
 		// TODO need to explicitly clear the ref (because of the data key)
+		return new IStream()
+		{
+			public InputStream getStream()
+			{
+				return new SecStream(SecStore.this, ref);
+			}
 
-		// TODO
-		throw new Error();
+			public long getLength()
+			{
+				return ref.getLength();
+			}
+		};
 	}
 
 

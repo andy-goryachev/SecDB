@@ -96,6 +96,12 @@ public class LogFile
 	{
 		return lastTime;
 	}
+	
+	
+	public String getName()
+	{
+		return file.getAbsolutePath();
+	}
 
 
 	protected static LogFile load(File f, byte[] key) throws Exception

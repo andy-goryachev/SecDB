@@ -10,6 +10,7 @@ import goryachev.common.util.Dump;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
 import goryachev.secdb.util.ByteArrayIStream;
+import goryachev.secdb.util.Utils;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,7 +81,7 @@ public class InMemoryStore
 		long len = in.getLength(); 
 		InMemoryRef ref = new InMemoryRef(seq, len);
 		
-		byte[] b = in.readBytes(Integer.MAX_VALUE);
+		byte[] b = Utils.readBytes(in, Integer.MAX_VALUE);
 		objects.put(ref, b);
 		
 		D.print("store", Dump.toHexString(b), ref); // FIX
