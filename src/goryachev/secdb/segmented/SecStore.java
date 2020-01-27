@@ -173,15 +173,14 @@ public class SecStore
 
 	public void setRootRef(Ref ref) throws Exception
 	{
-		// TODO synchronize
+		// TODO synchronize?
+		// TODO log HEAD
 		root = ref;
 	}
 
 
 	public Ref store(IStream in, boolean isTree) throws Exception
 	{
-		InputStream is = in.getStream();
-		
 		// if isTree, use the main key
 		// if !isTree, generate a random data key
 		byte[] key = null; // TODO
@@ -205,8 +204,9 @@ public class SecStore
 				ref = ref.addSegment(name, off);
 			}
 
-			len = sf.write(is, key); 
-			if(len == 0)
+			long written = sf.write(in, key); 
+			len -= written;
+			if(len <= 0)
 			{
 				return ref;
 			}
@@ -219,7 +219,6 @@ public class SecStore
 		String name = GUID256.generateHexString();
 		String subdir = name.substring(0, 2);
 		File f = new File(dir, subdir + "/" + name);
-		f.mkdirs();
 		
 		SegmentFile sf =  new SegmentFile(f, name);
 		segments.put(name, sf); 

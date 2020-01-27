@@ -1,20 +1,29 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.util.CKit;
+import goryachev.secdb.IStream;
 import java.io.File;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 
 
 /**
  * SecStore Segment File.
+ * 
+ * Uses RandomAccessFiles (one for writing, the other for reading).
+ * A decision was made not to use MappedByteBuffer because of their sub-optimal 
+ * implementation on Windows (i.e. cannot delete a mapped file).
+ * 
+ * or use read-only mmap, write with FileChannel
+ * http://www.mapdb.org/blog/mmap_files_alloc_and_jvm_crash/
  */
 public class SegmentFile
 {
+	public static final long SEGMENT_SIZE = CKit.mebi(512);
+	protected static final int BUF_SIZE = 4096;
 	protected final File file;
 	protected final String name;
-	private long length;
-	// TODO or use MappedByteBuffer?
-	private RandomAccessFile raf;
+	private RandomAccessFile reader;
+	private RandomAccessFile writer;
 	
 	
 	public SegmentFile(File file, String name)
@@ -32,14 +41,30 @@ public class SegmentFile
 	
 	public long getLength()
 	{
-		return length;
+		// this might query the file system each time
+		return file.length();
 	}
 
 
-	/** writes as much data as possible until segment is full.  returns the amount of remaining data to store */ 
-	public long write(InputStream in, byte[] key) throws Exception
+	/** 
+	 * writes as much data as possible until segment is full.  
+	 * returns the number of bytes written.
+	 */ 
+	public long write(IStream in, byte[] key) throws Exception
 	{
-		// TODO
-		throw new Error();
+		long size = in.getLength();
+		long len = getLength();
+		long max = SEGMENT_SIZE - len;
+		
+		byte[] buf = new byte[BUF_SIZE];
+		
+		if(writer == null)
+		{
+			file.getParentFile().mkdirs();
+			writer = new RandomAccessFile(file, "rw");
+		}
+		writer.seek(len);
+		
+		return Utils.copy(in.getStream(), writer, buf, Math.min(max, size));
 	}
 }
