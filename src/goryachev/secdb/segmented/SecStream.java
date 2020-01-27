@@ -28,7 +28,7 @@ public class SecStream
 	}
 
 
-	public int read(byte b[], int off, int len) throws IOException
+	public int read(byte[] buffer, int offset, int length) throws IOException
 	{
 		// TODO 
 		throw new Error();
