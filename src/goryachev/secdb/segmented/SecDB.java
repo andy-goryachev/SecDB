@@ -6,6 +6,7 @@ import goryachev.secdb.IStored;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.DBTransaction;
 import goryachev.secdb.internal.DataHolder;
+import goryachev.secdb.segmented.log.LogFile;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;

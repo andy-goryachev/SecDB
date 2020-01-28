@@ -18,4 +18,16 @@ public class DBException
 		this.code = code;
 		this.value = value;
 	}
+	
+	
+	public DBErrorCode getErrorCode()
+	{
+		return code;
+	}
+	
+	
+	public Object getErrorValue()
+	{
+		return value;
+	}
 }

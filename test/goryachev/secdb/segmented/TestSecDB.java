@@ -7,10 +7,12 @@ import goryachev.common.util.D;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
+import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
 import goryachev.secdb.util.ByteArrayIStream;
 import goryachev.secdb.util.Utils;
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -39,15 +41,32 @@ public class TestSecDB
 	@Test
 	public void testOpen() throws Exception
 	{
-		SecDB db = SecDB.open(DIR, null);
+		SecDB db;
+		try
+		{
+			db = SecDB.open(DIR, null);
+		}
+		catch(DBException e)
+		{
+			switch(e.getErrorCode())
+			{
+			case DIR_NOT_FOUND:
+				SecDB.create(DIR, null);
+				db = SecDB.open(DIR, null);
+				break;
+			default:
+				throw e;
+			}
+		}
+		
 		try
 		{
 			db.execute(new Transaction()
 			{
 				protected void body() throws Exception
 				{
-					insert(new SKey("0"), new ByteArrayIStream("0".getBytes()));
-					insert(new SKey("1"), new ByteArrayIStream("1".getBytes()));
+					insert(new SKey("0"), v(0));
+					insert(new SKey("1"), v(1));
 				}
 			});
 			
@@ -55,8 +74,8 @@ public class TestSecDB
 			{
 				protected void body() throws Exception
 				{
-					insert(new SKey("1"), new ByteArrayIStream("2".getBytes()));
-					insert(new SKey("2"), new ByteArrayIStream("3".getBytes()));
+					insert(new SKey("1"), v(2));
+					insert(new SKey("2"), v(3));
 				}
 			});
 			
@@ -67,6 +86,14 @@ public class TestSecDB
 		{
 			db.close();
 		}
+	}
+	
+	
+	protected static IStream v(int x)
+	{
+		byte[] b = new byte[100];
+		Arrays.fill(b, (byte)x);
+		return new ByteArrayIStream(b);
 	}
 	
 	

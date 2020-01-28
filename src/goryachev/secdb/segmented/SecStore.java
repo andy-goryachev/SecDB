@@ -158,6 +158,19 @@ public class SecStore
 		// zero out the main key
 		// clear all buffers
 		
+		try
+		{
+			logFile.appendEvent(LogEventCode.CLOSED);
+		}
+		catch(IOException e)
+		{
+			throw e;
+		}
+		catch(Exception e)
+		{
+			throw new IOException(e);
+		}
+		
 		lock.unlock();
 	}
 
