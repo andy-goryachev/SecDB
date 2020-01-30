@@ -266,11 +266,23 @@ public class SecStore
 	}
 
 
-	protected SegmentFile segmentForLength(long length, boolean isTree)
+	protected SegmentFile segmentForLength(long length, boolean isTree) throws Exception
 	{
 		if(currentSegment == null)
 		{
-			currentSegment = newSegmentFile();
+			if(root == null)
+			{
+				currentSegment = newSegmentFile();
+			}
+			else
+			{
+				String name = root.getSegment(root.getSegmentCount() - 1);
+				currentSegment = getSegmentFile(name);
+				if(currentSegment == null)
+				{
+					throw new DBException(DBErrorCode.MISSING_SEGMENT_FILE, name);
+				}
+			}
 		}
 		return currentSegment;
 	}

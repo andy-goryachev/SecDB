@@ -19,6 +19,9 @@ public enum DBErrorCode
 	/** open: no log file(s) found */
 	MISSING_LOG_FILE,
 	
+	/** missing data segment file */
+	MISSING_SEGMENT_FILE,
+	
 	/** open: database may need recovery */
 	RECOVERY_REQUIRED,
 	

@@ -5,6 +5,7 @@ import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.Hex;
+import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -59,6 +60,8 @@ public class TestSecDB
 			}
 		}
 		
+		AtomicReference<Throwable> error = new AtomicReference();
+		
 		try
 		{
 			db.execute(new Transaction()
@@ -68,7 +71,14 @@ public class TestSecDB
 					insert(new SKey("0"), v(0));
 					insert(new SKey("1"), v(1));
 				}
+
+				protected void onError(Throwable e)
+				{
+					error.set(e);
+				}
 			});
+			
+			check(error);
 			
 			db.execute(new Transaction()
 			{
@@ -77,7 +87,14 @@ public class TestSecDB
 					insert(new SKey("1"), v(2));
 					insert(new SKey("2"), v(3));
 				}
+				
+				protected void onError(Throwable e)
+				{
+					error.set(e);
+				}
 			});
+			
+			check(error);
 			
 			int ct = query(db, "0", "9");
 			TF.eq(ct, 3);
@@ -94,6 +111,16 @@ public class TestSecDB
 		byte[] b = new byte[100];
 		Arrays.fill(b, (byte)x);
 		return new ByteArrayIStream(b);
+	}
+	
+	
+	protected void check(AtomicReference<Throwable> error)
+	{
+		Throwable e = error.get();
+		if(e != null)
+		{
+			throw new Error("transaction failed", e);
+		}
 	}
 	
 	
