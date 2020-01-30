@@ -96,7 +96,7 @@ public class DReader
 	
 	
 	/** reads one byte as an signed int (range -128 to 127) */
-	public int readXInt8() throws IOException
+	public int readInt8() throws IOException
 	{
 		int ch = in.read();
 		if(ch < 0)

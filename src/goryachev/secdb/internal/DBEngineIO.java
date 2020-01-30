@@ -31,7 +31,7 @@ public class DBEngineIO
 			{
 				DBLeafNode n = (DBLeafNode)node;
 				int sz = n.size();
-				wr.writeXInt8(sz);
+				wr.writeInt8(sz);
 				
 				writeKeys(wr, sz, n);
 				writeValues(store, wr, n);
@@ -40,7 +40,7 @@ public class DBEngineIO
 			{
 				DBInternalNode n = (DBInternalNode)node;
 				int sz = n.size();
-				wr.writeXInt8(-sz);
+				wr.writeInt8(-sz);
 				
 				writeKeys(wr, sz, n);
 				writeNodeRefs(store, wr, n);
@@ -66,7 +66,7 @@ public class DBEngineIO
 		try
 		{
 			// TODO perhaps add constructors that take arrays of (keys,refs/values)
-			int sz = rd.readXInt8();
+			int sz = rd.readInt8();
 			if(sz > 0)
 			{
 				// leaf node

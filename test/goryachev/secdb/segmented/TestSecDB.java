@@ -5,7 +5,6 @@ import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.Hex;
-import goryachev.common.util.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -13,7 +12,6 @@ import goryachev.secdb.QueryClient;
 import goryachev.secdb.util.ByteArrayIStream;
 import goryachev.secdb.util.Utils;
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -108,8 +106,7 @@ public class TestSecDB
 	
 	protected static IStream v(int x)
 	{
-		byte[] b = new byte[100];
-		Arrays.fill(b, (byte)x);
+		byte[] b = ("value=" + x).getBytes(CKit.CHARSET_ASCII);
 		return new ByteArrayIStream(b);
 	}
 	
