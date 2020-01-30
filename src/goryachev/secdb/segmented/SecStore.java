@@ -111,7 +111,6 @@ public class SecStore
 			// TODO
 			// decrypt key -> missing key file, passphrase error
 			
-			
 			// read all logs
 			// check if recovery is needed
 			//   (perform recovery)
@@ -131,10 +130,9 @@ public class SecStore
 				// TODO recover
 				throw new DBException(DBErrorCode.RECOVERY_REQUIRED, lf.getName());
 			}
-			else
-			{
-				// TODO is recovery is not needed, create a new log file and delete all	
-			}
+			
+			// TODO
+			// get STATE event and initialize segment files
 			
 			// read root ref
 			Ref root = lf.getRootRef();
@@ -226,13 +224,24 @@ public class SecStore
 	}
 	
 	
+	protected File toSegmentFile(String name)
+	{
+		if(name.length() < 64)
+		{
+			throw new Error("illegal segment file name: " + name);
+		}
+		
+		String subdir = name.substring(0, 2);
+		return new File(dir, subdir + "/" + name);		
+	}
+	
+	
 	protected SegmentFile newSegmentFile()
 	{
 		String name = GUID256.generateHexString();
-		String subdir = name.substring(0, 2);
-		File f = new File(dir, subdir + "/" + name);
-		
+		File f = toSegmentFile(name);
 		SegmentFile sf =  new SegmentFile(f, name);
+
 		synchronized(segments)
 		{
 			segments.put(name, sf);
@@ -245,7 +254,14 @@ public class SecStore
 	{
 		synchronized(segments)
 		{
-			return segments.get(name);
+			SegmentFile sf = segments.get(name);
+			if(sf == null)
+			{
+				File f = toSegmentFile(name);
+				sf = new SegmentFile(f, name);
+				segments.put(name, sf);
+			}
+			return sf;
 		}
 	}
 
