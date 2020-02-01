@@ -66,7 +66,8 @@ public class SegmentFile
 		}
 		writer.seek(len);
 		
-		return Utils.copy(in.getStream(), writer, buf, Math.min(max, size));
+		long toWrite = Math.min(max, size);
+		return Utils.copy(in.getStream(), writer, buf, toWrite);
 		
 		// TODO don't forget to close the writer
 	}

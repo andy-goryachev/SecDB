@@ -214,11 +214,22 @@ public class SecStore
 				ref = ref.addSegment(name, off);
 			}
 
-			long written = sf.write(in, key); 
-			len -= written;
-			if(len <= 0)
+			long written = sf.write(in, key);
+			if(written == 0)
+			{
+				throw new Error("zero bytes written");
+			}
+			else if(written < 0)
 			{
 				return ref;
+			}
+			else
+			{
+				len -= written;
+				if(len <= 0)
+				{
+					return ref;
+				}
 			}
 		}
 	}
@@ -284,6 +295,12 @@ public class SecStore
 				}
 			}
 		}
+		
+		if(currentSegment.getLength() >= SegmentFile.SEGMENT_SIZE)
+		{
+			currentSegment = newSegmentFile();
+		}
+		
 		return currentSegment;
 	}
 

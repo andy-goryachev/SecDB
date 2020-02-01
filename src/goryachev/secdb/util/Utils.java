@@ -35,7 +35,13 @@ public class Utils
 		{
 			CKit.checkCancelled();
 			
-			int rd = in.read(buf);
+			int max = (int)Math.min(buf.length, length);
+			if(max == 0)
+			{
+				return count;
+			}
+			
+			int rd = in.read(buf, 0, max);
 			if(rd < 0)
 			{
 				return count;
@@ -44,6 +50,7 @@ public class Utils
 			{
 				out.write(buf, 0, rd);
 				count += rd;
+				length -= rd;
 			}
 		}
 	}

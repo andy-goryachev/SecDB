@@ -261,10 +261,21 @@ public abstract class Ref
 		}
 		
 
-		public Ref.MultiSegment addSegment(String segment, long offset)
+		public Ref.MultiSegment addSegment(String seg, long off)
 		{
-			// TODO append a segment
-			throw new Error();
+			String[] segments = new String[]
+			{
+				segment,
+				seg
+			};
+			
+			long[] offsets = new long[]
+			{
+				offset,
+				off
+			};
+			
+			return new Ref.MultiSegment(length, dataKey, segments, offsets);
 		}
 		
 		
@@ -440,10 +451,19 @@ public abstract class Ref
 		}
 		
 		
-		public Ref.MultiSegment addSegment(String segment, long offset)
+		public Ref.MultiSegment addSegment(String seg, long off)
 		{
-			// TODO append a segment
-			throw new Error();
+			int ct = getSegmentCount();
+			
+			String[] segs = new String[ct + 1];
+			System.arraycopy(segments, 0, segs, 0, ct);
+			segs[ct] = seg;
+			
+			long[] offs = new long[ct + 1];
+			System.arraycopy(offsets, 0, offs, 0, ct);
+			offs[ct] = off;
+			
+			return new Ref.MultiSegment(length, dataKey, segs, offs);
 		}
 
 		
