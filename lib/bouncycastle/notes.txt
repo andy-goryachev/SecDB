@@ -1,0 +1,5 @@
+﻿https://www.bouncycastle.org/latest_releases.html
+
+bcprov-jdk15on-*.jar    - binary
+lcrypto-jdk15on-*.zip   - sources
+
