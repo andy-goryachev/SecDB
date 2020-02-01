@@ -35,7 +35,14 @@ public class DBEngine<R extends IRef>
 		else
 		{
 			IStream in = store.load(ref);
-			return readNode(in);
+			try
+			{
+				return readNode(in);
+			}
+			catch(Throwable e)
+			{
+				throw new Exception("at ref=" + ref, e);
+			}
 		}
 	}
 	

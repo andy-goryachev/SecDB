@@ -72,13 +72,17 @@ public class SegmentFile
 	}
 
 
-	public int read(byte[] buffer, int offset, int length) throws Exception
+	public int read(long position, byte[] buffer, int offset, int length) throws Exception
 	{
 		if(reader == null)
 		{
 			reader = new RandomAccessFile(file, "r");
 		}
 		
-		return reader.read(buffer, offset, length);
+		synchronized(reader)
+		{
+			reader.seek(position);
+			return reader.read(buffer, offset, length);
+		}
 	}
 }

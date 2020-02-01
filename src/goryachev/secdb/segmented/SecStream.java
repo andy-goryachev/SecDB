@@ -120,7 +120,7 @@ public class SecStream
 		}
 		
 		SegmentFile sf = store.getSegmentFile(name);
-		return sf.read(buffer, offset, length);
+		return sf.read(off, buffer, offset, length);
 	}
 
 

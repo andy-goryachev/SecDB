@@ -50,16 +50,17 @@ public class Utils
 	
 	
 	/** read data into a new byte array, as long as the object size is below the limit */
-	public static byte[] readBytes(IStream in, int limit) throws Exception
+	public static byte[] readBytes(IStream inp, int limit) throws Exception
 	{
-		long len = in.getLength();
+		long len = inp.getLength();
 		if(len > limit)
 		{
 			throw new Exception("object is too large: size=" + len + ", limit=" + limit);
 		}
 		
 		byte[] b = new byte[(int)len];
-		CKit.readFully(in.getStream(), b);
+		InputStream is = inp.getStream();
+		CKit.readFully(is, b);
 		return b;
 	}
 }
