@@ -3,11 +3,14 @@ package goryachev.secdb.segmented;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.D;
+import goryachev.common.util.Parsers;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -18,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TestLarge
 {
 	private static final File DIR = new File("H:/Test/SecDB/large-test");
+	private static final long SIZE = 1_000_000_000L;
 	
 	
 	public static void main(String[] args)
@@ -71,8 +75,8 @@ public class TestLarge
 			{
 				protected void body() throws Exception
 				{
-					insert(new SKey("0"), v(0));
-					insert(new SKey("1"), v(1));
+					insert(new SKey("0"), createStream(0));
+					insert(new SKey("1"), createStream(99));
 				}
 
 				protected void onError(Throwable e)
@@ -87,8 +91,8 @@ public class TestLarge
 			{
 				protected void body() throws Exception
 				{
-					insert(new SKey("1"), v(2));
-					insert(new SKey("2"), v(3));
+					insert(new SKey("1"), createStream(1));
+					insert(new SKey("2"), createStream(2));
 				}
 				
 				protected void onError(Throwable e)
@@ -109,9 +113,10 @@ public class TestLarge
 	}
 	
 	
-	protected static IStream v(int seed)
+	protected static IStream createStream(int seed)
 	{
-		return new LargePseudoRandomStream(seed, 1_000_000_000L);
+		//return new LargePseudoRandomStream(0xaa550000 | seed, SIZE);
+		return new TestStream(SIZE);
 	}
 	
 	
@@ -134,9 +139,18 @@ public class TestLarge
 		{
 			public boolean acceptQueryResult(SKey key, IStored st)
 			{
-				D.print(key, st.getLength());
-				ct.incrementAndGet();
-				return true;
+				try
+				{
+					D.print(key, st.getLength());
+					check(key.toString(), st.getIStream());
+					ct.incrementAndGet();
+					return true;
+				}
+				catch(Exception e)
+				{
+					onError(e);
+					return false;
+				}
 			}
 
 			public void onError(Throwable err)
@@ -152,5 +166,33 @@ public class TestLarge
 		}
 		
 		return ct.get();
+	}
+	
+	
+	protected void check(String key, IStream is) throws Exception
+	{
+		int seed = Parsers.parseInteger(key);
+		InputStream in1 = new BufferedInputStream(createStream(seed).getStream());
+		InputStream in2 = new BufferedInputStream(is.getStream());
+
+		long off = 0;
+		
+		for(;;)
+		{
+			int c1 = in1.read();
+			int c2 = in2.read();
+			
+			if(c1 != c2)
+			{
+				throw new Exception(String.format("mismatch at offset %08x, %d, %d, key=%s", off, c1, c2, key));
+			}
+			
+			if(c1 < 0)
+			{
+				return;
+			}
+			
+			off++;
+		}
 	}
 }
