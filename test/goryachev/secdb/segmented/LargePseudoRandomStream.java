@@ -18,7 +18,7 @@ public class LargePseudoRandomStream
 	
 	public LargePseudoRandomStream(int seed, long length)
 	{
-		this.random = new Xoroshiro128Plus(seed);
+		this.random = new Xoroshiro128Plus(0x55aa000000000000L | seed);
 		this.length = length;
 	}
 	

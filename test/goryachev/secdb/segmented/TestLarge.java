@@ -2,6 +2,7 @@
 package goryachev.secdb.segmented;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
+import goryachev.common.util.CKit;
 import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
 import goryachev.common.util.SKey;
@@ -43,6 +44,13 @@ public class TestLarge
 		SecDB db = SecDB.open(DIR, null);
 		int ct = query(db, "0", "9");
 		D.print(ct);
+	}
+	
+	
+//	@Test
+	public void testPseudoRandom() throws Exception
+	{
+		compare("test", new LargePseudoRandomStream(1, SIZE).getStream(), new LargePseudoRandomStream(1, SIZE).getStream());
 	}
 	
 	
@@ -113,13 +121,6 @@ public class TestLarge
 	}
 	
 	
-	protected static IStream createStream(int seed)
-	{
-		//return new LargePseudoRandomStream(0xaa550000 | seed, SIZE);
-		return new TestStream(SIZE);
-	}
-	
-	
 	protected void check(AtomicReference<Throwable> error)
 	{
 		Throwable e = error.get();
@@ -172,27 +173,55 @@ public class TestLarge
 	protected void check(String key, IStream is) throws Exception
 	{
 		int seed = Parsers.parseInteger(key);
-		InputStream in1 = new BufferedInputStream(createStream(seed).getStream());
-		InputStream in2 = new BufferedInputStream(is.getStream());
-
-		long off = 0;
-		
-		for(;;)
+		InputStream is1 = createStream(seed).getStream();
+		InputStream is2 = is.getStream();
+		compare(key, is1, is2);
+	}
+	
+	
+	protected static IStream createStream(int seed)
+	{
+		return new LargePseudoRandomStream(seed, SIZE);
+//		return new TestStream(SIZE);
+	}
+	
+	
+	protected static void compare(String key, InputStream is1, InputStream is2) throws Exception
+	{
+		InputStream in1 = new BufferedInputStream(is1);
+		try
 		{
-			int c1 = in1.read();
-			int c2 = in2.read();
-			
-			if(c1 != c2)
+			InputStream in2 = new BufferedInputStream(is2);
+			try
 			{
-				throw new Exception(String.format("mismatch at offset %08x, %d, %d, key=%s", off, c1, c2, key));
+				long off = 0;
+				
+				for(;;)
+				{
+					int c1 = in1.read();
+					int c2 = in2.read();
+					
+					if(c1 != c2)
+					{
+						throw new Exception(String.format("mismatch at offset %08x, %d, %d, key=%s", off, c1, c2, key));
+					}
+					
+					if(c1 < 0)
+					{
+						return;
+					}
+					
+					off++;
+				}
 			}
-			
-			if(c1 < 0)
+			finally
 			{
-				return;
+				CKit.close(in2);
 			}
-			
-			off++;
+		}
+		finally
+		{
+			CKit.close(in1);
 		}
 	}
 }
