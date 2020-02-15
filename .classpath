@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/bouncycastle/bcprov-jdk15on-164.jar" sourcepath="lib/bouncycastle/lcrypto-jdk15on-164.zip"/>
+	<classpathentry kind="lib" path="lib/gson/gson-2.8.5.jar"/>
 	<classpathentry kind="output" path="out"/>
 </classpath>

@@ -31,6 +31,13 @@ public class TestLarge
 	}
 	
 	
+	protected static IStream createStream(int seed)
+	{
+//		return new LargePseudoRandomStream(seed, SIZE);
+		return new TestStream(SIZE);
+	}
+	
+	
 //	@Test
 	public void testCreate() throws Exception
 	{
@@ -50,7 +57,7 @@ public class TestLarge
 //	@Test
 	public void testPseudoRandom() throws Exception
 	{
-		compare("test", new LargePseudoRandomStream(1, SIZE).getStream(), new LargePseudoRandomStream(1, SIZE).getStream());
+		compare("test", createStream(1).getStream(), createStream(1).getStream());
 	}
 	
 	
@@ -176,13 +183,6 @@ public class TestLarge
 		InputStream is1 = createStream(seed).getStream();
 		InputStream is2 = is.getStream();
 		compare(key, is1, is2);
-	}
-	
-	
-	protected static IStream createStream(int seed)
-	{
-		return new LargePseudoRandomStream(seed, SIZE);
-//		return new TestStream(SIZE);
 	}
 	
 	
