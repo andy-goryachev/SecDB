@@ -77,8 +77,13 @@ public class SegmentFile
 		log.trace(() -> "rv=" + rv);
 		
 		return rv;
-		
-		// TODO don't forget to close the writer
+	}
+	
+	
+	public void closeWriter() throws Exception
+	{
+		writer.close();
+		writer = null;
 	}
 
 

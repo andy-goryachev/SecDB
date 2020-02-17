@@ -160,6 +160,22 @@ public class SecStore
 		
 		try
 		{
+			if(currentSegment != null)
+			{
+				currentSegment.closeWriter();
+			}
+		}
+		catch(IOException e)
+		{
+			throw e;
+		}
+		catch(Exception e)
+		{
+			throw new IOException(e);
+		}
+		
+		try
+		{
 			logFile.appendEvent(LogEventCode.CLOSED);
 		}
 		catch(IOException e)
@@ -301,6 +317,7 @@ public class SecStore
 		
 		if(currentSegment.getLength() >= SegmentFile.SEGMENT_SIZE)
 		{
+			currentSegment.closeWriter();
 			currentSegment = newSegmentFile();
 		}
 		
