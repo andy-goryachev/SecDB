@@ -1,0 +1,17 @@
+{
+	defaultLevel: off,
+	all:
+	[
+		SecDB,
+		SecStream,
+		SegmentFile
+	],
+	appenders:
+	[
+		{
+			type: stdout,
+			level: debug,
+			spec: "{t.yyyy-MM-dd hh:mm:ss.SSS} {class.1}"
+		}
+	]
+}

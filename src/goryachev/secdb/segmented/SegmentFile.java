@@ -1,5 +1,6 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.secdb.IStream;
 import goryachev.secdb.util.Utils;
@@ -21,6 +22,7 @@ public class SegmentFile
 {
 	public static final long SEGMENT_SIZE = CKit.mebi(512);
 	protected static final int BUF_SIZE = 4096;
+	protected static final Log log = Log.get("SegmentFile");
 	protected final File file;
 	protected final String name;
 	private RandomAccessFile reader;
@@ -57,6 +59,7 @@ public class SegmentFile
 		long len = getLength();
 		long max = SEGMENT_SIZE - len;
 		
+		// TODO make it a final field, as only one writerr is allowed
 		byte[] buf = new byte[BUF_SIZE];
 		
 		if(writer == null)
@@ -64,10 +67,16 @@ public class SegmentFile
 			file.getParentFile().mkdirs();
 			writer = new RandomAccessFile(file, "rw");
 		}
-		writer.seek(len);
 		
 		long toWrite = Math.min(max, size);
-		return Utils.copy(in.getStream(), writer, buf, toWrite);
+		
+		log.trace(() -> "size=" + size + " len=" + len + " max=" + max + " toWrite=" + toWrite + " file=" + file);
+		
+		writer.seek(len);
+		long rv = Utils.copy(in.getStream(), writer, buf, toWrite);
+		log.trace(() -> "rv=" + rv);
+		
+		return rv;
 		
 		// TODO don't forget to close the writer
 	}

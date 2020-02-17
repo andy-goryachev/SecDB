@@ -23,6 +23,7 @@ public class LogConfig
 		public String[] debug;
 		public String[] info;
 		public String[] trace;
+		public String[] all;
 		public CMap<String,String> channels;
 	}
 	
@@ -46,6 +47,7 @@ public class LogConfig
 	public String[] debug;
 	public String[] info;
 	public String[] trace;
+	public String[] all;
 	public CMap<String,String> channels;
 	public CMap<String,Profile> profiles;
 	public CList<AppenderInfo> appenders;
@@ -100,6 +102,7 @@ public class LogConfig
 					LogUtil.process(m, p.debug, LogLevel.DEBUG);
 					LogUtil.process(m, p.info, LogLevel.INFO);
 					LogUtil.process(m, p.trace, LogLevel.TRACE);
+					LogUtil.process(m, p.all, LogLevel.ALL);
 					
 					LogUtil.process(m, p.channels);
 				}
@@ -112,6 +115,7 @@ public class LogConfig
 		LogUtil.process(m, debug, LogLevel.DEBUG);
 		LogUtil.process(m, info, LogLevel.INFO);
 		LogUtil.process(m, trace, LogLevel.TRACE);
+		LogUtil.process(m, all, LogLevel.ALL);
 		
 		LogUtil.process(m, channels);
 		

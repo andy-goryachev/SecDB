@@ -52,7 +52,8 @@ public class Log
 			if(ch == null)
 			{
 				ch = new Log(log, s);
-				log.children.put(s, ch);
+				ch.needsCaller = log.needsCaller;
+				log.children.put(s, ch);				
 
 				ch.applyConfig(config);
 			}
@@ -221,10 +222,17 @@ public class Log
 			{
 				allAppenders.add(a);
 				
-				for(String name: a.getChannels())
+				if(a.getChannels().size() == 0)
 				{
-					Log ch = get(name);
-					ch.addAppender(a);
+					root.addAppender(a);
+				}
+				else
+				{
+					for(String name: a.getChannels())
+					{
+						Log ch = get(name);
+						ch.addAppender(a);
+					}
 				}
 			}
 		}
@@ -285,7 +293,6 @@ public class Log
 	{
 		if(level == null)
 		{
-			// FIX
 			return false;
 		}
 		return level.isGreaterThanOrEqual(lv);
@@ -311,7 +318,7 @@ public class Log
 	protected void setNeedsCallerRecursively(boolean on)
 	{
 		if(on != needsCaller)
-		{			
+		{	
 			if(!on)
 			{
 				boolean v = LogUtil.checkNeedsCaller(appenders);

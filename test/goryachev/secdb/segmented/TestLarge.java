@@ -1,5 +1,7 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.log.Log;
+import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
@@ -31,10 +33,17 @@ public class TestLarge
 	}
 	
 	
+	@BeforeClass
+	public static void initLog()
+	{
+		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
+	}
+	
+	
 	protected static IStream createStream(int seed)
 	{
-//		return new LargePseudoRandomStream(seed, SIZE);
-		return new TestStream(SIZE);
+		return new LargePseudoRandomStream(seed, SIZE);
+//		return new TestStream(SIZE);
 	}
 	
 	

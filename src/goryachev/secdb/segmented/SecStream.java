@@ -1,5 +1,6 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.log.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,15 +11,12 @@ import java.io.InputStream;
 public class SecStream
 	extends InputStream
 {
+	protected static final Log log = Log.get("SecStream");
 	protected final SecStore store;
 	protected final Ref ref;
 	private long position;
 	private int segmentIndex;
 	private long segmentOffset;
-	// TODO for read(), use some kind of LocalBuffer class
-//	private byte[] buf = new byte[4096];
-//	private int available;
-//	private int offset;
 	
 	
 	public SecStream(SecStore store, Ref ref)
@@ -120,6 +118,11 @@ public class SecStream
 		}
 		
 		SegmentFile sf = store.getSegmentFile(name);
+		
+		long off2 = off; // FIX
+		int len2 = length;
+		log.trace(() -> "off=" + off2 + " offset=" + offset + " len=" + len2 + " f=" + sf.getName());
+		
 		return sf.read(off, buffer, offset, length);
 	}
 

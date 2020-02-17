@@ -2,6 +2,7 @@
 package goryachev.secdb.segmented;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
+import goryachev.common.log.Log;
 import goryachev.common.util.CFileLock;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GUID256;
@@ -28,6 +29,7 @@ public class SecStore
 	implements Closeable,IStore<Ref>
 {
 	protected static final String LOCK_FILE = "lock";
+	protected static final Log log = Log.get("SecStore");
 	private final File dir;
 	private final CFileLock lock;
 	private final LogFile logFile;
@@ -189,6 +191,7 @@ public class SecStore
 	}
 
 
+	// TODO mutex
 	public Ref store(IStream in, boolean isTree) throws Exception
 	{
 		// if isTree, use the main key
