@@ -43,7 +43,7 @@ public class LargePseudoRandomStream
 				{
 					random.nextBytes(oneByte);
 					pos++;
-					return oneByte[0];
+					return oneByte[0] & 0xff;
 				}
 				return -1;
 			}
@@ -51,20 +51,36 @@ public class LargePseudoRandomStream
 			
 			public int read(byte[] buf, int off, int len) throws IOException
 			{
-				long remain = length - pos;
-				if(remain <= 0)
+				boolean block = false;
+				
+				if(block)
 				{
-					return -1;
+					long remain = length - pos;
+					if(remain <= 0)
+					{
+						return -1;
+					}
+					
+					int max = (int)Math.min(len, remain);
+					
+					// neither Random nor Xoroshiro128Plus have nextBytes(byte[] buf, int off, int len) method
+					byte[] b = new byte[max];
+					random.nextBytes(b);
+					System.arraycopy(b, 0, buf, off, max);
+					pos += max;
+					return max;
 				}
-				
-				int max = (int)Math.min(len, remain);
-				
-				// neither Random nor Xoroshiro128Plus have nextBytes(byte[] buf, int off, int len) method
-				byte[] b = new byte[max];
-				random.nextBytes(b);
-				System.arraycopy(b, 0, buf, off, max);
-				pos += max;
-				return max;
+				else
+				{
+					int c = read();
+					if(c < 0)
+					{
+						return -1;
+					}
+					
+					buf[off] = (byte)c;
+					return 1;
+				}
 			}
 		};
 	}

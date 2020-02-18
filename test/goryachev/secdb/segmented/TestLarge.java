@@ -212,7 +212,7 @@ public class TestLarge
 					
 					if(c1 != c2)
 					{
-						throw new Exception(String.format("mismatch at offset %08x, %d, %d, key=%s", off, c1, c2, key));
+						throw new Exception(String.format("mismatch at offset 0x%08x, %02x, %02x, key=%s", off, c1, c2, key));
 					}
 					
 					if(c1 < 0)

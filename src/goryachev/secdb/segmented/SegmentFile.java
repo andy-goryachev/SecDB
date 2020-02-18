@@ -59,7 +59,7 @@ public class SegmentFile
 		long len = getLength();
 		long max = SEGMENT_SIZE - len;
 		
-		// TODO make it a final field, as only one writerr is allowed
+		// TODO make it a final field, as only one writer is allowed
 		byte[] buf = new byte[BUF_SIZE];
 		
 		if(writer == null)
