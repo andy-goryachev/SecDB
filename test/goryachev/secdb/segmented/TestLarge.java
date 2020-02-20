@@ -42,8 +42,8 @@ public class TestLarge
 	
 	protected static IStream createStream(int seed)
 	{
-		return new LargePseudoRandomStream(seed, SIZE);
-//		return new TestStream(SIZE);
+//		return new LargePseudoRandomStream(seed, SIZE);
+		return new TestStream(SIZE);
 	}
 	
 	
