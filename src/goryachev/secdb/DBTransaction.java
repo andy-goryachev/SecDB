@@ -76,6 +76,13 @@ public abstract class DBTransaction<R extends IRef>
 	}
 	
 	
+	public void remove(SKey key) throws Exception
+	{
+		BPlusTreeNode<SKey,DataHolder<R>> newRoot = root.remove(root, key, branchingFactor);
+		root = newRoot;
+	}
+	
+	
 	protected void setRoot(IStore<R> store, BPlusTreeNode<SKey,DataHolder<R>> root, int branchingFactor)
 	{
 		if(this.store == null)

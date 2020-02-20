@@ -20,7 +20,8 @@ import java.io.RandomAccessFile;
  */
 public class SegmentFile
 {
-	public static final long SEGMENT_SIZE = CKit.mebi(512);
+	// FIX make final after debugging
+	public static /*final*/ long SEGMENT_SIZE = CKit.mebi(512);
 	protected static final int BUF_SIZE = 4096;
 	protected static final Log log = Log.get("SegmentFile");
 	protected final File file;
