@@ -54,15 +54,14 @@ public class TestStream
 					return -1;
 				}
 				
-				int max = (int)Math.min(len, remain);
-				
-				for(int i=0; i<max; i++)
+				int ct = (int)Math.min(len, remain);
+				for(int i=0; i<ct; i++)
 				{
 					buf[off + i] = (byte)val();
 					pos++;
 				}
 				
-				return max;
+				return ct;
 			}
 			
 			
