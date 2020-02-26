@@ -258,10 +258,10 @@ public class SecStore
 	
 	protected File toSegmentFile(String name)
 	{
-		if(name.length() < 64)
-		{
-			throw new Error("illegal segment file name: " + name);
-		}
+//		if(name.length() < 64)
+//		{
+//			throw new Error("illegal segment file name: " + name);
+//		}
 		
 //		String subdir = name.substring(0, 2);
 //		return new File(dir, subdir + "/" + name);
