@@ -65,7 +65,11 @@ public class SegmentFile
 		
 		if(writer == null)
 		{
-			file.getParentFile().mkdirs();
+			File pf = file.getParentFile();
+			if(pf != null)
+			{
+				pf.mkdirs();
+			}
 			writer = new RandomAccessFile(file, "rw");
 		}
 		

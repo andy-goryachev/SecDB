@@ -72,6 +72,10 @@ public abstract class DBTransaction<R extends IRef>
 		}
 		
 		BPlusTreeNode<SKey,DataHolder<R>> newRoot = root.insertValue(root, key, h, branchingFactor);
+		if(newRoot == null)
+		{
+			throw new Error("null root?");
+		}
 		root = newRoot;
 	}
 	
@@ -79,12 +83,21 @@ public abstract class DBTransaction<R extends IRef>
 	public void remove(SKey key) throws Exception
 	{
 		BPlusTreeNode<SKey,DataHolder<R>> newRoot = root.remove(root, key, branchingFactor);
+		if(newRoot == null)
+		{
+			throw new Error("null root?");
+		}
 		root = newRoot;
 	}
 	
 	
 	protected void setRoot(IStore<R> store, BPlusTreeNode<SKey,DataHolder<R>> root, int branchingFactor)
 	{
+		if(root == null)
+		{
+			throw new Error("trying to set a null root");
+		}
+		
 		if(this.store == null)
 		{
 			this.store = store;
