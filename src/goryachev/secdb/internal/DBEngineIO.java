@@ -3,6 +3,7 @@ package goryachev.secdb.internal;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
 import goryachev.common.io.DWriterBytes;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
@@ -23,6 +24,7 @@ public class DBEngineIO
 	public static final int MAX_INLINE_SIZE = REF_MARKER - 1;
 	/** TODO remove after debugging */
 	private static final boolean DEBUG = true;
+	protected static final Log log = Log.get("DBEngineIO");
 	
 	
 	public static <R extends IRef> R store(IStore<R> store, BPlusTreeNode<SKey,DataHolder<R>> node) throws Exception
@@ -74,7 +76,9 @@ public class DBEngineIO
 			}
 			
 			byte[] b = wr.toByteArray();
-			return store.store(new ByteArrayIStream(b), true);
+			R ref = store.store(new ByteArrayIStream(b), true);
+			log.debug(() -> "STORE " + ref + " " + Hex.toHexString(b));
+			return ref;
 		}
 		finally
 		{
