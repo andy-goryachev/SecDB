@@ -210,14 +210,15 @@ public class SecStore
 
 
 	// TODO mutex
-	public Ref store(IStream in, boolean isTree) throws Exception
+	public Ref store(IStream inp, boolean isTree) throws Exception
 	{
 		// if isTree, use the main key
 		// if !isTree, generate a random data key
 		byte[] key = null; // TODO
 		// TODO nonce = segment + offset
 
-		long len = in.getLength();
+		InputStream in = inp.getStream();
+		long len = inp.getLength();
 		Ref ref = null;
 		
 		for(;;)
@@ -235,7 +236,7 @@ public class SecStore
 				ref = ref.addSegment(name, off);
 			}
 
-			long written = sf.write(in, key);
+			long written = sf.write(in, len, key);
 			if(written == 0)
 			{
 				throw new Error("zero bytes written");
