@@ -89,6 +89,8 @@ public class DBEngineIO
 	
 	public static <R extends IRef> BPlusTreeNode<SKey,DataHolder<R>> read(IStore<R> store, byte[] buf) throws Exception
 	{
+		log.debug(() -> Hex.toHexString(buf));
+		
 		DReader rd = new DReader(buf);
 		try
 		{
