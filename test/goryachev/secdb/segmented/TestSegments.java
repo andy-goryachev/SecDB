@@ -14,7 +14,7 @@ import java.util.Random;
 
 
 /**
- * TestSegments.
+ * Test Segments.
  */
 public class TestSegments
 {
