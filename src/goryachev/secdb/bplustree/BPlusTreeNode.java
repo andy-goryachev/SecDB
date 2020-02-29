@@ -231,7 +231,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				setModified();
 				return root;
 			}
-			return null;
+			return root;
 		}
 
 

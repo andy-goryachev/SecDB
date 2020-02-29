@@ -2,9 +2,9 @@
 package goryachev.secdb.segmented;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
-import goryachev.secdb.IStream;
 import goryachev.secdb.util.Utils;
 import java.io.File;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 
 
@@ -28,6 +28,8 @@ public class SegmentFile
 	protected final String name;
 	private RandomAccessFile reader;
 	private RandomAccessFile writer;
+	/** only one writer is allowed */
+	private final byte[] writeBuffer = new byte[BUF_SIZE];
 	
 	
 	public SegmentFile(File file, String name)
@@ -54,27 +56,27 @@ public class SegmentFile
 	 * writes as much data as possible until segment is full.  
 	 * returns the number of bytes written.
 	 */ 
-	public long write(IStream in, byte[] key) throws Exception
+	public long write(InputStream in, long len, byte[] key) throws Exception
 	{
-		long size = in.getLength();
-		long len = getLength();
-		long max = SEGMENT_SIZE - len;
-		
-		// TODO make it a final field, as only one writer is allowed
-		byte[] buf = new byte[BUF_SIZE];
+		long seglen = getLength();
+		long available = SEGMENT_SIZE - seglen;
 		
 		if(writer == null)
 		{
-			file.getParentFile().mkdirs();
+			File pf = file.getParentFile();
+			if(pf != null)
+			{
+				pf.mkdirs();
+			}
 			writer = new RandomAccessFile(file, "rw");
 		}
 		
-		long toWrite = Math.min(max, size);
+		long toWrite = Math.min(available, len);
 		
-		log.trace(() -> "size=" + size + " len=" + len + " max=" + max + " toWrite=" + toWrite + " file=" + file);
+		log.trace(() -> "size=" + len + " seglen=" + seglen + " max=" + available + " toWrite=" + toWrite + " file=" + file);
 		
-		writer.seek(len);
-		long rv = Utils.copy(in.getStream(), writer, buf, toWrite);
+		writer.seek(seglen);
+		long rv = Utils.copy(in, writer, writeBuffer, toWrite);
 		log.trace(() -> "rv=" + rv);
 		
 		return rv;

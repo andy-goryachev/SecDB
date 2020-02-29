@@ -119,7 +119,7 @@ public class SecStream
 		
 		SegmentFile sf = store.getSegmentFile(name);
 		
-		long off2 = off; // FIX
+		long off2 = off; // FIX  log: better to use printf style than lambda!
 		int len2 = length;
 		log.trace(() -> "off=" + off2 + " offset=" + offset + " len=" + len2 + " f=" + sf.getName());
 		

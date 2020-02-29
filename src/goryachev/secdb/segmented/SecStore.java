@@ -5,7 +5,6 @@ import goryachev.common.io.DWriter;
 import goryachev.common.log.Log;
 import goryachev.common.util.CFileLock;
 import goryachev.common.util.CMap;
-import goryachev.common.util.GUID256;
 import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -36,6 +36,8 @@ public class SecStore
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
+	@Deprecated // TODO remove
+	private static final AtomicLong seq = new AtomicLong();
 	
 	
 	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root)
@@ -208,14 +210,15 @@ public class SecStore
 
 
 	// TODO mutex
-	public Ref store(IStream in, boolean isTree) throws Exception
+	public Ref store(IStream inp, boolean isTree) throws Exception
 	{
 		// if isTree, use the main key
 		// if !isTree, generate a random data key
 		byte[] key = null; // TODO
 		// TODO nonce = segment + offset
 
-		long len = in.getLength();
+		InputStream in = inp.getStream();
+		long len = inp.getLength();
 		Ref ref = null;
 		
 		for(;;)
@@ -233,7 +236,7 @@ public class SecStore
 				ref = ref.addSegment(name, off);
 			}
 
-			long written = sf.write(in, key);
+			long written = sf.write(in, len, key);
 			if(written == 0)
 			{
 				throw new Error("zero bytes written");
@@ -256,19 +259,24 @@ public class SecStore
 	
 	protected File toSegmentFile(String name)
 	{
-		if(name.length() < 64)
-		{
-			throw new Error("illegal segment file name: " + name);
-		}
+//		if(name.length() < 64)
+//		{
+//			throw new Error("illegal segment file name: " + name);
+//		}
 		
-		String subdir = name.substring(0, 2);
-		return new File(dir, subdir + "/" + name);		
+//		String subdir = name.substring(0, 2);
+//		return new File(dir, subdir + "/" + name);
+		
+		// FIX
+		return new File(dir, name);
 	}
 	
 	
 	protected SegmentFile newSegmentFile()
 	{
-		String name = GUID256.generateHexString();
+		// FIX
+//		String name = GUID256.generateHexString();
+		String name = "data_" + seq.incrementAndGet();
 		File f = toSegmentFile(name);
 		SegmentFile sf =  new SegmentFile(f, name);
 

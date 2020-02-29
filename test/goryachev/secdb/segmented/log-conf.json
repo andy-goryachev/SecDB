@@ -1,10 +1,14 @@
 {
 	defaultLevel: off,
-	all:
+	off:
 	[
 		SecDB,
 		SecStream,
 		SegmentFile
+	],
+	all:
+	[
+		DBEngineIO
 	],
 	appenders:
 	[

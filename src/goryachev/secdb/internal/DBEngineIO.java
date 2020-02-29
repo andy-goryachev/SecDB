@@ -3,7 +3,9 @@ package goryachev.secdb.internal;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
 import goryachev.common.io.DWriterBytes;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
+import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
@@ -20,6 +22,9 @@ public class DBEngineIO
 	private static final int REF_MARKER = 255;
 	/** size threshold below which small values are stored in the leaf node */
 	public static final int MAX_INLINE_SIZE = REF_MARKER - 1;
+	/** TODO remove after debugging */
+	private static final boolean DEBUG = true;
+	protected static final Log log = Log.get("DBEngineIO");
 	
 	
 	public static <R extends IRef> R store(IStore<R> store, BPlusTreeNode<SKey,DataHolder<R>> node) throws Exception
@@ -29,21 +34,41 @@ public class DBEngineIO
 		{
 			if(node instanceof DBLeafNode)
 			{
+				if(DEBUG)
+				{
+					wr.writeByteArray(d("LEAF_BEG"));
+				}
+				
 				DBLeafNode n = (DBLeafNode)node;
 				int sz = n.size();
 				wr.writeInt8(sz);
 				
 				writeKeys(wr, sz, n);
 				writeValues(store, wr, n);
+				
+				if(DEBUG)
+				{
+					wr.writeByteArray(d("LEAF_END"));
+				}
 			}
 			else if(node instanceof DBInternalNode)
 			{
+				if(DEBUG)
+				{
+					wr.writeByteArray(d("INTR_BEG"));
+				}
+				
 				DBInternalNode n = (DBInternalNode)node;
 				int sz = n.size();
 				wr.writeInt8(-sz);
 				
 				writeKeys(wr, sz, n);
 				writeNodeRefs(store, wr, n);
+				
+				if(DEBUG)
+				{
+					wr.writeByteArray(d("INTR_END"));
+				}
 			}
 			else
 			{
@@ -51,7 +76,9 @@ public class DBEngineIO
 			}
 			
 			byte[] b = wr.toByteArray();
-			return store.store(new ByteArrayIStream(b), true);
+			R ref = store.store(new ByteArrayIStream(b), true);
+			log.debug(() -> "STORE " + ref + "\n" + Hex.toHexStringASCII(b));
+			return ref;
 		}
 		finally
 		{
@@ -62,9 +89,17 @@ public class DBEngineIO
 	
 	public static <R extends IRef> BPlusTreeNode<SKey,DataHolder<R>> read(IStore<R> store, byte[] buf) throws Exception
 	{
+		log.debug(() -> "\n" + Hex.toHexStringASCII(buf));
+		
 		DReader rd = new DReader(buf);
 		try
 		{
+			byte[] beg;
+			if(DEBUG)
+			{
+				beg = rd.readByteArray(8);
+			}
+			
 			// TODO perhaps add constructors that take arrays of (keys,refs/values)
 			int sz = rd.readInt8();
 			if(sz > 0)
@@ -73,6 +108,14 @@ public class DBEngineIO
 				DBLeafNode n = new DBLeafNode(store);
 				readKeys(rd, sz, n);
 				readValues(store, rd, n);
+				
+				if(DEBUG)
+				{
+					chk(beg, "LEAF_BEG");
+					
+					byte[] end = rd.readByteArray(8);
+					chk(end, "LEAF_END");
+				}
 				return n;
 			}
 			else
@@ -82,12 +125,37 @@ public class DBEngineIO
 				sz = -sz;
 				readKeys(rd, sz, n);
 				readNodeRefs(store, rd, n);
+				
+				if(DEBUG)
+				{
+					chk(beg, "INTR_BEG");
+					
+					byte[] end = rd.readByteArray(8);
+					chk(end, "INTR_END");
+				}
 				return n;
 			}
 		}
 		finally
 		{
 			CKit.close(rd);
+		}
+	}
+	
+	
+	@Deprecated // FIX remove
+	private static byte[] d(String s)
+	{
+		return s.getBytes(CKit.CHARSET_ASCII);
+	}
+	
+	
+	@Deprecated // FIX remove
+	private static void chk(byte[] b, String s) throws Exception
+	{
+		if(CKit.notEquals(b, d(s)))
+		{
+			throw new Exception("expecting " + s + " read=" + Hex.toHexString(b));
 		}
 	}
 	

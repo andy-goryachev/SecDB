@@ -7,6 +7,7 @@ import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
+import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.secdb.util.ByteArrayIStream;
 import java.io.File;
@@ -28,10 +29,12 @@ public class TestSegments
 	
 	
 	@BeforeClass
-	public static void initLog()
+	public static void initLog() throws Exception
 	{
 		SegmentFile.SEGMENT_SIZE = 256;
 		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
+		
+		FileTools.deleteRecursively(DIR);
 	}
 	
 	
