@@ -77,7 +77,7 @@ public class DBEngineIO
 			
 			byte[] b = wr.toByteArray();
 			R ref = store.store(new ByteArrayIStream(b), true);
-			log.debug(() -> "STORE " + ref + " " + Hex.toHexString(b));
+			log.debug(() -> "STORE " + ref + "\n" + Hex.toHexStringASCII(b));
 			return ref;
 		}
 		finally
@@ -89,7 +89,7 @@ public class DBEngineIO
 	
 	public static <R extends IRef> BPlusTreeNode<SKey,DataHolder<R>> read(IStore<R> store, byte[] buf) throws Exception
 	{
-		log.debug(() -> Hex.toHexString(buf));
+		log.debug(() -> "\n" + Hex.toHexStringASCII(buf));
 		
 		DReader rd = new DReader(buf);
 		try
