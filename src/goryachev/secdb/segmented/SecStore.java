@@ -276,7 +276,7 @@ public class SecStore
 	{
 		// FIX
 //		String name = GUID256.generateHexString();
-		String name = "data_" + seq.incrementAndGet();
+		String name = "DF" + seq.incrementAndGet();
 		File f = toSegmentFile(name);
 		SegmentFile sf =  new SegmentFile(f, name);
 

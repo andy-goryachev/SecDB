@@ -1,5 +1,6 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.internal;
+import goryachev.common.util.D;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
 import goryachev.secdb.bplustree.BPlusTreeNode;
@@ -40,6 +41,10 @@ public class NodeHolder<R extends IRef>
 
 	public R getRef()
 	{
+		if(dataHolder == null)
+		{
+			D.p(); // FIX remove
+		}
 		return dataHolder.getRef();
 	}
 

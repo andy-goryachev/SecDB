@@ -45,6 +45,7 @@ public class SecStream
 				}
 				
 				position++;
+				segmentOffset++;
 				return buf[0] & 0xff;
 			}
 		}
@@ -66,6 +67,7 @@ public class SecStream
 				else
 				{
 					position += rv;
+					segmentOffset += rv;
 				}
 				return rv;
 			}
@@ -103,7 +105,8 @@ public class SecStream
 				{
 					return -1;
 				}
-				
+
+				segmentOffset = 0;
 				continue;
 			}
 			else
