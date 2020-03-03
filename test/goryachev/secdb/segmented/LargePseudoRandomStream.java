@@ -61,14 +61,14 @@ public class LargePseudoRandomStream
 						return -1;
 					}
 					
-					int max = (int)Math.min(len, remain);
+					int sz = (int)Math.min(len, remain);
 					
 					// neither Random nor Xoroshiro128Plus have nextBytes(byte[] buf, int off, int len) method
-					byte[] b = new byte[max];
+					byte[] b = new byte[sz];
 					random.nextBytes(b);
-					System.arraycopy(b, 0, buf, off, max);
-					pos += max;
-					return max;
+					System.arraycopy(b, 0, buf, off, sz);
+					pos += sz;
+					return sz;
 				}
 				else
 				{
