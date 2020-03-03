@@ -78,6 +78,8 @@ public class TestSegments
 				}
 			});
 		}
+		
+		db.close();
 	}
 	
 	

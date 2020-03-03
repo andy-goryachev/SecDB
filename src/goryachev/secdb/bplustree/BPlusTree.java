@@ -41,7 +41,8 @@ import java.util.Queue;
 public class BPlusTree<K extends Comparable<? super K>, V>
 {
 	private final int branchingFactor;
-	private BPlusTreeNode<K,V> root = new BPlusTreeNode.LeafNode();
+
+	private BPlusTreeNode<K,V> root = new BPlusTreeNode.LeafNode(); // FIX
 
 
 	public BPlusTree(int branchingFactor)
