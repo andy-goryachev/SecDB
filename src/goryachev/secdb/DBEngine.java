@@ -1,6 +1,6 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
-import goryachev.common.util.Log;
+import goryachev.common.log.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.internal.DBEngineIO;
@@ -16,6 +16,7 @@ public class DBEngine<R extends IRef>
 {
 	private static final int BRANCHING_FACTOR = 4;
 	private static final int NODE_SIZE_LIMIT = 1_000_000;
+	protected static final Log log = Log.get("DBEngine");
 	private final IStore<R> store;
 	
 	
@@ -100,7 +101,7 @@ public class DBEngine<R extends IRef>
 			}
 			catch(Throwable e)
 			{
-				Log.ex(e);
+				log.error(e);
 			}
 		}
 		catch(Throwable err)
@@ -111,7 +112,7 @@ public class DBEngine<R extends IRef>
 			}
 			catch(Throwable e)
 			{
-				Log.ex(e);
+				log.error(e);
 			}
 		}
 		finally
@@ -122,7 +123,7 @@ public class DBEngine<R extends IRef>
 			}
 			catch(Throwable e)
 			{
-				Log.ex(e);
+				log.error(e);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 //	The MIT License (MIT)
 //	
 //	Copyright (c) 2014 Fang Jiaguo
-//	Copyright © 2018 Andy Goryachev <andy@goryachev.com>
+//	Copyright © 2018-2020 Andy Goryachev <andy@goryachev.com>
 //	
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
 //	of this software and associated documentation files (the "Software"), to deal
@@ -136,7 +136,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	
 	/**
 	 * Performs a search query with the keys specified by the range:
-	 * {@code key1} and {@code key2}.
+	 * {@code start} and {@code end}.
 	 * 
 	 * @param start the start key of the range
 	 * @param includeStart whether to include the start key in the query

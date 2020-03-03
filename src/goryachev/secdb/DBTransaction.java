@@ -1,6 +1,6 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
-import goryachev.common.util.Log;
+import goryachev.common.log.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
 import goryachev.secdb.internal.DataHolder;
@@ -17,7 +17,7 @@ public abstract class DBTransaction<R extends IRef>
 	
 	protected void onSuccess() { }
 	
-	protected void onError(Throwable e) { Log.ex(e); }
+	protected void onError(Throwable e) { log.error(e); }
 	
 	protected void onFinish() { }
 	
@@ -26,6 +26,7 @@ public abstract class DBTransaction<R extends IRef>
 	private IStore<R> store;
 	private BPlusTreeNode<SKey,DataHolder<R>> root;
 	private int branchingFactor;
+	protected static final Log log = Log.get("DBTransaction");
 	
 	
 	public DBTransaction()

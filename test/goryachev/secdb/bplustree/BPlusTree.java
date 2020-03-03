@@ -1,7 +1,7 @@
 //	The MIT License (MIT)
 //	
 //	Copyright (c) 2014 Fang Jiaguo
-//	Copyright © 2018 Andy Goryachev <andy@goryachev.com>
+//	Copyright © 2018-2020 Andy Goryachev <andy@goryachev.com>
 //	
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
 //	of this software and associated documentation files (the "Software"), to deal
@@ -35,14 +35,15 @@ import java.util.Queue;
  * A Java implementation of B+ tree for key-value store.
  * Not thread safe.
  * 
+ * This class is not a part of SecDB.
+ * 
  * Original code:
  * https://github.com/jiaguofang/b-plus-tree
  */
 public class BPlusTree<K extends Comparable<? super K>, V>
 {
 	private final int branchingFactor;
-
-	private BPlusTreeNode<K,V> root = new BPlusTreeNode.LeafNode(); // FIX
+	private BPlusTreeNode<K,V> root = new BPlusTreeNode.LeafNode();
 
 
 	public BPlusTree(int branchingFactor)
