@@ -206,12 +206,19 @@ public class TestLarge
 	}
 	
 	
+	protected static InputStream stream(InputStream in)
+	{
+		return new BufferedInputStream(in);
+//		return in;
+	}
+	
+	
 	protected static void compare(String key, InputStream is1, InputStream is2) throws Exception
 	{
-		InputStream in1 = is1; //new BufferedInputStream(is1);
+		InputStream in1 = stream(is1);
 		try
 		{
-			InputStream in2 = is2; // new BufferedInputStream(is2);
+			InputStream in2 = stream(is2);
 			try
 			{
 				long off = 0;

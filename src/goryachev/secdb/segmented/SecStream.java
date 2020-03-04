@@ -16,7 +16,7 @@ public class SecStream
 	protected final Ref ref;
 	private long position;
 	private int segmentIndex;
-	private long segmentOffset;
+	private int segmentOffset;
 	
 	
 	public SecStream(SecStore store, Ref ref)
@@ -88,16 +88,15 @@ public class SecStream
 	{
 		String name;
 		long off;
-		long max;
+		long sz;
 	
 		for(;;)
 		{
 			name = ref.getSegment(segmentIndex);
 			off = ref.getOffset(segmentIndex) + segmentOffset;
+			sz = SegmentFile.SEGMENT_SIZE - off;
 		
-			max = SegmentFile.SEGMENT_SIZE - off;
-		
-			if(max == 0)
+			if(sz == 0)
 			{
 				// next segment
 				segmentIndex++;
@@ -115,23 +114,22 @@ public class SecStream
 			}
 		}
 		
-		if(max < length)
+		if(sz < length)
 		{
-			length = (int)max;
+			length = (int)sz;
 		}
 		
 		SegmentFile sf = store.getSegmentFile(name);
+		int rv = sf.read(off, buffer, offset, length);
+
+		log.trace("off={%08x} offset={%04x} len={%d} f={%s} -> {%d}", off, offset, length, sf.getName(), rv);
 		
-		long off2 = off; // FIX  log: better to use printf style than lambda!
-		int len2 = length;
-		log.trace(() -> "off=" + off2 + " offset=" + offset + " len=" + len2 + " f=" + sf.getName());
-		
-		return sf.read(off, buffer, offset, length);
+		return rv;
 	}
 
 
 	public void close() throws IOException
 	{
-			// TODO clear the key
+		// TODO clear the key
 	}
 }

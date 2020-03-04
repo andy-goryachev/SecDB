@@ -3,12 +3,12 @@
 	off:
 	[
 		SecDB,
-		SecStream,
 		SegmentFile
 	],
 	all:
 	[
-		DBEngineIO
+		DBEngineIO,
+		SecStream
 	],
 	appenders:
 	[
