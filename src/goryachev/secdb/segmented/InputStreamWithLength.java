@@ -1,5 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.util;
+package goryachev.secdb.segmented;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,7 +12,7 @@ public class InputStreamWithLength
 {
 	private final InputStream in;
 	private final long length;
-	private int count = 8; // size of long
+	private int count = SegmentStream.HEADER_SIZE;
 	
 	
 	public InputStreamWithLength(InputStream in, long len)
