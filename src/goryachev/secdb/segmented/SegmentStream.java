@@ -63,7 +63,7 @@ public class SegmentStream
 		try
 		{
 			int len = (int)Math.min(remain, length);
-			int rv = readPrivate(buffer, offset, length);
+			int rv = readPrivate(buffer, offset, len);
 			if(rv < 0)
 			{
 				throw new IOException("unexpected EOF: pos=" + position + " ref=" + ref);
