@@ -227,7 +227,7 @@ public class SecStore
 			throw new Error("invalid data length=" + len);
 		}
 		
-		InputStream in = new InputStreamWithLength(inp.getStream(), len);
+		InputStream in = inp.getStream();
 		Ref ref = null;
 		
 		for(;;)
@@ -350,7 +350,7 @@ public class SecStore
 		{
 			public InputStream getStream()
 			{
-				return new SegmentStream.Wrapper(SecStore.this, ref);
+				return new SegmentStream(SecStore.this, ref);
 			}
 
 			public long getLength()
