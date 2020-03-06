@@ -215,7 +215,11 @@ public class SecStore
 		// if isTree, use the main key
 		// if !isTree, generate a random data key
 		byte[] key = null; // TODO
-		// TODO nonce = segment + offset
+		
+		// TODO nonce = segment(*1) + offset + segment count
+		// *1: multi-segment blocks use the first segment name for nonce
+		
+		// TODO need to store the data length
 
 		InputStream in = inp.getStream();
 		long len = inp.getLength();
