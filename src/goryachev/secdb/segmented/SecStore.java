@@ -10,6 +10,7 @@ import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
+import goryachev.secdb.util.InputStreamWithLength;
 import goryachev.secdb.util.Utils;
 import java.io.Closeable;
 import java.io.File;
@@ -221,8 +222,13 @@ public class SecStore
 		
 		// TODO need to store the data length
 
-		InputStream in = inp.getStream();
 		long len = inp.getLength();
+		if(len <= 0)
+		{
+			throw new Error("invalid data length=" + len);
+		}
+		
+		InputStream in = new InputStreamWithLength(inp.getStream(), len);
 		Ref ref = null;
 		
 		for(;;)
@@ -345,7 +351,7 @@ public class SecStore
 		{
 			public InputStream getStream()
 			{
-				return new SecStream(SecStore.this, ref);
+				return new SegmentStream(SecStore.this, ref);
 			}
 
 			public long getLength()

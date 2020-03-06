@@ -8,7 +8,7 @@
 	all:
 	[
 		DBEngineIO,
-		SecStream
+		SegmentStream
 	],
 	appenders:
 	[

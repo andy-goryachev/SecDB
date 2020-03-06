@@ -6,12 +6,12 @@ import java.io.InputStream;
 
 
 /**
- * InputStream reads data from the database SegmentFiles.
+ * This InputStream reads data from SegmentFile(s).
  */
-public class SecStream
+public class SegmentStream
 	extends InputStream
 {
-	protected static final Log log = Log.get("SecStream");
+	protected static final Log log = Log.get("SegmentStream");
 	protected final SecStore store;
 	protected final Ref ref;
 	private long position;
@@ -19,7 +19,7 @@ public class SecStream
 	private int segmentOffset;
 	
 	
-	public SecStream(SecStore store, Ref ref)
+	public SegmentStream(SecStore store, Ref ref)
 	{
 		this.store = store;
 		this.ref = ref;
