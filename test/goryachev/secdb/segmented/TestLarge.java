@@ -13,7 +13,6 @@ import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
-import goryachev.secdb.util.Utils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -26,8 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class TestLarge
 {
-	private static final File DIR = new File("user.home/large-test");
-	private static final long SIZE = 1024; // 1_000_000_000L;
+	private static final File DIR = new File("H:/Test/SecDB/large-test");
+	private static final long SIZE = 1_000_000_000L;
 	
 	
 	public static void main(String[] args)
@@ -45,11 +44,11 @@ public class TestLarge
 	}
 	
 	
-	protected static IStream createStream(int seed)
+	public static IStream createStream(int seed)
 	{
-//		return new LargePseudoRandomStream(seed, SIZE);
+		return new LargePseudoRandomStream2(seed, SIZE);
 //		return new TestStream(SIZE);
-		return new TestStream2(seed, SIZE);
+//		return new TestStream2(seed, SIZE);
 	}
 	
 	
@@ -65,17 +64,7 @@ public class TestLarge
 	{
 		SecDB db = SecDB.open(DIR, null);
 		int ct = query(db, "0", "9");
-		D.print(ct);
-	}
-	
-	
-//	@Test
-	public void testPseudoRandom() throws Exception
-	{
-		for(int i=0; i<100; i++)
-		{
-			compare("test", createStream(i).getStream(), createStream(i).getStream());
-		}
+		TF.print(ct);
 	}
 	
 	
@@ -169,7 +158,8 @@ public class TestLarge
 			{
 				try
 				{
-					D.print(key, st.getLength());
+					byte[] b = readBytes(st.getIStream(), 16);
+					D.print("query:", key, st.getLength(), Hex.toHexStringASCII(b));
 					check(key.toString(), st.getIStream());
 					ct.incrementAndGet();
 					return true;
@@ -197,12 +187,12 @@ public class TestLarge
 	}
 	
 	
-	protected void check(String key, IStream is) throws Exception
+	protected void check(String key, IStream in) throws Exception
 	{
 		int seed = Parsers.parseInteger(key);
-		InputStream is1 = createStream(seed).getStream();
-		InputStream is2 = is.getStream();
-		compare(key, is1, is2);
+		InputStream read = in.getStream();
+		InputStream expected = createStream(seed).getStream();
+		compare(key, read, expected);
 	}
 	
 	
@@ -213,34 +203,29 @@ public class TestLarge
 	}
 	
 	
-	protected static void compare(String key, InputStream is1, InputStream is2) throws Exception
+	protected static void compare(String key, InputStream readInput, InputStream expectedInput) throws Exception
 	{
-		InputStream in1 = stream(is1);
+		InputStream ri = stream(readInput);
 		try
 		{
-			InputStream in2 = stream(is2);
+			InputStream ei = stream(expectedInput);
 			try
 			{
 				long off = 0;
 				
 				for(;;)
 				{
-					if(off == 1024)
-					{
-						D.p(); // FIX
-					}
+					int cr = ri.read();
+					int ce = ei.read();
 					
-					int c1 = in1.read();
-					int c2 = in2.read();
-					
-					if(c1 != c2)
+					if(cr != ce)
 					{
 						// FIX
-						throw new Exception(String.format("mismatch at offset 0x%08x, %02x, %02x, key=%s", off, c1, c2, key));
+						throw new Exception(String.format("mismatch at offset 0x%08x, rd=%02x, exp=%02x, key=%s", off, cr, ce, key));
 //						return;
 					}
 					
-					if(c1 < 0)
+					if(cr < 0)
 					{
 						return;
 					}
@@ -250,12 +235,12 @@ public class TestLarge
 			}
 			finally
 			{
-				CKit.close(in2);
+				CKit.close(ei);
 			}
 		}
 		finally
 		{
-			CKit.close(in1);
+			CKit.close(ri);
 		}
 	}
 	
@@ -270,8 +255,8 @@ public class TestLarge
 			{
 				try
 				{
-					byte[] b = Utils.readBytes(st.getIStream(), Integer.MAX_VALUE);
-					D.print(key, "\n" + Hex.toHexStringASCII(b));
+					byte[] b = readBytes(st.getIStream(), 16);
+					TF.print(key, "\n" + Hex.toHexStringASCII(b));
 					return true;
 				}
 				catch(Throwable e)
@@ -286,5 +271,16 @@ public class TestLarge
 				err.printStackTrace();
 			}
 		});
+	}
+	
+	
+	/** read data into a new byte array, as long as the object size is below the limit */
+	public static byte[] readBytes(IStream inp, int limit) throws Exception
+	{
+		long len = Math.min(limit, inp.getLength());
+		byte[] b = new byte[(int)len];
+		InputStream is = inp.getStream();
+		CKit.readFully(is, b);
+		return b;
 	}
 }

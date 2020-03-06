@@ -1,24 +1,24 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.util.Xoroshiro128Plus;
 import goryachev.secdb.IStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 
 /**
  * Large Pseudo Random Stream.
  */
-public class LargePseudoRandomStream
+public class LargePseudoRandomStream2
 	implements IStream
 {
-	protected final Xoroshiro128Plus random;
+	protected final Random random;
 	protected final long length;
 	
 	
-	public LargePseudoRandomStream(int seed, long length)
+	public LargePseudoRandomStream2(int seed, long length)
 	{
-		this.random = new Xoroshiro128Plus(0x55aa000000000000L, seed);
+		this.random = new Random(0x55aa000000000000L ^ seed);
 		this.length = length;
 	}
 	
