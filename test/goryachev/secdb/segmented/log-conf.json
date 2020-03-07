@@ -3,19 +3,19 @@
 	off:
 	[
 		SecDB,
-		SegmentFile
+		SegmentFile,
+		SegmentStream
 	],
 	all:
 	[
-		DBEngineIO,
-		SegmentStream
+//		DBEngineIO,
 	],
 	appenders:
 	[
 		{
 			type: stdout,
 			level: debug,
-			spec: "{t.yyyy-MM-dd hh:mm:ss.SSS} {class.1}"
+			spec: "{t.yyyy-MM-dd hh:mm:ss.SSS} {class.1}.{method}"
 		}
 	]
 }

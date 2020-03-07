@@ -51,6 +51,8 @@ public class LogEventFormatter
 			FormatField.className(),
 			FormatField.text("."),
 			FormatField.method(),
+			FormatField.text(":"),
+			FormatField.line(),
 			FormatField.text(" "),
 			FormatField.error(),
 			FormatField.text(" "),

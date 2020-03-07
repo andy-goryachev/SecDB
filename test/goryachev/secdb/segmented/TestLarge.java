@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TestLarge
 {
 	private static final File DIR = new File("H:/Test/SecDB/large-test");
-	private static final long SIZE = 1_000_000_000L;
+	private static final long SIZE = 1000; // 1_000_000_000L;
 	
 	
 	public static void main(String[] args)
@@ -40,6 +40,7 @@ public class TestLarge
 	{
 		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
 		
+		SegmentFile.SEGMENT_SIZE = 256;
 		FileTools.deleteRecursively(DIR);
 	}
 	
@@ -255,7 +256,7 @@ public class TestLarge
 			{
 				try
 				{
-					byte[] b = readBytes(st.getIStream(), 16);
+					byte[] b = readBytes(st.getIStream(), 2048);
 					TF.print(key, "\n" + Hex.toHexStringASCII(b));
 					return true;
 				}

@@ -105,6 +105,33 @@ public abstract class FormatField
 	}
 	
 	
+	/** field emits the source file line number */
+	public static FormatField line()
+	{
+		return new FormatField()
+		{
+			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
+			{
+				if(caller == null)
+				{
+					sb.append("NO_CALLER_ERRROR"); // FIX
+				}
+				else
+				{
+					int line = caller.getLineNumber();
+					sb.append(line);
+				}
+			}
+			
+			
+			protected boolean needsCaller()
+			{
+				return true;
+			}
+		};
+	}
+	
+	
 	/** field emits the caller method name */
 	public static FormatField method()
 	{
