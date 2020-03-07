@@ -51,7 +51,7 @@ public class LargePseudoRandomStream
 			
 			public int read(byte[] buf, int off, int len) throws IOException
 			{
-				boolean block = true;
+				boolean block = !true;
 				
 				if(block)
 				{

@@ -1,5 +1,6 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.util.CKit;
 import goryachev.common.util.Xoroshiro128Plus;
 import goryachev.secdb.IStream;
 import java.io.IOException;
@@ -9,15 +10,36 @@ import java.io.InputStream;
 /**
  * IStream streams incrementing byte values.
  */
-public class TestStream
+public class TestStream3
 	implements IStream
 {
+	protected final byte[] bytes;
 	protected final long length;
+	private int phase;
 	
 	
-	public TestStream(long length)
+	public TestStream3(int seed, long length)
 	{
+		this.bytes = toBytes(seed).getBytes(CKit.CHARSET_ASCII);
 		this.length = length;
+	}
+	
+	
+	private static String toBytes(int seed)
+	{
+		switch(seed)
+		{
+		case 0:
+			return "zero-0 ";
+		case 1:
+			return "one-111 ";
+		case 2:
+			return "two-2222 ";
+		case 3:
+			return "three-333 ";
+		default:
+			return "abcdefg";
+		}
 	}
 	
 	
@@ -54,20 +76,26 @@ public class TestStream
 					return -1;
 				}
 				
-				int sz = (int)Math.min(len, remain);
-				for(int i=0; i<sz; i++)
+				int ct = (int)Math.min(len, remain);
+				for(int i=0; i<ct; i++)
 				{
 					buf[off + i] = (byte)val();
 					pos++;
 				}
 				
-				return sz;
+				return ct;
 			}
 			
 			
 			protected int val()
 			{
-				return 0xff & (int)pos;
+				int rv = bytes[phase];
+				phase++;
+				if(phase >= bytes.length)
+				{
+					phase = 0;
+				}
+				return rv;
 			}
 		};
 	}

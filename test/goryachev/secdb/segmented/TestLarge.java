@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TestLarge
 {
 	private static final File DIR = new File("H:/Test/SecDB/large-test");
-	private static final long SIZE = 1000; // 1_000_000_000L;
+	private static final long SIZE = 999; // 1_000_000_000L;
 	
 	
 	public static void main(String[] args)
@@ -47,9 +47,11 @@ public class TestLarge
 	
 	public static IStream createStream(int seed)
 	{
+//		return new LargePseudoRandomStream(seed, SIZE);
 		return new LargePseudoRandomStream2(seed, SIZE);
 //		return new TestStream(SIZE);
 //		return new TestStream2(seed, SIZE);
+//		return new TestStream3(seed, SIZE);
 	}
 	
 	
@@ -199,8 +201,8 @@ public class TestLarge
 	
 	protected static InputStream stream(InputStream in)
 	{
-		return new BufferedInputStream(in);
-//		return in;
+//		return new BufferedInputStream(in);
+		return in;
 	}
 	
 	
