@@ -50,7 +50,7 @@ public class TestSegments
 		{
 			db = SecDB.open(DIR, null);
 		}
-		catch(DBException e)
+		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{

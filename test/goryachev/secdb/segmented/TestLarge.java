@@ -91,7 +91,7 @@ public class TestLarge
 		{
 			db = SecDB.open(dir(), null);
 		}
-		catch(DBException e)
+		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{

@@ -59,7 +59,7 @@ public class SecStore
 			dir.mkdirs();
 			if(!dir.exists())
 			{
-				throw new DBException(DBErrorCode.DIR_UNABLE_TO_CREATE, dir);
+				throw new SecException(SecErrorCode.DIR_UNABLE_TO_CREATE, dir);
 			}
 		}
 		
@@ -67,7 +67,7 @@ public class SecStore
 		{
 			if(!Utils.isEmptyDir(dir))
 			{
-				throw new DBException(DBErrorCode.DIR_NOT_EMPTY, dir);
+				throw new SecException(SecErrorCode.DIR_NOT_EMPTY, dir);
 			}
 		}
 		
@@ -107,7 +107,7 @@ public class SecStore
 		// check directories
 		if(!dir.exists() || !dir.isDirectory())
 		{
-			throw new DBException(DBErrorCode.DIR_NOT_FOUND, dir);
+			throw new SecException(SecErrorCode.DIR_NOT_FOUND, dir);
 		}
 		
 		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
@@ -124,7 +124,7 @@ public class SecStore
 			List<LogFile> lfs = LogFile.open(dir, null);
 			if(lfs.size() == 0)
 			{
-				throw new DBException(DBErrorCode.MISSING_LOG_FILE, dir);
+				throw new SecException(SecErrorCode.MISSING_LOG_FILE, dir);
 			}
 			
 			LogFile lf = lfs.get(0);
@@ -134,7 +134,7 @@ public class SecStore
 			if(lf.isRecoveryNeeded())
 			{
 				// TODO recover
-				throw new DBException(DBErrorCode.RECOVERY_REQUIRED, lf.getName());
+				throw new SecException(SecErrorCode.RECOVERY_REQUIRED, lf.getName());
 			}
 			
 			// TODO
@@ -329,7 +329,7 @@ public class SecStore
 				currentSegment = getSegmentFile(name);
 				if(currentSegment == null)
 				{
-					throw new DBException(DBErrorCode.MISSING_SEGMENT_FILE, name);
+					throw new SecException(SecErrorCode.MISSING_SEGMENT_FILE, name);
 				}
 			}
 		}

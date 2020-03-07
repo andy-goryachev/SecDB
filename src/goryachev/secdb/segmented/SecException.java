@@ -5,14 +5,14 @@ package goryachev.secdb.segmented;
 /**
  * SecDB Exception.
  */
-public class DBException
+public class SecException
 	extends Exception
 {
-	private final DBErrorCode code;
+	private final SecErrorCode code;
 	private final Object value;
 	
 	
-	public DBException(DBErrorCode code, Object value)
+	public SecException(SecErrorCode code, Object value)
 	{
 		super(code + " " + value);
 		this.code = code;
@@ -20,7 +20,7 @@ public class DBException
 	}
 	
 	
-	public DBErrorCode getErrorCode()
+	public SecErrorCode getErrorCode()
 	{
 		return code;
 	}

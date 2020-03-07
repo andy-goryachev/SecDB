@@ -5,7 +5,7 @@ package goryachev.secdb.segmented;
 /**
  * SecDB Error Code.
  */
-public enum DBErrorCode
+public enum SecErrorCode
 {
 	/** create: directory is not empty */
 	DIR_NOT_EMPTY,
