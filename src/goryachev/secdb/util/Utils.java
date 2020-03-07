@@ -38,13 +38,13 @@ public class Utils
 			int sz = (int)Math.min(buf.length, length);
 			if(sz == 0)
 			{
-				return count;
+				break;
 			}
 			
 			int rd = in.read(buf, 0, sz);
 			if(rd < 0)
 			{
-				return count;
+				break;
 			}
 			else if(rd > 0)
 			{
@@ -53,6 +53,8 @@ public class Utils
 				length -= rd;
 			}
 		}
+		
+		return count;
 	}
 	
 	

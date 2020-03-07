@@ -71,13 +71,13 @@ public class SegmentFile
 			writer = new RandomAccessFile(file, "rw");
 		}
 		
-		long toWrite = Math.min(available, len);
+		long sz = Math.min(available, len);
 		
-		log.trace(() -> "size=" + len + " seglen=" + seglen + " max=" + available + " toWrite=" + toWrite + " file=" + file);
+		log.trace("size={%d} seglen={%d} avail={%d} sz={%d} f={%s}", len, seglen, available, sz, file);
 		
 		writer.seek(seglen);
-		long rv = Utils.copy(in, writer, writeBuffer, toWrite);
-		log.trace(() -> "rv=" + rv);
+		long rv = Utils.copy(in, writer, writeBuffer, sz);
+		log.trace("rv={%d}", rv);
 		
 		return rv;
 	}
