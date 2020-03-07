@@ -9,4 +9,11 @@ import goryachev.secdb.DBTransaction;
 public abstract class Transaction
 	extends DBTransaction<Ref>
 {
+	protected abstract void body() throws Exception;
+	
+	protected void onSuccess() { }
+	
+	protected void onError(Throwable e) { log.error(e); }
+	
+	protected void onFinish() { }
 }

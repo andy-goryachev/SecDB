@@ -5,6 +5,7 @@ import goryachev.common.io.DWriter;
 import goryachev.common.log.Log;
 import goryachev.common.util.CFileLock;
 import goryachev.common.util.CMap;
+import goryachev.common.util.GUID256;
 import goryachev.common.util.Hex;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
@@ -17,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -38,8 +38,6 @@ public class SecStore
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
-	@Deprecated // TODO remove
-	private static final AtomicLong seq = new AtomicLong();
 	
 	
 	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root)
@@ -270,24 +268,19 @@ public class SecStore
 	
 	protected File toSegmentFile(String name)
 	{
-//		if(name.length() < 64)
-//		{
-//			throw new Error("illegal segment file name: " + name);
-//		}
+		if(name.length() < 64)
+		{
+			throw new Error("illegal segment file name: " + name);
+		}
 		
-//		String subdir = name.substring(0, 2);
-//		return new File(dir, subdir + "/" + name);
-		
-		// FIX
-		return new File(dir, name);
+		String subdir = name.substring(0, 2);
+		return new File(dir, subdir + "/" + name);
 	}
 	
 	
 	protected SegmentFile newSegmentFile()
 	{
-		// FIX
-//		String name = GUID256.generateHexString();
-		String name = "DF" + seq.incrementAndGet();
+		String name = GUID256.generateHexString();
 		File f = toSegmentFile(name);
 		SegmentFile sf =  new SegmentFile(f, name);
 

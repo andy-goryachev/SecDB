@@ -62,7 +62,6 @@ public class SecDB
 	}
 	
 	
-	// TODO transaction
 	// TODO store single value
 	
 	
