@@ -15,7 +15,7 @@ public class TestStream3
 {
 	protected final byte[] bytes;
 	protected final long length;
-	private int phase;
+	protected int phase;
 	
 	
 	public TestStream3(int seed, long length)
