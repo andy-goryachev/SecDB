@@ -11,6 +11,7 @@ import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
+import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class SecStore
 	implements Closeable,IStore<Ref>
 {
 	protected static final String LOCK_FILE = "lock";
+	protected static final int BUFFER_SIZE = 4096;
 	protected static final Log log = Log.get("SecStore");
 	private final File dir;
 	private final CFileLock lock;
@@ -350,7 +352,7 @@ public class SecStore
 		{
 			public InputStream getStream()
 			{
-				return new SegmentStream(SecStore.this, ref);
+				return new BufferedInputStream(new SegmentStream(SecStore.this, ref), BUFFER_SIZE);
 			}
 
 			public long getLength()

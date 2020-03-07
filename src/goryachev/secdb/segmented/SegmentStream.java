@@ -43,8 +43,6 @@ public class SegmentStream
 					continue;
 				}
 				
-				position++;
-				segmentOffset++;
 				return buf[0] & 0xff;
 			}
 		}

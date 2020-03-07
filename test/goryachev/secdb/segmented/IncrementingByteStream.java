@@ -9,13 +9,13 @@ import java.io.InputStream;
 /**
  * IStream streams incrementing byte values.
  */
-public class TestStream
+public class IncrementingByteStream
 	implements IStream
 {
 	protected final long length;
 	
 	
-	public TestStream(long length)
+	public IncrementingByteStream(long length)
 	{
 		this.length = length;
 	}

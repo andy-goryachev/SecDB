@@ -5,6 +5,7 @@ import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
+import goryachev.common.util.CPlatform;
 import goryachev.common.util.D;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.Hex;
@@ -25,8 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class TestLarge
 {
-	private static final File DIR = new File("H:/Test/SecDB/large-test");
-	private static final long SIZE = 999; // 1_000_000_000L;
+	private static final long SIZE = 1_000_000_000L;
 	
 	
 	public static void main(String[] args)
@@ -35,21 +35,33 @@ public class TestLarge
 	}
 	
 	
+	public static File dir()
+	{
+		if(CPlatform.isWindows())
+		{
+			return new File("H:/Test/SecDB/large-test");
+		}
+		else
+		{
+			return new File("user.home/large-test");
+		}
+	}
+	
+	
 	@BeforeClass
 	public static void initLog() throws Exception
 	{
 		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
 		
-		SegmentFile.SEGMENT_SIZE = 256;
-		FileTools.deleteRecursively(DIR);
+//		SegmentFile.SEGMENT_SIZE = 256;
+		FileTools.deleteRecursively(dir());
 	}
 	
 	
 	public static IStream createStream(int seed)
 	{
 //		return new LargePseudoRandomStream(seed, SIZE);
-		return new LargePseudoRandomStream2(seed, SIZE);
-//		return new TestStream(SIZE);
+		return new IncrementingByteStream(SIZE);
 //		return new TestStream2(seed, SIZE);
 //		return new TestStream3(seed, SIZE);
 	}
@@ -58,14 +70,14 @@ public class TestLarge
 //	@Test
 	public void testCreate() throws Exception
 	{
-		SecDB.create(DIR, null);
+		SecDB.create(dir(), null);
 	}
 	
 	
 //	@Test
 	public void testQuery() throws Exception
 	{
-		SecDB db = SecDB.open(DIR, null);
+		SecDB db = SecDB.open(dir(), null);
 		int ct = query(db, "0", "9");
 		TF.print(ct);
 	}
@@ -77,15 +89,15 @@ public class TestLarge
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, null);
+			db = SecDB.open(dir(), null);
 		}
 		catch(DBException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null);
-				db = SecDB.open(DIR, null);
+				SecDB.create(dir(), null);
+				db = SecDB.open(dir(), null);
 				break;
 			default:
 				throw e;
@@ -214,7 +226,7 @@ public class TestLarge
 			InputStream ei = stream(expectedInput);
 			try
 			{
-				long off = 0;
+				long off = 0; // TODO remove
 				
 				for(;;)
 				{
