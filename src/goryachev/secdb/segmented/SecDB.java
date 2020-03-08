@@ -3,10 +3,9 @@ package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
+import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
-import goryachev.secdb.DBTransaction;
 import goryachev.secdb.internal.DataHolder;
-import goryachev.secdb.segmented.log.LogFile;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -56,13 +55,32 @@ public class SecDB
 	}
 	
 	
-	public void execute(DBTransaction<Ref> tx)
+	public void execute(Transaction tx)
 	{
 		engine.execute(tx);
 	}
 	
 	
-	// TODO store single value
+	/** executes a Transaction which inserts a single value */ 
+	public void store(SKey key, IStream in, Runnable onFinish)
+	{
+		execute(new Transaction()
+		{
+			protected void body() throws Exception
+			{
+				insert(key, in);
+			}
+			
+			
+			protected void onFinish() 
+			{
+				if(onFinish != null)
+				{
+					onFinish.run();
+				}
+			}
+		});
+	}
 	
 	
 	/** range query.  'start' may be less than, greater than, or equal to 'end' */
