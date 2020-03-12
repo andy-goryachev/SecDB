@@ -1,6 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
+import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -34,8 +35,7 @@ public class SecDB
 	}
 	
 	
-	// TODO OpaqueString
-	public static SecDB open(File dir, char[] passphrase) throws Exception
+	public static SecDB open(File dir, OpaqueChars passphrase) throws Exception
 	{
 		SecStore st = SecStore.open(dir, passphrase);
 		return new SecDB(st);

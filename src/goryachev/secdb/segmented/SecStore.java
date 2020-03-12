@@ -7,6 +7,7 @@ import goryachev.common.util.CFileLock;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GUID256;
 import goryachev.common.util.Hex;
+import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.log.LogEventCode;
@@ -99,8 +100,7 @@ public class SecStore
 	}
 	
 	
-	// TODO OpaqueString
-	public static SecStore open(File dir, char[] passphrase) throws Exception
+	public static SecStore open(File dir, OpaqueChars passphrase) throws Exception
 	{
 		// check directories
 		if(!dir.exists() || !dir.isDirectory())
