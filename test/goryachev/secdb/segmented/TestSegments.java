@@ -55,7 +55,7 @@ public class TestSegments
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null);
+				SecDB.create(DIR, null, null);
 				db = SecDB.open(DIR, null);
 				break;
 			default:

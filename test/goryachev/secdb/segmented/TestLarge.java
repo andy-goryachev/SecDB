@@ -70,7 +70,7 @@ public class TestLarge
 //	@Test
 	public void testCreate() throws Exception
 	{
-		SecDB.create(dir(), null);
+		SecDB.create(dir(), null, null);
 	}
 	
 	
@@ -96,7 +96,7 @@ public class TestLarge
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(dir(), null);
+				SecDB.create(dir(), null, null);
 				db = SecDB.open(dir(), null);
 				break;
 			default:

@@ -5,6 +5,7 @@ import goryachev.common.util.CComparator;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
+import goryachev.crypto.OpaqueBytes;
 import goryachev.secdb.segmented.Ref;
 import java.io.Closeable;
 import java.io.File;
@@ -28,7 +29,7 @@ public class LogFile
 	protected static final String NAME_PREFIX = "log.";
 	protected static final MonotonicUniqueTimeStamp tstamp = new MonotonicUniqueTimeStamp();
 	protected final File file;
-	protected final byte[] key;
+	protected final OpaqueBytes key;
 	protected final EnumMap<LogEventCode,LogEvent> events = new EnumMap<>(LogEventCode.class);
 	private LogEvent lastEvent;
 	private FileOutputStream out;
@@ -36,7 +37,7 @@ public class LogFile
 	private long lastTime;
 	
 	
-	public LogFile(File f, byte[] key)
+	public LogFile(File f, OpaqueBytes key)
 	{
 		this.file = f;
 		this.key = key;
@@ -44,8 +45,7 @@ public class LogFile
 	
 	
 	/** creates an empty log file.  assumes the directory exists */
-	// TODO log key
-	public static LogFile create(File dir, byte[] key) throws Exception
+	public static LogFile create(File dir, OpaqueBytes key) throws Exception
 	{
 		File f = File.createTempFile(NAME_PREFIX, "", dir); 
 		return new LogFile(f, key);
@@ -57,7 +57,7 @@ public class LogFile
 	 * sorted most recent first.
 	 */
 	// TODO log key
-	public static List<LogFile> open(File dir, byte[] key) throws Exception
+	public static List<LogFile> open(File dir, OpaqueBytes key) throws Exception
 	{
 		// pick the oldest log file
 		
@@ -104,7 +104,7 @@ public class LogFile
 	}
 
 
-	protected static LogFile load(File f, byte[] key) throws Exception
+	protected static LogFile load(File f, OpaqueBytes key) throws Exception
 	{
 		LogFile lf = new LogFile(f, key);
 		lf.load();

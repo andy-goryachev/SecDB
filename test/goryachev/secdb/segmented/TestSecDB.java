@@ -33,7 +33,7 @@ public class TestSecDB
 //	@Test
 	public void testCreate() throws Exception
 	{
-		SecDB.create(DIR, null);
+		SecDB.create(DIR, null, null);
 	}
 	
 	
@@ -50,7 +50,7 @@ public class TestSecDB
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null);
+				SecDB.create(DIR, null, null);
 				db = SecDB.open(DIR, null);
 				break;
 			default:

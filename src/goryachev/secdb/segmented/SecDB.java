@@ -1,6 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
+import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
@@ -10,6 +11,7 @@ import goryachev.secdb.internal.DataHolder;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 
 /**
@@ -29,9 +31,15 @@ public class SecDB
 	}
 	
 	
-	public static void create(File dir, char[] passphrase) throws Exception
+	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
-		SecStore.create(dir, passphrase);
+		create(dir, key, passphrase, new SecureRandom());
+	}
+	
+	
+	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws Exception
+	{
+		SecStore.create(dir, key, passphrase, random);
 	}
 	
 	

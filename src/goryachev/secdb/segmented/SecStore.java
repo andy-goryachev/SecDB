@@ -4,12 +4,15 @@ import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
 import goryachev.common.log.Log;
 import goryachev.common.util.CFileLock;
+import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GUID256;
 import goryachev.common.util.Hex;
+import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
+import goryachev.secdb.crypto.KeyFile;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
@@ -18,6 +21,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.util.List;
 
 
@@ -31,6 +35,7 @@ public class SecStore
 	implements Closeable,IStore<Ref>
 {
 	protected static final String LOCK_FILE = "lock";
+	protected static final String KEY_FILE = "key";
 	protected static final int BUFFER_SIZE = 4096;
 	protected static final Log log = Log.get("SecStore");
 	private final File dir;
@@ -51,7 +56,7 @@ public class SecStore
 	
 	
 	/** likely to throw DbException which contains error code and additional information */
-	public static void create(File dir, char[] passphrase) throws Exception
+	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws Exception
 	{
 		if(!dir.exists())
 		{
@@ -88,9 +93,32 @@ public class SecStore
 //			}
 //		}
 		
-		// TODO encrypt key
+		// encrypt the main key
+		byte[] encryptedKey = KeyFile.encrypt(key, passphrase, random);
+		
+		// store key file
+		File kf = getKeyFile(dir);
+		try
+		{
+			CKit.write(encryptedKey, kf);
+			
+			byte[] chk = CKit.readBytes(kf);
+			if(CKit.notEquals(encryptedKey, chk))
+			{
+				throw new Exception("key file content mismatch");
+			}
+		}
+		catch(SecException e)
+		{
+			throw e;
+		}
+		catch(Throwable e)
+		{
+			throw new SecException(SecErrorCode.FAILED_KEY_FILE_WRITE, e);
+		}
+		
 		// TODO generate log key
-		byte[] logKey = null;
+		OpaqueBytes logKey = null;
 		// TODO write key --> exception if unable
 		
 		// TODO write log
@@ -98,8 +126,8 @@ public class SecStore
 		lf.appendEvent(LogEventCode.HEAD, null);
 		lf.appendEvent(LogEventCode.CLOSED);
 	}
-	
-	
+
+
 	public static SecStore open(File dir, OpaqueChars passphrase) throws Exception
 	{
 		// check directories
@@ -110,16 +138,31 @@ public class SecStore
 		
 		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
 		lock.checkLock();
+		
+		byte[] encryptedKey;
+		try
+		{
+			encryptedKey = CKit.readBytes(getKeyFile(dir));
+		}
+		catch(Throwable e)
+		{
+			throw new SecException(SecErrorCode.FAILED_KEY_FILE_READ, e);
+		}
+		
 		try
 		{
 			// TODO
 			// decrypt key -> missing key file, passphrase error
+			OpaqueBytes key = KeyFile.decrypt(encryptedKey, passphrase);
+			
+			// TODO think of a way to derive log key from the main key
+			OpaqueBytes logKey = null;
 			
 			// read all logs
 			// check if recovery is needed
 			//   (perform recovery)
 			// check version?
-			List<LogFile> lfs = LogFile.open(dir, null);
+			List<LogFile> lfs = LogFile.open(dir, logKey);
 			if(lfs.size() == 0)
 			{
 				throw new SecException(SecErrorCode.MISSING_LOG_FILE, dir);
@@ -275,6 +318,12 @@ public class SecStore
 		
 		String subdir = name.substring(0, 2);
 		return new File(dir, subdir + "/" + name);
+	}
+	
+	
+	protected static File getKeyFile(File dir)
+	{
+		return new File(dir, KEY_FILE);
 	}
 	
 	
