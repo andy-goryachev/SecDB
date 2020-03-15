@@ -43,13 +43,44 @@ public class TestEncryption
 	@Test
 	public void test() throws Exception
 	{
-		SecureRandom random = new SecureRandom();
-		byte[] clearKey = new byte[256/8];
-		random.nextBytes(clearKey);
+		test(false);
 		
-		OpaqueBytes key = new OpaqueBytes(clearKey);
+		boolean success = FileTools.deleteRecursively(DIR);
+		if(!success)
+		{
+			throw new Exception("directory has not been removed: " + DIR);
+		}
 		
-		OpaqueChars passphrase = new OpaqueChars(PASSPHRASE.toCharArray());
+		test(true);
+	}
+	
+	
+	protected void test(boolean encrypt) throws Exception
+	{
+		OpaqueBytes key;
+		OpaqueChars passphrase;
+		SecureRandom random;
+		
+		if(encrypt)
+		{
+			random = new SecureRandom();
+			
+			byte[] clearKey = new byte[256/8];
+			random.nextBytes(clearKey);
+			
+			key = new OpaqueBytes(clearKey);
+			passphrase = new OpaqueChars(PASSPHRASE.toCharArray());
+			
+			TF.print("testing encrypted");
+		}
+		else
+		{
+			random = null;
+			key = null;
+			passphrase = null;
+			
+			TF.print("no encryption");
+		}
 		
 		SecDB db;
 		try
@@ -61,8 +92,8 @@ public class TestEncryption
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, key, passphrase);
-				db = SecDB.open(DIR, null);
+				SecDB.create(DIR, key, passphrase, random);
+				db = SecDB.open(DIR, passphrase);
 				break;
 			default:
 				throw e;

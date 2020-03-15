@@ -96,13 +96,36 @@ public class SecStore
 //		}
 		
 		// encrypt the main key
-		byte[] encryptedKey = KeyFile.encrypt(key, passphrase, random);
+		byte[] encryptedKey;
+		if((key == null) && (passphrase == null) && (random == null))
+		{
+			encryptedKey = new byte[0];
+		}
+		else
+		{
+			encryptedKey = KeyFile.encrypt(key, passphrase, random);
+		}
 		
 		// store key file
 		File kf = getKeyFile(dir);
 		try
 		{
+			boolean created = kf.createNewFile();
+			if(!created)
+			{
+				throw new Exception("failed to create " + kf);
+			}
+			// this is madness
+			kf.setReadable(false, false);
+			kf.setReadable(true, true);
+			kf.setWritable(false, false);
+			kf.setWritable(true, true);
+			
+			// TODO verify permissions
+						
 			CKit.write(encryptedKey, kf);
+			
+			// TODO verify permissions
 			
 			byte[] chk = CKit.readBytes(kf);
 			if(CKit.notEquals(encryptedKey, chk))
@@ -222,7 +245,36 @@ public class SecStore
 		
 		try
 		{
+			if(currentSegment != null)
+			{
+				currentSegment.closeReader();
+			}
+		}
+		catch(IOException e)
+		{
+			throw e;
+		}
+		catch(Exception e)
+		{
+			throw new IOException(e);
+		}
+		
+		try
+		{
 			logFile.appendEvent(LogEventCode.CLOSED);
+		}
+		catch(IOException e)
+		{
+			throw e;
+		}
+		catch(Exception e)
+		{
+			throw new IOException(e);
+		}
+		
+		try
+		{
+			logFile.close();
 		}
 		catch(IOException e)
 		{

@@ -20,6 +20,14 @@ public class SecException
 	}
 	
 	
+	public SecException(SecErrorCode code, Throwable cause)
+	{
+		super(code.toString(), cause);
+		this.code = code;
+		this.value = null;
+	}
+	
+	
 	public SecErrorCode getErrorCode()
 	{
 		return code;

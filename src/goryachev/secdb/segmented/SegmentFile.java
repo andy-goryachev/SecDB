@@ -85,13 +85,28 @@ public class SegmentFile
 	
 	public void closeWriter() throws Exception
 	{
-		writer.close();
-		writer = null;
+		if(writer != null)
+		{
+			writer.close();
+			writer = null;
+		}
+	}
+	
+	
+	public void closeReader() throws Exception
+	{
+		if(reader != null)
+		{
+			reader.close();
+			reader = null;
+		}
 	}
 
 
 	public int read(long position, byte[] buffer, int offset, int length) throws Exception
 	{
+		// TODO we need to keep track of the total number of open readers 
+		// to avoid having too many open files
 		if(reader == null)
 		{
 			reader = new RandomAccessFile(file, "r");

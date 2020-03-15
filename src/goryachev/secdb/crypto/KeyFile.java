@@ -128,6 +128,19 @@ public final class KeyFile
 	 */
 	public static final OpaqueBytes decrypt(byte[] encrypted, OpaqueChars pass) throws Exception
 	{
+		if(pass == null)
+		{
+			return null;
+		}
+		else if(encrypted == null)
+		{
+			return null;
+		}
+		else if(encrypted.length == 0)
+		{
+			return null;
+		}
+		
 		DReader rd = new DReader(encrypted);
 		try
 		{			
@@ -162,7 +175,7 @@ public final class KeyFile
 				// N - cpu/memory cost
 				// r - block mix size parameter
 				// p - parallelization parameter
-				pw = (pass == null) ? new byte[0] : pass.getBytes();
+				pw = pass.getBytes();
 				
 				byte[] key = SCrypt.generate(pw, salt, n, r, p, KEY_SIZE_BYTES);
 				try
