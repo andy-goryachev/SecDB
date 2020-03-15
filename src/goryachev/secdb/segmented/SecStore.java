@@ -330,40 +330,47 @@ public class SecStore
 		}
 		
 		InputStream in = inp.getStream();
-		Ref ref = null;
-		
-		for(;;)
+		try
 		{
-			SegmentFile sf = segmentForLength(len, isTree);
-			String name = sf.getName();
-			long off = sf.getLength();
+			Ref ref = null;
 			
-			if(ref == null)
+			for(;;)
 			{
-				ref = new Ref.SingleSegment(len, key, name, off);
-			}
-			else
-			{
-				ref = ref.addSegment(name, off);
-			}
-
-			long written = sf.write(in, len, key);
-			if(written == 0)
-			{
-				throw new Error("zero bytes written");
-			}
-			else if(written < 0)
-			{
-				return ref;
-			}
-			else
-			{
-				len -= written;
-				if(len <= 0)
+				SegmentFile sf = segmentForLength(len, isTree);
+				String name = sf.getName();
+				long off = sf.getLength();
+				
+				if(ref == null)
+				{
+					ref = new Ref.SingleSegment(len, key, name, off);
+				}
+				else
+				{
+					ref = ref.addSegment(name, off);
+				}
+	
+				long written = sf.write(in, len, key);
+				if(written == 0)
+				{
+					throw new Error("zero bytes written");
+				}
+				else if(written < 0)
 				{
 					return ref;
 				}
+				else
+				{
+					len -= written;
+					if(len <= 0)
+					{
+						return ref;
+					}
+				}
 			}
+		}
+		finally
+		{
+			CKit.close(in);
 		}
 	}
 	
