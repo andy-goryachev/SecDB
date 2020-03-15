@@ -221,6 +221,7 @@ public class SecStore
 	}
 
 
+	// FIX does not close all the files (readers)
 	public void close() throws IOException
 	{
 		// TODO
@@ -243,20 +244,25 @@ public class SecStore
 			throw new IOException(e);
 		}
 		
-		try
+		boolean failedToCloseReaders = false;
+		synchronized(segments)
 		{
-			if(currentSegment != null)
+			for(SegmentFile sf: segments.values())
 			{
-				currentSegment.closeReader();
+				try
+				{
+					sf.closeReader();
+				}
+				catch(Throwable e)
+				{
+					failedToCloseReaders = true;
+				}
 			}
 		}
-		catch(IOException e)
+		
+		if(failedToCloseReaders)
 		{
-			throw e;
-		}
-		catch(Exception e)
-		{
-			throw new IOException(e);
+			throw new IOException("Failed to close readers");
 		}
 		
 		try
