@@ -41,22 +41,24 @@ public class SecStore
 	private final File dir;
 	private final CFileLock lock;
 	private final LogFile logFile;
+	private final OpaqueBytes key;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
 	
 	
-	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root)
+	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root, OpaqueBytes key)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
 		this.root = root;
 		this.lock = lock;
+		this.key = key;
 	}
 	
 	
-	/** likely to throw DbException which contains error code and additional information */
-	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws Exception
+	/** might throw SecException which contains error code and additional information */
+	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws SecException, Exception
 	{
 		if(!dir.exists())
 		{
@@ -121,7 +123,7 @@ public class SecStore
 		OpaqueBytes logKey = null;
 		// TODO write key --> exception if unable
 		
-		// TODO write log
+		// write log
 		LogFile lf = LogFile.create(dir, logKey);
 		lf.appendEvent(LogEventCode.HEAD, null);
 		lf.appendEvent(LogEventCode.CLOSED);
@@ -151,7 +153,6 @@ public class SecStore
 		
 		try
 		{
-			// TODO
 			// decrypt key -> missing key file, passphrase error
 			OpaqueBytes key = KeyFile.decrypt(encryptedKey, passphrase);
 			
@@ -187,7 +188,7 @@ public class SecStore
 			// TODO
 			// load root node and do some checks
 			
-			return new SecStore(dir, lock, lf, root);
+			return new SecStore(dir, lock, lf, root, key);
 		}
 		catch(Exception e)
 		{

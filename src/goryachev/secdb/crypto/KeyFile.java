@@ -150,9 +150,10 @@ public final class KeyFile
 			byte[] nonce = new byte[NONCE_SIZE_BYTES];
 			CKit.readFully(rd, nonce);
 
-			byte[] pw = null;
-			byte[] salt = nonce; // reuse nonce as salt
+			// reuse nonce as salt
+			byte[] salt = nonce; // TODO perhaps invert or hash, just in case
 
+			byte[] pw = null;
 			try
 			{
 				// generate key with scrypt
