@@ -17,10 +17,12 @@ import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -42,6 +44,7 @@ public class SecStore
 	private final CFileLock lock;
 	private final LogFile logFile;
 	private final OpaqueBytes key;
+	protected final EncHelper encHelper;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
@@ -54,6 +57,7 @@ public class SecStore
 		this.root = root;
 		this.lock = lock;
 		this.key = key;
+		this.encHelper = EncHelper.create(key);
 	}
 	
 	
@@ -321,15 +325,32 @@ public class SecStore
 		// TODO nonce = segment(*1) + offset + segment count
 		// *1: multi-segment blocks use the first segment name for nonce
 		
-		// TODO need to store the data length
-
 		long len = inp.getLength();
 		if(len <= 0)
 		{
 			throw new Error("invalid data length=" + len);
 		}
 		
+		len = encHelper.getLengthFor(len);
 		InputStream in = inp.getStream();
+		
+		SegmentOutputStream ss = new SegmentOutputStream(this, len, isTree, key);
+		OutputStream out = encHelper.getEncryptionStream(ss);
+		try
+		{
+			CKit.copy(in, out, BUFFER_SIZE);
+		}
+		finally
+		{
+			CKit.close(in);
+			CKit.close(out);
+		}
+		
+		Ref ref = ss.getRef();
+		return ref;
+		
+//		in = encHelper.getEncryptionStream(in); // FIX not here
+		/*
 		try
 		{
 			Ref ref = null;
@@ -349,6 +370,7 @@ public class SecStore
 					ref = ref.addSegment(name, off);
 				}
 	
+				// TODO eax encrypt stream should be here
 				long written = sf.write(in, len, key);
 				if(written == 0)
 				{
@@ -372,6 +394,7 @@ public class SecStore
 		{
 			CKit.close(in);
 		}
+		*/
 	}
 	
 	
@@ -454,13 +477,15 @@ public class SecStore
 
 	public IStream load(Ref ref) throws Exception
 	{
-		// TODO data key
 		// TODO need to explicitly clear the ref (because of the data key)
 		return new IStream()
 		{
+			@SuppressWarnings("resource")
 			public InputStream getStream()
 			{
-				return new BufferedInputStream(new SegmentStream(SecStore.this, ref), BUFFER_SIZE);
+				InputStream in = new SegmentInputStream(SecStore.this, ref);
+				in = encHelper.getDecryptionStream(in);
+				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
 
 			public long getLength()

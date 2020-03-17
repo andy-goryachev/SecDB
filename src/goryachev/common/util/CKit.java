@@ -1296,12 +1296,24 @@ public final class CKit
 	/** copies input stream into the output stream using 64K buffer.  returns the number of bytes copied.  supports cancellation */
 	public static long copy(InputStream in, OutputStream out) throws Exception
 	{
+		return copy(in, out, 65536);
+	}
+	
+	
+	/** copies input stream into the output stream.  returns the number of bytes copied.  supports cancellation */
+	public static long copy(InputStream in, OutputStream out, int bufferSize) throws Exception
+	{
+		if(bufferSize < 1)
+		{
+			throw new IllegalArgumentException("invalid bufferSize=" + bufferSize);
+		}
+		
 		if(in == null)
 		{
 			return 0;
 		}
 		
-		byte[] buf = new byte[65536];
+		byte[] buf = new byte[bufferSize];
 		long count = 0;
 		for(;;)
 		{

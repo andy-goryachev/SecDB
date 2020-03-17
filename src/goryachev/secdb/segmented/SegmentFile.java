@@ -4,6 +4,7 @@ import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.secdb.util.Utils;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 
@@ -55,7 +56,8 @@ public class SegmentFile
 	/** 
 	 * writes as much data as possible until segment is full.  
 	 * returns the number of bytes written.
-	 */ 
+	 */
+	@Deprecated
 	public long write(InputStream in, long len, byte[] key) throws Exception
 	{
 		long seglen = getLength();
@@ -80,6 +82,33 @@ public class SegmentFile
 		log.trace("rv={%d}", rv);
 		
 		return rv;
+	}
+	
+	
+	public int write2(byte[] buf, int off, int len, byte[] key) throws Exception
+	{
+		long seglen = getLength();
+		long available = SEGMENT_SIZE - seglen;
+		
+		if(writer == null)
+		{
+			File pf = file.getParentFile();
+			if(pf != null)
+			{
+				pf.mkdirs();
+			}
+			writer = new RandomAccessFile(file, "rw");
+		}
+		
+		int sz = (int)Math.min(available, len);
+		
+		log.trace("size={%d} seglen={%d} avail={%d} sz={%d} f={%s}", len, seglen, available, sz, file);
+		
+		writer.seek(seglen);
+		writer.write(buf, off, sz);
+		log.trace("rv={%d}", sz);
+		
+		return sz;
 	}
 	
 	

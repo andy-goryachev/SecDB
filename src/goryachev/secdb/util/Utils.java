@@ -2,9 +2,9 @@
 package goryachev.secdb.util;
 import goryachev.common.util.CKit;
 import goryachev.secdb.IStream;
+import java.io.DataOutput;
 import java.io.File;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 
 
 /**
@@ -28,7 +28,7 @@ public class Utils
 	
 	
 	/** copies input into the output stream.  returns the number of bytes copied.  supports cancellation */
-	public static long copy(InputStream in, RandomAccessFile out, byte[] buf, long length) throws Exception
+	public static long copy(InputStream in, DataOutput out, byte[] buf, long length) throws Exception
 	{
 		long count = 0;
 		for(;;)

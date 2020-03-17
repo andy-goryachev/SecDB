@@ -8,10 +8,10 @@ import java.io.InputStream;
 /**
  * This InputStream reads data from SegmentFile(s).
  */
-public class SegmentStream
+public class SegmentInputStream
 	extends InputStream
 {
-	protected static final Log log = Log.get("SegmentStream");
+	protected static final Log log = Log.get("SegmentInputStream");
 	protected final SecStore store;
 	protected final Ref ref;
 	private long position;
@@ -19,7 +19,7 @@ public class SegmentStream
 	private int segmentOffset;
 	
 	
-	public SegmentStream(SecStore store, Ref ref)
+	public SegmentInputStream(SecStore store, Ref ref)
 	{
 		this.store = store;
 		this.ref = ref;
