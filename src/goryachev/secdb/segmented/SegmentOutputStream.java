@@ -14,7 +14,10 @@ public class SegmentOutputStream
 	private final long length;
 	private final boolean isTree;
 	private final byte[] key;
+	private SegmentFile sf;
+	private long off2;
 	private Ref ref;
+	private Ref finalRef;
 	
 	
 	public SegmentOutputStream(SecStore store, long length, boolean isTree, byte[] key)
@@ -26,46 +29,64 @@ public class SegmentOutputStream
 	}
 	
 	
+	public Ref getInitialRef() throws Exception
+	{
+		sf();
+		return ref;
+	}
+	
+	
+	protected SegmentFile sf() throws Exception
+	{
+		if(sf == null)
+		{
+			sf = store.segmentForLength(length, isTree);
+			String name = sf.getName();
+			off2 = sf.getLength();
+			
+			if(ref == null)
+			{
+				ref = new Ref.SingleSegment(length, key, name, off2);
+			}
+			else
+			{
+				ref = ref.addSegment(name, off2);
+			}
+		}
+		return sf;
+	}
+	
+	
 	public void write(int b) throws IOException
 	{
 		throw new Error("single byte write is not supported");
 	}
 
 
-	// TODO
-	public void write(byte[] buf, int offset, int len) throws IOException
+	public void write(byte[] buf, int off, int len) throws IOException
 	{
 		try
 		{
 			for(;;)
 			{
-				SegmentFile sf = store.segmentForLength(len, isTree);
-				String name = sf.getName();
-				long off = sf.getLength();
-				
-				if(ref == null)
-				{
-					ref = new Ref.SingleSegment(len, key, name, off);
-				}
-				else
-				{
-					ref = ref.addSegment(name, off);
-				}
-	
-				int written = sf.write2(buf, offset, len, key);
+				int written = sf().write2(buf, off, len, key);
 				if(written < 0)
 				{
-					// TODO check if this is right
-					return;
+					sf = null;
+					continue;
 				}
 				
-				
 				len -= written;
-				if(len <= 0)
+				if(len == 0)
 				{
 					return;
 				}
-				off += written;
+				else if(len < 0)
+				{
+					throw new Error("len=" + len);
+				}
+				
+				off2 += written;
 			}
 		}
 		catch(IOException e)
@@ -81,12 +102,17 @@ public class SegmentOutputStream
 
 	public void close() throws IOException
 	{
-		// TODO
+		finalRef = ref;
 	}
 
 
+	/** TODO available only after close */
 	public Ref getRef()
 	{
-		return ref;
+		if(finalRef == null)
+		{
+			throw new Error("null final ref");
+		}
+		return finalRef;
 	}
 }

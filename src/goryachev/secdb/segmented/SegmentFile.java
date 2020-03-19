@@ -89,6 +89,11 @@ public class SegmentFile
 	{
 		long seglen = getLength();
 		long available = SEGMENT_SIZE - seglen;
+		int sz = (int)Math.min(available, len);
+		if(sz <= 0)
+		{
+			return -1;
+		}
 		
 		if(writer == null)
 		{
@@ -99,8 +104,6 @@ public class SegmentFile
 			}
 			writer = new RandomAccessFile(file, "rw");
 		}
-		
-		int sz = (int)Math.min(available, len);
 		
 		log.trace("size={%d} seglen={%d} avail={%d} sz={%d} f={%s}", len, seglen, available, sz, file);
 		

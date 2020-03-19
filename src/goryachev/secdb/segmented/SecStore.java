@@ -333,9 +333,13 @@ public class SecStore
 		
 		len = encHelper.getLengthFor(len);
 		InputStream in = inp.getStream();
-		
+				
 		SegmentOutputStream ss = new SegmentOutputStream(this, len, isTree, key);
-		OutputStream out = encHelper.getEncryptionStream(ss);
+		
+		Ref ref = ss.getInitialRef();
+		byte[] nonce = createNonce(ref);
+
+		OutputStream out = encHelper.getEncryptionStream(nonce, ss);
 		try
 		{
 			CKit.copy(in, out, BUFFER_SIZE);
@@ -346,8 +350,7 @@ public class SecStore
 			CKit.close(out);
 		}
 		
-		Ref ref = ss.getRef();
-		return ref;
+		return ss.getRef();
 		
 //		in = encHelper.getEncryptionStream(in); // FIX not here
 		/*
@@ -484,7 +487,8 @@ public class SecStore
 			public InputStream getStream()
 			{
 				InputStream in = new SegmentInputStream(SecStore.this, ref);
-				in = encHelper.getDecryptionStream(in);
+				byte[] nonce = createNonce(ref);
+				in = encHelper.getDecryptionStream(nonce, in);
 				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
 
@@ -511,5 +515,12 @@ public class SecStore
 	protected static File getSegmentDir(File dir, int x)
 	{
 		return new File(dir, Hex.toHexByte(x));
+	}
+	
+	
+	protected static byte[] createNonce(Ref ref)
+	{
+		// TODO name + offset of the first segment
+		return null;
 	}
 }

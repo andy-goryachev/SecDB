@@ -1,5 +1,8 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.crypto.Crypto;
+import goryachev.crypto.EAXDecryptStream;
+import goryachev.crypto.EAXEncryptStream;
 import goryachev.crypto.OpaqueBytes;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,9 +16,9 @@ public abstract class EncHelper
 {
 	public abstract long getLengthFor(long len);
 	
-	protected abstract InputStream getDecryptionStream(InputStream in);
+	protected abstract InputStream getDecryptionStream(byte[] nonce, InputStream in);
 	
-	protected abstract OutputStream getEncryptionStream(OutputStream out);
+	protected abstract OutputStream getEncryptionStream(byte[] nonce, OutputStream out);
 	
 	
 	//
@@ -50,13 +53,13 @@ public abstract class EncHelper
 		}
 		
 
-		protected InputStream getDecryptionStream(InputStream in)
+		protected InputStream getDecryptionStream(byte[] nonce, InputStream in)
 		{
 			return in;
 		}
 
 
-		protected OutputStream getEncryptionStream(OutputStream out)
+		protected OutputStream getEncryptionStream(byte[] nonce, OutputStream out)
 		{
 			return out;
 		}
@@ -79,22 +82,35 @@ public abstract class EncHelper
 		
 		public long getLengthFor(long len)
 		{
-			// TODO
-			return len;
+			return len + 8;
 		}
 		
 		
-		protected InputStream getDecryptionStream(InputStream in)
+		protected InputStream getDecryptionStream(byte[] nonce, InputStream in)
 		{
-			// TODO
-			return in;
+			byte[] k = key.getBytes();
+			try
+			{
+				return new EAXDecryptStream(k, nonce, null, in);
+			}
+			finally
+			{
+				Crypto.zero(k);
+			}
 		}
 
 
-		protected OutputStream getEncryptionStream(OutputStream out)
+		protected OutputStream getEncryptionStream(byte[] nonce, OutputStream out)
 		{
-			// TODO
-			return out;
+			byte[] k = key.getBytes();
+			try
+			{
+				return new EAXEncryptStream(k, nonce, null, out);
+			}
+			finally
+			{
+				Crypto.zero(k);
+			}
 		}
 	}
 }
