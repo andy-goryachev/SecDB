@@ -1217,7 +1217,7 @@ public final class CKit
 			int count = in.read(b, offset, b.length - offset);
 			if(count < 0)
 			{
-				throw new EOFException("read only " + offset + " bytes");
+				throw new EOFException("read only " + offset + " bytes instead of " + b.length);
 			}
 			offset += count;
 		}

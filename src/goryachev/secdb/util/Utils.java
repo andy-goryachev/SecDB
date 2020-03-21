@@ -69,7 +69,14 @@ public class Utils
 		
 		byte[] b = new byte[(int)len];
 		InputStream is = inp.getStream();
-		CKit.readFully(is, b);
-		return b;
+		try
+		{
+			CKit.readFully(is, b);
+			return b;
+		}
+		finally
+		{
+			CKit.close(is);
+		}
 	}
 }

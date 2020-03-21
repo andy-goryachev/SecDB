@@ -5,7 +5,7 @@ import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
-import goryachev.common.util.D;
+import goryachev.common.util.CList;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.crypto.OpaqueBytes;
@@ -43,7 +43,7 @@ public class TestEncryption
 	@Test
 	public void test() throws Exception
 	{
-		test(false);
+//		test(false);
 		
 		boolean success = FileTools.deleteRecursively(DIR);
 		if(!success)
@@ -99,6 +99,8 @@ public class TestEncryption
 				throw e;
 			}
 		}
+		
+		CList<Throwable> errors = new CList();
 
 		try
 		{
@@ -115,7 +117,8 @@ public class TestEncryption
 	
 					protected void onError(Throwable e)
 					{
-						TF.fail(e);
+						e.printStackTrace();
+						errors.add(e);
 					}
 				});
 			}
@@ -123,6 +126,16 @@ public class TestEncryption
 		finally
 		{
 			db.close();
+		}
+		
+		if(errors.size() > 0)
+		{
+			for(Throwable e: errors)
+			{
+				TF.print(CKit.stackTrace(e));
+			}
+			
+			throw new Error("encountered " + errors.size() + " errors");
 		}
 		
 		// verify

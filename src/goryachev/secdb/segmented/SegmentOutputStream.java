@@ -106,7 +106,7 @@ public class SegmentOutputStream
 	}
 
 
-	/** TODO available only after close */
+	/** available only after close */
 	public Ref getRef()
 	{
 		if(finalRef == null)

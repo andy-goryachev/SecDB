@@ -9,6 +9,8 @@
 	all:
 	[
 //		DBEngineIO,
+		DebugInputStream,
+		DebugOutputStream
 	],
 	appenders:
 	[

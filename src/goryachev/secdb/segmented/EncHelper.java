@@ -91,7 +91,18 @@ public abstract class EncHelper
 			byte[] k = key.getBytes();
 			try
 			{
-				return new EAXDecryptStream(k, nonce, null, in);
+				return new DebugInputStream
+				(
+					"rd:dec", 
+					1024, 
+					new EAXDecryptStream
+					(
+						k, 
+						nonce, 
+						null, 
+						new DebugInputStream("read:enc", 1024, in)
+					)
+				);
 			}
 			finally
 			{
@@ -105,7 +116,18 @@ public abstract class EncHelper
 			byte[] k = key.getBytes();
 			try
 			{
-				return new EAXEncryptStream(k, nonce, null, out);
+				return new DebugOutputStream
+				(
+					"wr:dec", 
+					1024,
+					new EAXEncryptStream
+					(
+						k, 
+						nonce, 
+						null, 
+						new DebugOutputStream("wr:enc", 1024, out)
+					)
+				);
 			}
 			finally
 			{

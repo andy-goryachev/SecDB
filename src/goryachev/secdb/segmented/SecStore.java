@@ -331,7 +331,7 @@ public class SecStore
 			throw new Error("invalid data length=" + len);
 		}
 		
-		len = encHelper.getLengthFor(len);
+//		len = encHelper.getLengthFor(len);
 		InputStream in = inp.getStream();
 				
 		SegmentOutputStream ss = new SegmentOutputStream(this, len, isTree, key);
@@ -521,6 +521,6 @@ public class SecStore
 	protected static byte[] createNonce(Ref ref)
 	{
 		// TODO name + offset of the first segment
-		return null;
+		return new byte[0];
 	}
 }
