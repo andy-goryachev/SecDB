@@ -14,6 +14,7 @@ public class SegmentInputStream
 	protected static final Log log = Log.get("SegmentInputStream");
 	protected final SecStore store;
 	protected final Ref ref;
+	protected final long length;
 	private long position;
 	private int segmentIndex;
 	private int segmentOffset;
@@ -23,12 +24,13 @@ public class SegmentInputStream
 	{
 		this.store = store;
 		this.ref = ref;
+		this.length = ref.getLength();
 	}
 	
 
 	public int read() throws IOException
 	{
-		if((ref.getLength() - position) > 0)
+		if((length - position) > 0)
 		{
 			byte[] buf = new byte[1];
 			for(;;)
@@ -50,9 +52,9 @@ public class SegmentInputStream
 	}
 
 
-	public int read(byte[] buffer, int offset, int length) throws IOException
+	public int read(byte[] buf, int off, int len) throws IOException
 	{
-		long remain = ref.getLength() - position;
+		long remain = length - position;
 		if(remain <= 0)
 		{
 			return -1;
@@ -60,8 +62,8 @@ public class SegmentInputStream
 		
 		try
 		{
-			int len = (int)Math.min(remain, length);
-			int rv = readPrivate(buffer, offset, len);
+			int sz = (int)Math.min(remain, len);
+			int rv = readPrivate(buf, off, sz);
 			if(rv < 0)
 			{
 				throw new IOException("unexpected EOF: pos=" + position + " ref=" + ref);
@@ -84,7 +86,7 @@ public class SegmentInputStream
 	}
 	
 	
-	protected int readPrivate(byte[] buffer, int offset, int length) throws Exception
+	protected int readPrivate(byte[] buf, int offset, int len) throws Exception
 	{
 		String name;
 		long off;
@@ -114,15 +116,15 @@ public class SegmentInputStream
 			}
 		}
 		
-		if(sz < length)
+		if(sz < len)
 		{
-			length = (int)sz;
+			len = (int)sz;
 		}
 		
 		SegmentFile sf = store.getSegmentFile(name);
-		int rv = sf.read(off, buffer, offset, length);
+		int rv = sf.read(off, buf, offset, len);
 
-		log.trace("off={%08x} offset={%04x} len={%d} f={%s} -> {%d}", off, offset, length, sf.getName(), rv);
+		log.trace("off={%08x} offset={%04x} len={%d} f={%s} -> {%d}", off, offset, len, sf.getName(), rv);
 		
 		return rv;
 	}

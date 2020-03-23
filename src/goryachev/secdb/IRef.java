@@ -3,10 +3,11 @@ package goryachev.secdb;
 
 
 /**
- * A stored object Reference, specific to IStore.
+ * A reference of a data object stored in IStore.
  */
 public interface IRef
 {
+	/** returns the amount of storage used (data length + storage and encryption overhead) */
 	public long getLength();
 	
 	public int hashCode();

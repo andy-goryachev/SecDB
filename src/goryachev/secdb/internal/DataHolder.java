@@ -28,7 +28,7 @@ public abstract class DataHolder<R>
 	
 	//
 	
-	private final IStore<R> store;
+	protected final IStore<R> store;
 	
 	
 	public DataHolder(IStore<R> store)
@@ -70,13 +70,14 @@ public abstract class DataHolder<R>
 			{
 				public long getLength()
 				{
-					return ref.getLength();
+					long len = ref.getLength();
+					return store.convertLength(len, false);
 				}
 
 
 				public IStream getIStream() throws Exception
 				{
-					return getIStore().load(ref);
+					return store.load(ref);
 				}
 			};
 		}

@@ -297,6 +297,12 @@ public class SecStore
 		
 		lock.unlock();
 	}
+	
+	
+	public long convertLength(long len, boolean whenEncrypting)
+	{
+		return encHelper.convertLength(len, whenEncrypting);
+	}
 
 
 	public Ref getRootRef()
@@ -331,10 +337,11 @@ public class SecStore
 			throw new Error("invalid data length=" + len);
 		}
 		
-//		len = encHelper.getLengthFor(len);
+		long storedLength = convertLength(len, true);
+		
 		InputStream in = inp.getStream();
 				
-		SegmentOutputStream ss = new SegmentOutputStream(this, len, isTree, key);
+		SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, key);
 		
 		Ref ref = ss.getInitialRef();
 		byte[] nonce = createNonce(ref);
@@ -481,6 +488,10 @@ public class SecStore
 	public IStream load(Ref ref) throws Exception
 	{
 		// TODO need to explicitly clear the ref (because of the data key)
+		
+		long len = ref.getLength();
+		long dataLength = convertLength(len, false);
+		
 		return new IStream()
 		{
 			@SuppressWarnings("resource")
@@ -494,7 +505,7 @@ public class SecStore
 
 			public long getLength()
 			{
-				return ref.getLength();
+				return dataLength;
 			}
 		};
 	}

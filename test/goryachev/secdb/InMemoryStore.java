@@ -128,4 +128,10 @@ public class InMemoryStore
 		long length = rd.readLong();
 		return new InMemoryRef(seq, length);
 	}
+
+
+	public long convertLength(long length, boolean whenEncrypting)
+	{
+		return length;
+	}
 }

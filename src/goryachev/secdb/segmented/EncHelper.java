@@ -14,7 +14,7 @@ import java.io.OutputStream;
  */
 public abstract class EncHelper
 {
-	public abstract long getLengthFor(long len);
+	public abstract long convertLength(long len, boolean whenEncrypting);
 	
 	protected abstract InputStream getDecryptionStream(byte[] nonce, InputStream in);
 	
@@ -47,7 +47,7 @@ public abstract class EncHelper
 	
 	protected static class Clear extends EncHelper
 	{
-		public long getLengthFor(long len)
+		public long convertLength(long len, boolean whenEncrypting)
 		{
 			return len;
 		}
@@ -71,6 +71,7 @@ public abstract class EncHelper
 	
 	protected static class Encrypted extends EncHelper
 	{
+		private static final int MAC_OVERHEAD = 8;
 		private final OpaqueBytes key;
 		
 		
@@ -80,9 +81,9 @@ public abstract class EncHelper
 		}
 		
 		
-		public long getLengthFor(long len)
+		public long convertLength(long len, boolean whenEncrypting)
 		{
-			return len + 8;
+			return whenEncrypting ? len + MAC_OVERHEAD : len - MAC_OVERHEAD;
 		}
 		
 		

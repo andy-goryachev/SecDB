@@ -44,4 +44,8 @@ public interface IStore<R>
 
 	
 	public R readRef(DReader rd) throws Exception;
+
+	
+	/** storage may have overhead */
+	public long convertLength(long length, boolean whenEncrypting);
 }
