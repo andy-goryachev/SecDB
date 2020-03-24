@@ -60,10 +60,13 @@ public class TestLarge
 	
 	public static IStream createStream(int seed)
 	{
+		// bad implementation
 //		return new LargePseudoRandomStream(seed, SIZE);
-		return new IncrementingByteStream(SIZE);
-//		return new TestStream2(seed, SIZE);
-//		return new TestStream3(seed, SIZE);
+		
+		// not enough info
+//		return new IncrementingByteStream(SIZE);
+		
+		return new TestOffsetIStream(SIZE);
 	}
 	
 	
@@ -235,8 +238,11 @@ public class TestLarge
 					
 					if(cr != ce)
 					{
+						// FIX remove later
+						ri.read();
+						
 						// FIX
-						throw new Exception(String.format("mismatch at offset 0x%08x, rd=%02x, exp=%02x, key=%s", off, cr, ce, key));
+						throw new Exception(String.format("mismatch at offset %d, rd=%02x, exp=%02x, key=%s", off, cr, ce, key));
 //						return;
 					}
 					

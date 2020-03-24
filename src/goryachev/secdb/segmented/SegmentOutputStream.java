@@ -1,5 +1,7 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.log.Log;
+import goryachev.common.util.Hex;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -10,12 +12,13 @@ import java.io.OutputStream;
 public class SegmentOutputStream
 	extends OutputStream
 {
+	protected static final Log log = Log.get("SegmentOutputStream");
 	private final SecStore store;
 	private final long length;
 	private final boolean isTree;
 	private final byte[] key;
 	private SegmentFile sf;
-	private long off2;
+	private long position;
 	private Ref ref;
 	private Ref finalRef;
 	
@@ -42,15 +45,15 @@ public class SegmentOutputStream
 		{
 			sf = store.segmentForLength(length, isTree);
 			String name = sf.getName();
-			off2 = sf.getLength();
+			position = sf.getLength();
 			
 			if(ref == null)
 			{
-				ref = new Ref.SingleSegment(length, key, name, off2);
+				ref = new Ref.SingleSegment(length, key, name, position);
 			}
 			else
 			{
-				ref = ref.addSegment(name, off2);
+				ref = ref.addSegment(name, position);
 			}
 		}
 		return sf;
@@ -69,7 +72,12 @@ public class SegmentOutputStream
 		{
 			for(;;)
 			{
-				int written = sf().write2(buf, off, len, key);
+				int written = sf().write(buf, off, len, key);
+				
+				// TODO
+				log.trace(" wr position={%d} off={%d} len={%d} f={%s} -> {%d}", position, off, len, sf.getName(), written);
+				log.trace(Hex.toHexString(buf, off, 4));
+				
 				if(written < 0)
 				{
 					sf = null;
@@ -77,6 +85,8 @@ public class SegmentOutputStream
 				}
 				
 				len -= written;
+				position += written;
+
 				if(len == 0)
 				{
 					return;
@@ -85,8 +95,6 @@ public class SegmentOutputStream
 				{
 					throw new Error("len=" + len);
 				}
-				
-				off2 += written;
 			}
 		}
 		catch(IOException e)

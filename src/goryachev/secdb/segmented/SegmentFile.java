@@ -52,49 +52,18 @@ public class SegmentFile
 		return file.length();
 	}
 
-
-	/** 
-	 * writes as much data as possible until segment is full.  
-	 * returns the number of bytes written.
-	 */
-	@Deprecated
-	public long write(InputStream in, long len, byte[] key) throws Exception
+	
+	/** writes as much as possible to the segment file.  returns the number of bytes written, or -1 if the segment is full */
+	public int write(byte[] buf, int off, int len, byte[] key) throws Exception
 	{
 		long seglen = getLength();
 		long available = SEGMENT_SIZE - seglen;
-		
-		if(writer == null)
-		{
-			File pf = file.getParentFile();
-			if(pf != null)
-			{
-				pf.mkdirs();
-			}
-			writer = new RandomAccessFile(file, "rw");
-		}
-		
-		long sz = Math.min(available, len);
-		
-		log.trace("size={%d} seglen={%d} avail={%d} sz={%d} f={%s}", len, seglen, available, sz, file);
-		
-		writer.seek(seglen);
-		long rv = Utils.copy(in, writer, writeBuffer, sz);
-		log.trace("rv={%d}", rv);
-		
-		return rv;
-	}
-	
-	
-	public int write2(byte[] buf, int off, int len, byte[] key) throws Exception
-	{
-		long seglen = getLength();
-		long available = SEGMENT_SIZE - seglen;
-		int sz = (int)Math.min(available, len);
-		if(sz <= 0)
+		if(available <= 0)
 		{
 			return -1;
 		}
 		
+		int sz = (int)Math.min(available, len);
 		if(writer == null)
 		{
 			File pf = file.getParentFile();
@@ -135,7 +104,7 @@ public class SegmentFile
 	}
 
 
-	public int read(long position, byte[] buffer, int offset, int length) throws Exception
+	public int read(long position, byte[] buf, int off, int len) throws Exception
 	{
 		// TODO we need to keep track of the total number of open readers 
 		// to avoid having too many open files
@@ -147,7 +116,7 @@ public class SegmentFile
 		synchronized(reader)
 		{
 			reader.seek(position);
-			return reader.read(buffer, offset, length);
+			return reader.read(buf, off, len);
 		}
 	}
 }

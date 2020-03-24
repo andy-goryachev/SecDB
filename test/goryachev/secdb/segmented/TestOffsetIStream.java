@@ -1,24 +1,21 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.util.Xoroshiro128Plus;
 import goryachev.secdb.IStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 
 /**
- * IStream streams incrementing byte values.
+ * IStream streams integer values corresponding to the current data offset.
  */
-public class TestStream2
+public class TestOffsetIStream
 	implements IStream
 {
-	protected final int seed;
 	protected final long length;
 	
 	
-	public TestStream2(int seed, long length)
+	public TestOffsetIStream(long length)
 	{
-		this.seed = seed;
 		this.length = length;
 	}
 	
@@ -34,14 +31,15 @@ public class TestStream2
 		return new InputStream()
 		{
 			private long pos;
+			private int phase;
+			private int val;
 			
 			
 			public int read() throws IOException
 			{
 				if(pos < length)
 				{
-					int rv = val();
-					pos++;
+					int rv = val() & 0xff;
 					return rv;
 				}
 				return -1;
@@ -56,30 +54,40 @@ public class TestStream2
 					return -1;
 				}
 				
-				int ct = (int)Math.min(len, remain);
-				for(int i=0; i<ct; i++)
+				int sz = (int)Math.min(len, remain);
+				for(int i=0; i<sz; i++)
 				{
-					buf[off + i] = (byte)val();
-					pos++;
+					buf[off + i] = val();
 				}
 				
-				return ct;
+				return sz;
 			}
 			
 			
-			protected int val()
+			protected byte val()
 			{
-				switch((int)pos & 0x03)
+				byte v;
+				switch(phase)
 				{
 				case 0:
-					return (seed >> 24) & 0xff;
+					val = (int)pos;
+					v = (byte)(val >> 24);
+					break;
 				case 1:
-					return (seed >> 16) & 0xff;
+					v = (byte)(val >> 16);
+					break;
 				case 2:
-					return (seed >> 8) & 0xff;
+					v = (byte)(val >> 8);
+					break;
 				default:
-					return seed & 0xff;
+					v = (byte)(val);
+					break;
 				}
+				
+				phase = ((phase + 1) % 4);
+				pos++;
+				
+				return v;
 			}
 		};
 	}

@@ -1,6 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.util.Xoroshiro128Plus;
 import goryachev.secdb.IStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,8 +37,7 @@ public class IncrementingByteStream
 			{
 				if(pos < length)
 				{
-					int rv = val();
-					pos++;
+					int rv = val() & 0xff;
 					return rv;
 				}
 				return -1;
@@ -57,17 +55,16 @@ public class IncrementingByteStream
 				int sz = (int)Math.min(len, remain);
 				for(int i=0; i<sz; i++)
 				{
-					buf[off + i] = (byte)val();
-					pos++;
+					buf[off + i] = val();
 				}
 				
 				return sz;
 			}
 			
 			
-			protected int val()
+			protected byte val()
 			{
-				return 0xff & (int)pos;
+				return (byte)pos++;
 			}
 		};
 	}

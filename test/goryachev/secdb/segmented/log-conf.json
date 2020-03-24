@@ -10,7 +10,9 @@
 	[
 //		DBEngineIO,
 		DebugInputStream,
-		DebugOutputStream
+		DebugOutputStream,
+		SegmentInputStream,
+		SegmentOutputStream
 	],
 	appenders:
 	[

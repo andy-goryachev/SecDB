@@ -1,6 +1,7 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.log.Log;
+import goryachev.common.util.Hex;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -98,16 +99,17 @@ public class SegmentInputStream
 			off = ref.getOffset(segmentIndex) + segmentOffset;
 			sz = SegmentFile.SEGMENT_SIZE - off;
 		
-			if(sz == 0)
+			if(sz <= 0)
 			{
 				// next segment
 				segmentIndex++;
+				segmentOffset = 0;
+
 				if(segmentIndex >= ref.getSegmentCount())
 				{
 					return -1;
 				}
 
-				segmentOffset = 0;
 				continue;
 			}
 			else
@@ -124,7 +126,8 @@ public class SegmentInputStream
 		SegmentFile sf = store.getSegmentFile(name);
 		int rv = sf.read(off, buf, offset, len);
 
-		log.trace("off={%08x} offset={%04x} len={%d} f={%s} -> {%d}", off, offset, len, sf.getName(), rv);
+		log.trace("rd position={%d} off={%d} len={%d} f={%s} -> {%d}", position, off, len, sf.getName(), rv);
+		log.trace(Hex.toHexString(buf, offset, 4));
 		
 		return rv;
 	}
