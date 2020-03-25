@@ -1,7 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.log.Log;
-import goryachev.common.util.Hex;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,7 +10,6 @@ import java.io.InputStream;
 public class SegmentInputStream
 	extends InputStream
 {
-	protected static final Log log = Log.get("SegmentInputStream");
 	protected final SecStore store;
 	protected final Ref ref;
 	protected final long length;
@@ -124,12 +121,7 @@ public class SegmentInputStream
 		}
 		
 		SegmentFile sf = store.getSegmentFile(name);
-		int rv = sf.read(off, buf, offset, len);
-
-		log.trace("rd position={%d} off={%d} len={%d} f={%s} -> {%d}", position, off, len, sf.getName(), rv);
-		log.trace(Hex.toHexString(buf, offset, 4));
-		
-		return rv;
+		return sf.read(off, buf, offset, len);
 	}
 
 

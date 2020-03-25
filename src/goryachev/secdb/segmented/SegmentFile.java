@@ -1,11 +1,7 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
-import goryachev.secdb.util.Utils;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 
 
@@ -24,7 +20,6 @@ public class SegmentFile
 	// FIX make final after debugging
 	public static /*final*/ long SEGMENT_SIZE = CKit.mebi(512);
 	protected static final int BUF_SIZE = 4096;
-	protected static final Log log = Log.get("SegmentFile");
 	protected final File file;
 	protected final String name;
 	private RandomAccessFile reader;
@@ -63,7 +58,6 @@ public class SegmentFile
 			return -1;
 		}
 		
-		int sz = (int)Math.min(available, len);
 		if(writer == null)
 		{
 			File pf = file.getParentFile();
@@ -74,11 +68,10 @@ public class SegmentFile
 			writer = new RandomAccessFile(file, "rw");
 		}
 		
-		log.trace("size={%d} seglen={%d} avail={%d} sz={%d} f={%s}", len, seglen, available, sz, file);
+		int sz = (int)Math.min(available, len);
 		
 		writer.seek(seglen);
 		writer.write(buf, off, sz);
-		log.trace("rv={%d}", sz);
 		
 		return sz;
 	}

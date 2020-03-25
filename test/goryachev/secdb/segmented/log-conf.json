@@ -11,8 +11,6 @@
 //		DBEngineIO,
 		DebugInputStream,
 		DebugOutputStream,
-		SegmentInputStream,
-		SegmentOutputStream
 	],
 	appenders:
 	[

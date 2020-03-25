@@ -31,10 +31,25 @@ public class TestOffsetIStream
 		return new InputStream()
 		{
 			private long pos;
-			private int phase;
-			private int val;
+			private int index;
+			private String currentAddress;
 			
 			
+			protected byte val()
+			{
+				if((index == 0) || (index >= currentAddress.length()))
+				{
+					currentAddress = pos + " ";
+					index = 0;					
+				}
+				
+				byte v = (byte)currentAddress.charAt(index);
+				index++;
+				pos++;
+				
+				return v;
+			}
+		
 			public int read() throws IOException
 			{
 				if(pos < length)
@@ -61,33 +76,6 @@ public class TestOffsetIStream
 				}
 				
 				return sz;
-			}
-			
-			
-			protected byte val()
-			{
-				byte v;
-				switch(phase)
-				{
-				case 0:
-					val = (int)pos;
-					v = (byte)(val >> 24);
-					break;
-				case 1:
-					v = (byte)(val >> 16);
-					break;
-				case 2:
-					v = (byte)(val >> 8);
-					break;
-				default:
-					v = (byte)(val);
-					break;
-				}
-				
-				phase = ((phase + 1) % 4);
-				pos++;
-				
-				return v;
 			}
 		};
 	}

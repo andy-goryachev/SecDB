@@ -238,12 +238,7 @@ public class TestLarge
 					
 					if(cr != ce)
 					{
-						// FIX remove later
-						ri.read();
-						
-						// FIX
 						throw new Exception(String.format("mismatch at offset %d, rd=%02x, exp=%02x, key=%s", off, cr, ce, key));
-//						return;
 					}
 					
 					if(cr < 0)
