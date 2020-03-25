@@ -1,5 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.segmented;
+package goryachev.secdb.segmented.REMOVE;
 import goryachev.common.log.Log;
 import goryachev.common.util.Hex;
 import java.io.ByteArrayOutputStream;
@@ -10,6 +10,7 @@ import java.io.InputStream;
 /**
  * Debug Input Stream.
  */
+@Deprecated // TODO remove
 public class DebugInputStream
 	extends InputStream
 {

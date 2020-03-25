@@ -4,6 +4,8 @@ import goryachev.crypto.Crypto;
 import goryachev.crypto.EAXDecryptStream;
 import goryachev.crypto.EAXEncryptStream;
 import goryachev.crypto.OpaqueBytes;
+import goryachev.secdb.segmented.REMOVE.DebugInputStream;
+import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
