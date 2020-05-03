@@ -1,6 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.log.Log;
 import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
@@ -9,6 +8,7 @@ import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
+import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.util.ByteArrayIStream;
 import java.io.File;
 import java.util.Random;
@@ -32,7 +32,7 @@ public class TestSegments
 	public static void initLog() throws Exception
 	{
 		SegmentFile.SEGMENT_SIZE = 256;
-		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
+		JsonLogConfig.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
 		
 		FileTools.deleteRecursively(DIR);
 	}

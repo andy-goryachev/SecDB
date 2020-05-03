@@ -1,6 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.log.Log;
 import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
@@ -10,6 +9,7 @@ import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.OpaqueChars;
+import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import java.io.File;
@@ -34,7 +34,7 @@ public class TestEncryption
 	@BeforeClass
 	public static void initLog() throws Exception
 	{
-		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
+		JsonLogConfig.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
 		
 		FileTools.deleteRecursively(DIR);
 	}

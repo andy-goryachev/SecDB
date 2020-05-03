@@ -1,6 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.log.Log;
 import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
@@ -11,10 +10,10 @@ import goryachev.common.util.FileTools;
 import goryachev.common.util.Hex;
 import goryachev.common.util.Parsers;
 import goryachev.common.util.SKey;
+import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,7 +50,7 @@ public class TestLarge
 	@BeforeClass
 	public static void initLog() throws Exception
 	{
-		Log.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
+		JsonLogConfig.configure(CKit.readStringQuiet(TestLarge.class, "log-conf.json"));
 		
 //		SegmentFile.SEGMENT_SIZE = 256;
 		FileTools.deleteRecursively(dir());
