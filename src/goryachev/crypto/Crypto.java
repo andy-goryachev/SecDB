@@ -1,7 +1,7 @@
 // Copyright © 2011-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.crypto;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
-import goryachev.common.util.Log;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -53,7 +53,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	
@@ -133,7 +133,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	

@@ -172,7 +172,8 @@ public class LogConfig
 
 	protected static ConsoleAppender createConsoleAppender(LogConfig.AppenderInfo inf, PrintStream out)
 	{
-		ConsoleAppender a = new ConsoleAppender(out, inf.channels);
+		ConsoleAppender a = new ConsoleAppender(out);
+		// TODO configure
 		return a;
 	}
 }
