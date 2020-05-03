@@ -1,6 +1,5 @@
 // Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
-import goryachev.common.log.format.LogFormat;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
@@ -424,7 +423,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.ERROR))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.ERROR, null, msg);
 		}
 	}
@@ -474,7 +473,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.WARN))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.WARN, null, msg);
 		}
 	}
@@ -524,7 +523,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.INFO))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.INFO, null, msg);
 		}
 	}
@@ -574,7 +573,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.DEBUG))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.DEBUG, null, msg);
 		}
 	}
@@ -633,7 +632,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.TRACE))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.TRACE, null, msg);
 		}
 	}

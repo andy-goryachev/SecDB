@@ -1,5 +1,5 @@
 // Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.common.log.format;
+package research.logformat;
 
 
 /**
