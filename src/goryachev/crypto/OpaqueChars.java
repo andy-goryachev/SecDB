@@ -103,6 +103,10 @@ public final class OpaqueChars
 		try
 		{
 			b = getBytes();
+			if(b == null)
+			{
+				return null;
+			}
 			int sz = b.length/2;
 			
 			char[] cs = new char[sz];
@@ -164,11 +168,15 @@ public final class OpaqueChars
 		char[] cs = getChars();
 		try
 		{
-			char[] rv = new char[cs.length + add.length];
+			int len = cs == null ? 0 : cs.length;
+			char[] rv = new char[len + add.length];
 			try
 			{
-				System.arraycopy(cs, 0, rv, 0, cs.length);
-				System.arraycopy(add, 0, rv, cs.length, add.length);
+				if(cs != null)
+				{
+					System.arraycopy(cs, 0, rv, 0, cs.length);
+				}
+				System.arraycopy(add, 0, rv, len, add.length);
 				set(rv);
 			}
 			finally

@@ -30,6 +30,9 @@ import org.bouncycastle.crypto.signers.RSADigestSigner;
 /** Collection of simple operations related to cryptography */
 public class Crypto
 {
+	protected static final Log log = Log.get("Crypto");
+	
+	
 	public static void zero(CipherParameters p)
 	{
 		try
@@ -53,7 +56,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -69,7 +72,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 
@@ -85,7 +88,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -101,7 +104,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -117,7 +120,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -133,7 +136,7 @@ public class Crypto
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	

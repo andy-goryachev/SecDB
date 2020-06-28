@@ -65,7 +65,7 @@ public class TestLarge
 		// not enough info
 //		return new IncrementingByteStream(SIZE);
 		
-		return new TestOffsetIStream(SIZE);
+		return new TOffsetIStream(SIZE);
 	}
 	
 	

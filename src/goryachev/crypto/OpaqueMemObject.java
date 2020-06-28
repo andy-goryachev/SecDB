@@ -110,6 +110,12 @@ abstract class OpaqueMemObject
 	}
 	
 	
+	public boolean isEmpty()
+	{
+		return encrypted == null;
+	}
+	
+	
 	public final void clear()
 	{
 		Crypto.zero(encrypted);

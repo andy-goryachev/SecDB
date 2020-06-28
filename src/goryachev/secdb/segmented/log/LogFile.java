@@ -197,13 +197,16 @@ public class LogFile
 			return true;
 		}
 		
-		switch(lastEvent.getCode())
-		{
-		case CLOSED:
-			return false;
-		}
+		// TODO instead, we should probably determine if the last write has been successful or not.
+		// perhaps write to a file and delete it?  or create a marker file?
+		// or perhaps write in the log: WRITING... HEAD
+//		switch(lastEvent.getCode())
+//		{
+//		case CLOSED:
+//			return false;
+//		}
 		
-		return true;
+		return false;
 	}
 
 

@@ -8,13 +8,13 @@ import java.io.InputStream;
 /**
  * IStream streams integer values corresponding to the current data offset.
  */
-public class TestOffsetIStream
+public class TOffsetIStream
 	implements IStream
 {
 	protected final long length;
 	
 	
-	public TestOffsetIStream(long length)
+	public TOffsetIStream(long length)
 	{
 		this.length = length;
 	}

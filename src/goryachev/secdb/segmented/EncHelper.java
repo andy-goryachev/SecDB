@@ -33,7 +33,7 @@ public abstract class EncHelper
 	
 	public static EncHelper create(OpaqueBytes key)
 	{
-		if(key == null)
+		if((key == null) || key.isEmpty())
 		{
 			return new Clear();
 		}

@@ -148,7 +148,7 @@ public class TestEncryption
 			{
 				String kv = "kv" + i;
 				
-				IStored val = db.getValue(new SKey(kv));
+				IStored val = db.load(new SKey(kv));
 				if(val == null)
 				{
 					throw new Exception("failed to load " + kv);

@@ -31,6 +31,13 @@ public class SecDB
 	}
 	
 	
+	/** checks the directory for database files, returns true if all required files are present. */
+	public static boolean isPresent(File dir)
+	{
+		return SecStore.isPresent(dir);
+	}
+	
+	
 	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
 		create(dir, key, passphrase, new SecureRandom());
@@ -43,7 +50,7 @@ public class SecDB
 	}
 	
 	
-	public static SecDB open(File dir, OpaqueChars passphrase) throws Exception
+	public static SecDB open(File dir, OpaqueChars passphrase) throws Exception, SecException
 	{
 		SecStore st = SecStore.open(dir, passphrase);
 		return new SecDB(st);
@@ -56,20 +63,14 @@ public class SecDB
 	}
 	
 	
-	public IStored getValue(SKey key) throws Exception
-	{
-		DataHolder<Ref> ref = engine.getValue(key);
-		return ref == null ? null : ref.getStoredValue();
-	}
-	
-	
 	public void execute(Transaction tx)
 	{
 		engine.execute(tx);
 	}
 	
 	
-	/** executes a Transaction which inserts a single value */ 
+	/** executes a Transaction which inserts a single value */
+	// TODO communicate error?
 	public void store(SKey key, IStream in, Runnable onFinish)
 	{
 		execute(new Transaction()
@@ -88,6 +89,13 @@ public class SecDB
 				}
 			}
 		});
+	}
+	
+	
+	public IStored load(SKey key) throws Exception
+	{
+		DataHolder<Ref> ref = engine.getValue(key);
+		return ref == null ? null : ref.getStoredValue();
 	}
 	
 	

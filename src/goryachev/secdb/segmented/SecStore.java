@@ -17,7 +17,6 @@ import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +60,29 @@ public class SecStore
 	}
 	
 	
+	/** checks the directory for database files, returns true if all required files are present. */
+	public static boolean isPresent(File dir)
+	{
+		if(!dir.exists())
+		{
+			return false;
+		}
+		
+		if(!dir.isDirectory())
+		{
+			return false;
+		}
+		
+		File keyFile = getKeyFile(dir);
+		if(!keyFile.exists())
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
 	/** might throw SecException which contains error code and additional information */
 	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws SecException, Exception
 	{
@@ -80,25 +102,7 @@ public class SecStore
 				throw new SecException(SecErrorCode.DIR_NOT_EMPTY, dir);
 			}
 		}
-		
-		// TODO 16 dirs?  on demand?
-//		// create dirs
-//		for(int i=0; i<0x100; i++)
-//		{
-//			File d = getSegmentDir(dir, i);
-//			d.mkdir();
-//		}
-//		
-//		// check dirs
-//		for(int i=0; i<0x100; i++)
-//		{
-//			File d = getSegmentDir(dir, i);
-//			if(!d.isDirectory() || !d.exists())
-//			{
-//				throw new DBException(DBErrorCode.DIR_UNABLE_TO_CREATE, d);
-//			}
-//		}
-		
+
 		// encrypt the main key
 		byte[] encryptedKey;
 		if((key == null) && (passphrase == null) && (random == null))
@@ -111,27 +115,27 @@ public class SecStore
 		}
 		
 		// store key file
-		File kf = getKeyFile(dir);
+		File keyFile = getKeyFile(dir);
 		try
 		{
-			boolean created = kf.createNewFile();
+			boolean created = keyFile.createNewFile();
 			if(!created)
 			{
-				throw new Exception("failed to create " + kf);
+				throw new Exception("failed to create " + keyFile);
 			}
 			// this is madness
-			kf.setReadable(false, false);
-			kf.setReadable(true, true);
-			kf.setWritable(false, false);
-			kf.setWritable(true, true);
+			keyFile.setReadable(false, false);
+			keyFile.setReadable(true, true);
+			keyFile.setWritable(false, false);
+			keyFile.setWritable(true, true);
 			
 			// TODO verify permissions
 						
-			CKit.write(encryptedKey, kf);
+			CKit.write(encryptedKey, keyFile);
 			
 			// TODO verify permissions
 			
-			byte[] chk = CKit.readBytes(kf);
+			byte[] chk = CKit.readBytes(keyFile);
 			if(CKit.notEquals(encryptedKey, chk))
 			{
 				throw new Exception("key file content mismatch");
@@ -358,53 +362,6 @@ public class SecStore
 		}
 		
 		return ss.getRef();
-		
-//		in = encHelper.getEncryptionStream(in); // FIX not here
-		/*
-		try
-		{
-			Ref ref = null;
-			
-			for(;;)
-			{
-				SegmentFile sf = segmentForLength(len, isTree);
-				String name = sf.getName();
-				long off = sf.getLength();
-				
-				if(ref == null)
-				{
-					ref = new Ref.SingleSegment(len, key, name, off);
-				}
-				else
-				{
-					ref = ref.addSegment(name, off);
-				}
-	
-				// TODO eax encrypt stream should be here
-				long written = sf.write(in, len, key);
-				if(written == 0)
-				{
-					throw new Error("zero bytes written");
-				}
-				else if(written < 0)
-				{
-					return ref;
-				}
-				else
-				{
-					len -= written;
-					if(len <= 0)
-					{
-						return ref;
-					}
-				}
-			}
-		}
-		finally
-		{
-			CKit.close(in);
-		}
-		*/
 	}
 	
 	
