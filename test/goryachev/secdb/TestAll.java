@@ -21,7 +21,7 @@ public class TestAll
 			TestEAX.class,
 			TestEncryption.class,
 			TestInMemoryStore.class,
-			TestLarge.class,
+//			TestLarge.class,
 			TestSecDB.class,
 			TestSegments.class,
 			TestStreams.class
