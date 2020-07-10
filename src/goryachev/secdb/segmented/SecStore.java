@@ -361,7 +361,9 @@ public class SecStore
 			CKit.close(out);
 		}
 		
-		return ss.getRef();
+		Ref rv = ss.getRef();
+		log.trace("STORE len=%d ref=%s", len,  rv);
+		return rv;
 	}
 	
 	

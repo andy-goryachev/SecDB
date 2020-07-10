@@ -29,6 +29,8 @@ public class DBEngine<R extends IRef>
 	protected BPlusTreeNode<SKey,DataHolder<R>> loadRoot() throws Exception
 	{
 		R ref = store.getRootRef();
+		log.debug("root=%s", ref);
+		
 		if(ref == null)
 		{
 			return new DBLeafNode(store).modified();
@@ -57,7 +59,9 @@ public class DBEngine<R extends IRef>
 
 	public DataHolder<R> getValue(SKey key) throws Exception
 	{
-		return loadRoot().getValue(key);
+		DataHolder<R> h = loadRoot().getValue(key);
+		log.trace("key=%s, ref=%s", key, h);
+		return h;
 	}
 
 
@@ -133,5 +137,7 @@ public class DBEngine<R extends IRef>
 	{
 		R ref = DBEngineIO.store(store, newRoot);
 		store.setRootRef(ref);
+		
+		log.debug("new root=%s", ref);
 	}
 }

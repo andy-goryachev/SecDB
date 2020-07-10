@@ -5,6 +5,7 @@ import goryachev.common.io.DWriter;
 import goryachev.common.io.DWriterBytes;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
+import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
@@ -54,7 +55,7 @@ public class DBEngineIO
 			
 			byte[] b = wr.toByteArray();
 			R ref = store.store(new ByteArrayIStream(b), true);
-			//log.trace("STORE {%s} \n{%s}", ref, () -> Hex.toHexStringASCII(b));
+			log.trace(() -> "STORE " + ref + "\n" + Hex.toHexStringASCII(b));
 			return ref;
 		}
 		finally

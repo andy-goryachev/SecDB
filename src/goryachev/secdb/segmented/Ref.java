@@ -281,7 +281,7 @@ public abstract class Ref
 		
 		public String toString()
 		{
-			return "Ref[" + length + ":" + segment + ":" + Hex.toHexString(offset) + "]";
+			return "Ref[" + length + ":" + Hex.toHexString(offset) + ":" + segment + "]";
 		}
 	}
 	
@@ -476,9 +476,9 @@ public abstract class Ref
 			for(int i=0; i<getSegmentCount(); i++)
 			{
 				sb.a(",");
-				sb.a(getSegment(i));
-				sb.a(":");
 				sb.a(Hex.toHexString(getOffset(i)));
+				sb.a(":");
+				sb.a(getSegment(i));
 			}
 			
 			sb.a("]");

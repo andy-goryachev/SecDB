@@ -56,6 +56,12 @@ public abstract class DataHolder<R>
 			super(store);
 			this.ref = ref;
 		}
+		
+		
+		public String toString()
+		{
+			return "RefHolder[ref=" + ref + "]";
+		}
 
 
 		public boolean hasValue()
@@ -114,6 +120,12 @@ public abstract class DataHolder<R>
 		{
 			super(store);
 			this.bytes = bytes;
+		}
+		
+		
+		public String toString()
+		{
+			return "ValueHolder[size=" + bytes.length + "]";
 		}
 
 

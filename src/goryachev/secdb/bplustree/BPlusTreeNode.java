@@ -116,12 +116,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	}
 	
 	
-	protected void setModified(boolean on)
-	{
-		modified = on;
-	}
-	
-	
 	protected void setModified()
 	{
 		modified = true;
@@ -453,6 +447,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		{
 			BPlusTreeNode<K,V> child = getChild(key);
 			child.insertValue(root, key, value, branchingFactor);
+			setModified();
 			
 			if(child.isOverflow(branchingFactor))
 			{
