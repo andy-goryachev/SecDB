@@ -21,22 +21,23 @@ public class DBLeafNode<R extends IRef>
 	}
 	
 	
-	public DBLeafNode modified()
+	public static DBLeafNode createModified(IStore store)
 	{
-		setModified();
-		return this;
+		DBLeafNode n = new DBLeafNode(store);
+		n.setModified();
+		return n;
 	}
 	
 	
 	protected LeafNode<SKey,DataHolder<R>> newLeafNode()
 	{
-		return new DBLeafNode(store).modified();
+		return createModified(store);
 	}
 	
 	
 	protected InternalNode newInternalNode()
 	{
-		return new DBInternalNode(store).modified();
+		return DBInternalNode.createModified(store);
 	}
 
 

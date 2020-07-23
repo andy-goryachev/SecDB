@@ -33,7 +33,7 @@ public class DBEngine<R extends IRef>
 		
 		if(ref == null)
 		{
-			return new DBLeafNode(store).modified();
+			return DBLeafNode.createModified(store);
 		}
 		else
 		{
@@ -71,15 +71,18 @@ public class DBEngine<R extends IRef>
 	}
 
 	
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client)
+	/** runs query, returs true if no exceptions (Throwables) have been thrown, false otherwise */
+	public boolean query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client)
 	{
 		try
 		{
 			loadRoot().query(start, includeStart, end, includeEnd, client);
+			return true;
 		}
 		catch(Throwable e)
 		{
 			client.onError(e);
+			return false;
 		}
 	}
 
@@ -139,5 +142,12 @@ public class DBEngine<R extends IRef>
 		store.setRootRef(ref);
 		
 		log.debug("new root=%s", ref);
+	}
+
+
+	public void dumpTree() throws Exception
+	{
+		BPlusTreeNode<SKey,DataHolder<R>> root = loadRoot();
+		root.dump(System.err, 0);
 	}
 }

@@ -22,7 +22,10 @@
 //	SOFTWARE.
 //
 package goryachev.secdb.bplustree;
+import goryachev.common.util.SB;
 import goryachev.secdb.QueryClient;
+import goryachev.secdb.bplustree.BPlusTreeNode.InternalNode;
+import goryachev.secdb.bplustree.BPlusTreeNode.LeafNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -184,5 +187,56 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 		}
 
 		return sb.toString();
+	}
+	
+	
+	public String dumpKeys() throws Exception
+	{
+		SB sb = new SB();
+		dump(sb, root, 0);
+		return sb.toString();
+	}
+
+
+	private static <K extends Comparable<? super K>, V> void dump(SB sb, BPlusTreeNode<K,V> node, int indent) throws Exception
+	{
+		if(node instanceof InternalNode)
+		{
+			InternalNode n = (InternalNode)node;
+			int sz = n.getChildCount();
+			for(int i=0; i<sz; i++)
+			{
+				BPlusTreeNode<K,V> ch = n.childAt(i);
+				dump(sb, ch, indent + 1);
+				
+				if(i < (sz - 1))
+				{
+					Object k = n.keyAt(i);
+					
+					sb.sp(indent * 2);
+					sb.a("key=");
+					sb.a(k);
+					sb.nl();
+				}
+			}
+		}
+		else if(node instanceof LeafNode)
+		{
+			LeafNode n = (LeafNode)node;
+			int sz = n.keys.size();
+			for(int i=0; i<sz; i++)
+			{
+				Object k = n.keyAt(i);
+				
+				sb.sp(indent * 2);
+				sb.a("val=");
+				sb.a(k);
+				sb.nl();
+			}
+		}
+		else
+		{
+			throw new Error("?" + node);
+		}
 	}
 }

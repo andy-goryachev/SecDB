@@ -3,8 +3,8 @@ package goryachev.secdb.bplustree;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
+import goryachev.common.util.D;
 import goryachev.secdb.QueryClient;
-import goryachev.secdb.bplustree.BPlusTree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,6 +15,24 @@ public class TestBPlusTree
 	public static void main(String[] args)
 	{
 		TF.run();
+	}
+	
+	
+	@Test
+	public void testBulkDelete() throws Exception
+	{
+		BPlusTree<String,String> t = new BPlusTree<String,String>(4);
+		
+		t.insert(".files", "1");
+		t.insert("D5889315212F71B0751DF9829227A5D9E0EEC08D3CFE177DFC14DC9031F309CC", "2");
+		t.insert("query.000001737D81E92F.54CD92E2FBBF7A4F45B457E9B5C911FEC969022D0EC59335283895D91FC2CE59", "3");
+		t.insert("query.000001737D82010D.47EE060C790DCD3F3581FC74933822CF829C0D33EAF531C64F81F8CD27651945", "4");
+		
+		t.remove("query.000001737D81E92F.54CD92E2FBBF7A4F45B457E9B5C911FEC969022D0EC59335283895D91FC2CE59");
+		D.print(t.dumpKeys());
+		
+		t.remove("query.000001737D82010D.47EE060C790DCD3F3581FC74933822CF829C0D33EAF531C64F81F8CD27651945");
+		D.print(t.dumpKeys());
 	}
 	
 	

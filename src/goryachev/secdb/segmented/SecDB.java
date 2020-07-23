@@ -12,6 +12,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.List;
 
 
 /**
@@ -92,6 +93,43 @@ public class SecDB
 	}
 	
 	
+	public void remove(SKey key)
+	{
+		execute(new Transaction()
+		{
+			protected void body() throws Exception
+			{
+				remove(key);
+			}
+			
+			
+			protected void onFinish() 
+			{
+			}
+		});
+	}
+	
+	
+	public void remove(List<SKey> keys)
+	{
+		execute(new Transaction()
+		{
+			protected void body() throws Exception
+			{
+				for(SKey k: keys)
+				{
+					remove(k);
+				}
+			}
+			
+			
+			protected void onFinish() 
+			{
+			}
+		});
+	}
+	
+	
 	public IStored load(SKey key) throws Exception
 	{
 		DataHolder<Ref> ref = engine.getValue(key);
@@ -99,10 +137,10 @@ public class SecDB
 	}
 	
 	
-	/** range query.  'start' may be less than, greater than, or equal to 'end' */
-	public void query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
+	/** range query.  'start' may be less than, greater than, or equal to 'end'.  returns true if no exceptions have been thrown */
+	public boolean query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
 	{
-		engine.query(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
+		return engine.query(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
 		{
 			public void onError(Throwable err)
 			{
@@ -119,9 +157,22 @@ public class SecDB
 	}
 	
 	
-	/** simplified range query [start,end[ */
-	public void query(SKey start, SKey end, QueryClient<SKey,IStored> client)
+	/** simplified range query [start,end[.  returns true if no errors */
+	public boolean query(SKey start, SKey end, QueryClient<SKey,IStored> client)
 	{
-		query(start, true, end, false, client);
+		return query(start, true, end, false, client);
+	}
+
+
+	public void dumpTree()
+	{
+		try
+		{
+			engine.dumpTree();
+		}
+		catch(Throwable e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

@@ -23,6 +23,7 @@
 //
 package goryachev.secdb.bplustree;
 import goryachev.secdb.QueryClient;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,6 +65,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient<K,V> client) throws Exception;
 	
 	public abstract boolean isLeafNode();
+	
+	public abstract void dump(Appendable out, int indent) throws Exception;
 	
 	//
 
@@ -116,7 +119,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	}
 	
 	
-	protected void setModified()
+	public void setModified()
 	{
 		modified = true;
 	}
@@ -225,7 +228,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				setModified();
 				return root;
 			}
-			return root;
+			// not modified
+			return null;
 		}
 
 
@@ -320,7 +324,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-		public void merge(BPlusTreeNode sibling)
+//		public void merge(BPlusTreeNode sibling)
+		public void merge(BPlusTreeNode<K,V> sibling) throws Exception
 		{
 			@SuppressWarnings("unchecked")
 			LeafNode node = (LeafNode)sibling;
@@ -328,7 +333,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 			values.addAll(node.values);
 			setModified();
 		}
-
+		
 
 		@Override
 		public BPlusTreeNode split()
@@ -360,6 +365,23 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 		public boolean isUnderflow(int branchingFactor)
 		{
 			return values.size() < branchingFactor / 2;
+		}
+
+
+		public void dump(Appendable out, int indent) throws IOException
+		{
+			int sz = keys.size();
+			for(int i=0; i<sz; i++)
+			{
+				K key = keys.get(i);
+				for(int j=0; j<indent; j++)
+				{
+					out.append("  ");
+				}
+				out.append("val=");
+				out.append(key.toString());
+				out.append("\n");
+			}
 		}
 	}
 	
@@ -419,6 +441,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				return null;
 			}
 			
+			setModified();
+			
 			if(child.isUnderflow(branchingFactor))
 			{
 				BPlusTreeNode<K,V> childLeftSibling = getChildLeftSibling(key);
@@ -426,7 +450,13 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				BPlusTreeNode<K,V> left = childLeftSibling != null ? childLeftSibling : child;
 				BPlusTreeNode<K,V> right = childLeftSibling != null ? child : childRightSibling;
 				left.merge(right);
-				deleteChild(right.getFirstLeafKey());
+				
+				// FIX
+//				if(right.size() > 0)
+				{
+					deleteChild(right.getFirstLeafKey());
+				}
+				
 				if(left.isOverflow(branchingFactor))
 				{
 					BPlusTreeNode<K,V> sibling = left.split();
@@ -546,12 +576,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				removeChildAt(from);
 			}
 			
-//			sibling.keys.addAll(keys.subList(from, to));
-//			sibling.children.addAll(children.subList(from, to + 1));
-//
-//			keys.subList(from - 1, to).clear();
-//			children.subList(from, to + 1).clear();
-			
 			setModified();
 
 			return sibling;
@@ -628,6 +652,28 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				return childAt(ix + 1);
 			}
 			return null;
+		}
+		
+		
+		public void dump(Appendable out, int indent) throws Exception
+		{
+			int sz = getChildCount();
+			for(int i=0; i<sz; i++)
+			{
+				BPlusTreeNode<K,V> ch = childAt(i);
+				ch.dump(out, indent + 1);
+				
+				if(i < (sz - 1))
+				{
+					for(int j=0; j<indent; j++)
+					{
+						out.append("  ");
+					}
+					out.append("key=");
+					out.append(keyAt(i).toString());
+					out.append("\n");
+				}
+			}
 		}
 	}
 	

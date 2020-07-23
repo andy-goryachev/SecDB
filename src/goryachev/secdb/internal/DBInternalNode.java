@@ -23,10 +23,11 @@ public class DBInternalNode<R extends IRef>
 	}
 	
 	
-	protected DBInternalNode modified()
+	public static DBInternalNode createModified(IStore store)
 	{
-		setModified();
-		return this;
+		DBInternalNode n = new DBInternalNode(store);
+		n.setModified();
+		return n;
 	}
 	
 	
@@ -69,13 +70,13 @@ public class DBInternalNode<R extends IRef>
 	
 	protected LeafNode<SKey,DataHolder<R>> newLeafNode()
 	{
-		return new DBLeafNode(store).modified();
+		return DBLeafNode.createModified(store);
 	}
 	
 	
 	protected InternalNode newInternalNode()
 	{
-		return new DBInternalNode(store).modified();
+		return DBInternalNode.createModified(store);
 	}
 
 
