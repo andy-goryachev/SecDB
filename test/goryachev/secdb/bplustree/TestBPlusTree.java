@@ -23,6 +23,25 @@ public class TestBPlusTree
 	{
 		BPlusTree<String,String> t = new BPlusTree<String,String>(4);
 		
+		t.insert("1", "1");
+		t.insert("2", "2");
+		t.insert("3", "3");
+		t.insert("4", "4");
+		D.print(t.dumpKeys());
+		
+		t.remove("3"); // FIX breaks the tree
+		D.print(t.dumpKeys());
+		
+		t.remove("4");
+		D.print(t.dumpKeys());
+	}
+	
+	
+//	@Test
+	public void testBulkDelete2() throws Exception
+	{
+		BPlusTree<String,String> t = new BPlusTree<String,String>(4);
+		
 		t.insert(".files", "1");
 		t.insert("D5889315212F71B0751DF9829227A5D9E0EEC08D3CFE177DFC14DC9031F309CC", "2");
 		t.insert("query.000001737D81E92F.54CD92E2FBBF7A4F45B457E9B5C911FEC969022D0EC59335283895D91FC2CE59", "3");
@@ -36,7 +55,7 @@ public class TestBPlusTree
 	}
 	
 	
-	@Test
+//	@Test
 	public void testLoad() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 0);
@@ -71,7 +90,7 @@ public class TestBPlusTree
 	}
 	
 	
-	@Test
+//	@Test
 	public void test() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
@@ -94,7 +113,7 @@ public class TestBPlusTree
 	}
 
 
-	@Test
+//	@Test
 	public void testForward() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
@@ -111,7 +130,7 @@ public class TestBPlusTree
 	}
 	
 	
-	@Test
+//	@Test
 	public void testBackward() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);

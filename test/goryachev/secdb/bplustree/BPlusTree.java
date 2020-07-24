@@ -120,7 +120,8 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 */
 	public void remove(K key) throws Exception
 	{
-		setRoot(root.remove(root, key, branchingFactor));
+		BPlusTreeNode<K,V> newRoot = root.remove(root, key, branchingFactor); 
+		setRoot(newRoot);
 	}
 	
 	
@@ -193,6 +194,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	public String dumpKeys() throws Exception
 	{
 		SB sb = new SB();
+		sb.a("Dump Keys:\n");
 		dump(sb, root, 0);
 		return sb.toString();
 	}

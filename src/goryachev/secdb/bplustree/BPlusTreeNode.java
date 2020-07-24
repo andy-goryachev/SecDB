@@ -271,7 +271,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 			return keys.get(0);
 		}
 
-		
+
 		public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
 		{
 			int sz = size();
@@ -324,7 +324,6 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 
 		@Override
-//		public void merge(BPlusTreeNode sibling)
 		public void merge(BPlusTreeNode<K,V> sibling) throws Exception
 		{
 			@SuppressWarnings("unchecked")
@@ -449,13 +448,11 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				BPlusTreeNode<K,V> childRightSibling = getChildRightSibling(key);
 				BPlusTreeNode<K,V> left = childLeftSibling != null ? childLeftSibling : child;
 				BPlusTreeNode<K,V> right = childLeftSibling != null ? child : childRightSibling;
+				
 				left.merge(right);
 				
-				// FIX
-//				if(right.size() > 0)
-				{
-					deleteChild(right.getFirstLeafKey());
-				}
+				// FIX this is incorrect
+				deleteChild(right.getFirstLeafKey()); // FIX this causes an issue if the key being deleted is also in this tree node.
 				
 				if(left.isOverflow(branchingFactor))
 				{
