@@ -191,15 +191,17 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	}
 	
 	
+	// do not change the format as it is used in TestBPlusTreeDeletion	
 	public String dumpKeys() throws Exception
 	{
 		SB sb = new SB();
-		sb.a("Dump Keys:\n");
+		sb.a("\n");
 		dump(sb, root, 0);
 		return sb.toString();
 	}
 
 
+	// do not change the format as it is used in TestBPlusTreeDeletion
 	private static <K extends Comparable<? super K>, V> void dump(SB sb, BPlusTreeNode<K,V> node, int indent) throws Exception
 	{
 		if(node instanceof InternalNode)
@@ -216,7 +218,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 					Object k = n.keyAt(i);
 					
 					sb.sp(indent * 2);
-					sb.a("key=");
+					sb.a("I=");
 					sb.a(k);
 					sb.nl();
 				}
@@ -231,7 +233,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				Object k = n.keyAt(i);
 				
 				sb.sp(indent * 2);
-				sb.a("val=");
+				sb.a("L=");
 				sb.a(k);
 				sb.nl();
 			}
