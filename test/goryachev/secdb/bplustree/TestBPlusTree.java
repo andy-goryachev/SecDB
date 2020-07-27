@@ -18,7 +18,7 @@ public class TestBPlusTree
 	}
 	
 	
-	@Test
+//	@Test
 	public void testBulkDelete() throws Exception
 	{
 		BPlusTree<String,String> t = new BPlusTree<String,String>(4);
@@ -37,7 +37,7 @@ public class TestBPlusTree
 	}
 	
 	
-//	@Test
+	@Test
 	public void testBulkDelete2() throws Exception
 	{
 		BPlusTree<String,String> t = new BPlusTree<String,String>(4);

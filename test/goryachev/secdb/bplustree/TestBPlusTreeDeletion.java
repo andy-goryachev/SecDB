@@ -43,8 +43,9 @@ public class TestBPlusTreeDeletion
 			"I=30",
 			"    L=30",
 			"    L=35",
-			"  I=45",
+			"  I=40",
 			"    L=45",
+			"  I=55",
 			"    L=55"
 		);
 		
@@ -98,10 +99,4 @@ public class TestBPlusTreeDeletion
 		
 		return t;
 	}
-	
-	
-	//
-	
-	
-	
 }

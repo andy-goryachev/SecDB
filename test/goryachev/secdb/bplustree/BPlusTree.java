@@ -243,4 +243,12 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			throw new Error("?" + node);
 		}
 	}
+	
+	
+	public void checkInvariants() throws Exception
+	{
+		// TODO check number of nodes
+		// TODO check increasing keys
+		// TODO check children
+	}
 }

@@ -451,8 +451,17 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 				
 				left.merge(right);
 				
-				// FIX this is incorrect
-				deleteChild(right.getFirstLeafKey()); // FIX this causes an issue if the key being deleted is also in this tree node.
+				// FIX here lies the bug
+				{
+					if(keys.contains(key))
+					{
+						deleteChild(key);
+					}
+					else
+					{
+						deleteChild(right.getFirstLeafKey()); // FIX this causes an issue if the key being deleted is also in this tree node.
+					}
+				}
 				
 				if(left.isOverflow(branchingFactor))
 				{
@@ -460,12 +469,12 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 					insertChild(sibling.getFirstLeafKey(), sibling);
 				}
 				
-				if(root.size() == 0)
+				if(newRoot.size() == 0)
 				{
 					return left;
 				}
 			}
-			return root;
+			return newRoot;
 		}
 
 
