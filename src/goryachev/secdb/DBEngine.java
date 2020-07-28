@@ -85,6 +85,25 @@ public class DBEngine<R extends IRef>
 			return false;
 		}
 	}
+	
+	
+	/** 
+	 * Finds all the entries where the key "starts with" the given prefix.  
+	 * Returns true if no exceptions (Throwables) have been thrown, false otherwise
+	 */ 
+	public boolean prefixQuery(SKey prefix, QueryClient<SKey,DataHolder<R>> client)
+	{
+		try
+		{
+			loadRoot().prefixQuery(prefix, client);
+			return true;
+		}
+		catch(Throwable e)
+		{
+			client.onError(e);
+			return false;
+		}
+	}
 
 
 	public synchronized void execute(DBTransaction<R> tx)

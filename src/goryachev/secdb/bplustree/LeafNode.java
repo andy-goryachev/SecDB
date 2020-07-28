@@ -105,6 +105,39 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	{
 		return keys.get(0);
 	}
+	
+	
+	/** 
+	 * determines whether 'prefix' is the prefix of 'key'.
+	 * throws UnsupportedOperationException if K type does not support such an operation.
+	 */
+	protected boolean isPrefix(K prefix, K key) throws Exception
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	
+	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	{
+		int sz = size();
+		for(int i=0; i<sz; i++)
+		{
+			K key = keys.get(i);
+			if(isPrefix(prefix, key))
+			{
+				V val = values.get(i);
+				if(!client.acceptQueryResult(key, val))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
 
 	public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
@@ -113,12 +146,12 @@ public class LeafNode<K extends Comparable<? super K>,V>
 		for(int i=0; i<sz; i++)
 		{
 			K key = keys.get(i);
-			V val = values.get(i);
 			int cms = key.compareTo(start);
 			int cme = key.compareTo(end);
 			
 			if(((!includeStart && cms > 0) || (includeStart && cms >= 0)) && ((!includeEnd && cme < 0) || (includeEnd && cme <= 0)))
 			{
+				V val = values.get(i);
 				if(!client.acceptQueryResult(key, val))
 				{
 					return false;
@@ -216,11 +249,5 @@ public class LeafNode<K extends Comparable<? super K>,V>
 			out.append(key.toString());
 			out.append("\n");
 		}
-	}
-
-
-	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
-	{
-		throw new UnsupportedOperationException();
 	}
 }

@@ -126,6 +126,25 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	{
 		return childAt(0).getFirstLeafKey();
 	}
+	
+	
+	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	{
+		// similar to queryForward
+		int ix = findInsertIndex(prefix);
+		int sz = getChildCount();
+		
+		for(int i=ix; i<sz; i++)
+		{
+			BPlusTreeNode n = childAt(i);
+			if(!n.prefixQuery(prefix, client))
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
 
 	
 	public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
@@ -296,11 +315,5 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 				out.append("\n");
 			}
 		}
-	}
-	
-	
-	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
-	{
-		throw new UnsupportedOperationException();
 	}
 }
