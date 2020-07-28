@@ -5,13 +5,15 @@ import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
 import goryachev.secdb.bplustree.BPlusTreeNode;
+import goryachev.secdb.bplustree.InternalNode;
+import goryachev.secdb.bplustree.LeafNode;
 
 
 /**
  * DBEngine InternalNode.
  */
 public class DBInternalNode<R extends IRef>
-	extends BPlusTreeNode.InternalNode<SKey,DataHolder<R>>
+	extends InternalNode<SKey,DataHolder<R>>
 {
 	private final IStore<R> store;
 	protected final CList<NodeHolder> children = new CList();

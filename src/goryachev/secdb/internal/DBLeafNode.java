@@ -3,14 +3,15 @@ package goryachev.secdb.internal;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
-import goryachev.secdb.bplustree.BPlusTreeNode;
+import goryachev.secdb.bplustree.InternalNode;
+import goryachev.secdb.bplustree.LeafNode;
 
 
 /**
  * DBEngine LeafNode.
  */
 public class DBLeafNode<R extends IRef>
-	extends BPlusTreeNode.LeafNode<SKey,DataHolder<R>>
+	extends LeafNode<SKey,DataHolder<R>>
 {
 	private final IStore store;
 

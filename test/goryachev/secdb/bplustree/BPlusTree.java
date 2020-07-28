@@ -24,8 +24,6 @@
 package goryachev.secdb.bplustree;
 import goryachev.common.util.SB;
 import goryachev.secdb.QueryClient;
-import goryachev.secdb.bplustree.BPlusTreeNode.InternalNode;
-import goryachev.secdb.bplustree.BPlusTreeNode.LeafNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -46,7 +44,7 @@ import java.util.Queue;
 public class BPlusTree<K extends Comparable<? super K>, V>
 {
 	private final int branchingFactor;
-	private BPlusTreeNode<K,V> root = new BPlusTreeNode.LeafNode();
+	private BPlusTreeNode<K,V> root = new LeafNode();
 
 
 	public BPlusTree(int branchingFactor)
@@ -162,9 +160,9 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 						sb.append(", ");
 					}
 					
-					if(node instanceof BPlusTreeNode.InternalNode)
+					if(node instanceof InternalNode)
 					{
-						BPlusTreeNode.InternalNode n = (BPlusTreeNode.InternalNode)node;
+						InternalNode n = (InternalNode)node;
 						int sz = n.getChildCount();
 						ArrayList<BPlusTreeNode> children = new ArrayList(sz);
 						for(int i=0; i<sz; i++)
