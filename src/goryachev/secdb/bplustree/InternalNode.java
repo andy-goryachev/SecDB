@@ -297,4 +297,10 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 			}
 		}
 	}
+	
+	
+	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	{
+		throw new UnsupportedOperationException();
+	}
 }

@@ -84,11 +84,10 @@ public abstract class DBTransaction<R extends IRef>
 	public void remove(SKey key) throws Exception
 	{
 		BPlusTreeNode<SKey,DataHolder<R>> newRoot = root.remove(root, key, branchingFactor);
-		if(newRoot == null)
+		if(newRoot != null)
 		{
-			throw new Error("null root?");
+			root = newRoot;
 		}
-		root = newRoot;
 	}
 	
 	

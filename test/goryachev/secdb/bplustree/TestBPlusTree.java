@@ -85,7 +85,7 @@ public class TestBPlusTree
 				err.printStackTrace();
 			}
 		};
-		t.query(Integer.MIN_VALUE, true, Integer.MAX_VALUE, true, c);
+		t.rangeQuery(Integer.MIN_VALUE, true, Integer.MAX_VALUE, true, c);
 		TF.eq(counter.get(), 0L);
 	}
 	
@@ -151,7 +151,7 @@ public class TestBPlusTree
 	{
 		ArrayList<V> rv = new ArrayList<>();
 		
-		t.query(start, includeStart, end, includeEnd, new QueryClient<K,V>()
+		t.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<K,V>()
 		{
 			public boolean acceptQueryResult(K key, V value)
 			{

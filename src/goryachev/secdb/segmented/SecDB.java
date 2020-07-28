@@ -140,7 +140,7 @@ public class SecDB
 	/** range query.  'start' may be less than, greater than, or equal to 'end'.  returns true if no exceptions have been thrown */
 	public boolean query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
 	{
-		return engine.query(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
+		return engine.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
 		{
 			public void onError(Throwable err)
 			{

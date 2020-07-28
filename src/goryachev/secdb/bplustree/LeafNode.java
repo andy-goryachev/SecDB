@@ -217,4 +217,10 @@ public class LeafNode<K extends Comparable<? super K>,V>
 			out.append("\n");
 		}
 	}
+
+
+	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	{
+		throw new UnsupportedOperationException();
+	}
 }

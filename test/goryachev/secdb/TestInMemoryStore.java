@@ -64,7 +64,7 @@ public class TestInMemoryStore
 			
 			D.print("query", start, end);
 			
-			db.query(start, true, end, true, new QueryClient<SKey,DataHolder<InMemoryRef>>()
+			db.rangeQuery(start, true, end, true, new QueryClient<SKey,DataHolder<InMemoryRef>>()
 			{
 				public void onError(Throwable err)
 				{

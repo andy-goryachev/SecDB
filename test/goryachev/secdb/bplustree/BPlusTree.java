@@ -88,9 +88,20 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
+	public boolean rangeQuery(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
 	{
-		root.query(start, includeStart, end, includeEnd, client);
+		return root.rangeQuery(start, includeStart, end, includeEnd, client);
+	}
+	
+	
+	/** 
+	 * Finds all the entries where the key "starts with" the given prefix.  
+	 * If the key type does not support such an operation, an UnsupportedOperationException is thrown.
+	 * Returns true if no exceptions (Throwables) have been thrown, false otherwise
+	 */ 
+	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	{
+		return root.prefixQuery(prefix, client);
 	}
 
 

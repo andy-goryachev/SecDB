@@ -71,12 +71,12 @@ public class DBEngine<R extends IRef>
 	}
 
 	
-	/** runs query, returs true if no exceptions (Throwables) have been thrown, false otherwise */
-	public boolean query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client)
+	/** performs a range query, returns true if no exceptions (Throwables) have been thrown, false otherwise */
+	public boolean rangeQuery(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client)
 	{
 		try
 		{
-			loadRoot().query(start, includeStart, end, includeEnd, client);
+			loadRoot().rangeQuery(start, includeStart, end, includeEnd, client);
 			return true;
 		}
 		catch(Throwable e)

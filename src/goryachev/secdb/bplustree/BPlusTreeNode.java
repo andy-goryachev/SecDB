@@ -63,6 +63,13 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 
 	public abstract boolean queryBackward(K start, boolean includeStart, K end, boolean endPolicy, QueryClient<K,V> client) throws Exception;
 	
+	/** 
+	 * Finds all the entries where the key "starts with" the given prefix.  
+	 * If the key type does not support such an operation, an UnsupportedOperationException is thrown.
+	 * Returns true if no exceptions (Throwables) have been thrown, false otherwise
+	 */ 
+	public abstract boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception;
+	
 	public abstract boolean isLeafNode();
 	
 	public abstract void dump(Appendable out, int indent) throws Exception;
@@ -131,7 +138,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	
 	
 	/**
-	 * Performs a search query with the keys specified by the range:
+	 * Performs a range query with the keys specified by the range:
 	 * {@code start} and {@code end}.
 	 * 
 	 * @param start the start key of the range
@@ -140,23 +147,24 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public void query(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
+	public boolean rangeQuery(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
 	{
 		try
 		{
 			if(start.compareTo(end) <= 0)
 			{
-				queryForward(start, includeStart, end, includeEnd, client);
+				return queryForward(start, includeStart, end, includeEnd, client);
 			}
 			else
 			{
-				queryBackward(start, includeStart, end, includeEnd, client);
+				return queryBackward(start, includeStart, end, includeEnd, client);
 			}
 		}
 		catch(Throwable e)
 		{
 			client.onError(e);
 		}
+		return false;
 	}
 	
 	
