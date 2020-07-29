@@ -308,10 +308,36 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 			{
 				for(int j=0; j<level; j++)
 				{
-					out.append("  ");
+					out.append(indent);
 				}
+				
 				out.append("key=");
 				out.append(keyAt(i).toString());
+				out.append("\n");
+			}
+		}
+	}
+	
+	
+	public void dumpKeys(Appendable out, String indent, int level) throws Exception
+	{
+		int sz = getChildCount();
+		for(int i=0; i<sz; i++)
+		{
+			BPlusTreeNode<K,V> ch = childAt(i);
+			ch.dumpKeys(out, indent, level + 1);
+			
+			if(i < (sz - 1))
+			{
+				K k = keyAt(i);
+				
+				for(int j=0; j<level; j++)
+				{
+					out.append(indent);
+				}
+				
+				out.append("I=");
+				out.append(k.toString());
 				out.append("\n");
 			}
 		}

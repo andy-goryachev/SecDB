@@ -1,7 +1,6 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.bplustree;
 import goryachev.secdb.QueryClient;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -235,18 +234,39 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public void dump(Appendable out, String indent, int level) throws IOException
+	public void dump(Appendable out, String indent, int level) throws Exception
 	{
 		int sz = keys.size();
 		for(int i=0; i<sz; i++)
 		{
 			K key = keys.get(i);
+			
 			for(int j=0; j<level; j++)
 			{
 				out.append(indent);
 			}
+			
 			out.append("val=");
 			out.append(key.toString());
+			out.append("\n");
+		}
+	}
+	
+	
+	public void dumpKeys(Appendable out, String indent, int level) throws Exception
+	{
+		int sz = keys.size();
+		for(int i=0; i<sz; i++)
+		{
+			K k = keyAt(i);
+			
+			for(int j=0; j<level; j++)
+			{
+				out.append(indent);
+			}
+			
+			out.append("L=");
+			out.append(k.toString());
 			out.append("\n");
 		}
 	}

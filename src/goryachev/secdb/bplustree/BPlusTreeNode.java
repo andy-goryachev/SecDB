@@ -74,6 +74,8 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	
 	public abstract void dump(Appendable out, String indent, int level) throws Exception;
 	
+	public abstract void dumpKeys(Appendable out, String indent, int level) throws Exception;
+	
 	//
 
 	protected final List<K> keys;

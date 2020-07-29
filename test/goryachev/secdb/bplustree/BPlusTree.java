@@ -206,54 +206,10 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	{
 		SB sb = new SB();
 		sb.a("\n");
-		dumpKeys(sb, root, 0);
+		root.dumpKeys(sb, " ", 0);
 		return sb.toString();
 	}
 
-
-	// do not change the format as it is used in TestBPlusTreeDeletion
-	private static <K extends Comparable<? super K>, V> void dumpKeys(SB sb, BPlusTreeNode<K,V> node, int indent) throws Exception
-	{
-		if(node instanceof InternalNode)
-		{
-			InternalNode n = (InternalNode)node;
-			int sz = n.getChildCount();
-			for(int i=0; i<sz; i++)
-			{
-				BPlusTreeNode<K,V> ch = n.childAt(i);
-				dumpKeys(sb, ch, indent + 1);
-				
-				if(i < (sz - 1))
-				{
-					Object k = n.keyAt(i);
-					
-					sb.sp(indent);
-					sb.a("I=");
-					sb.a(k);
-					sb.nl();
-				}
-			}
-		}
-		else if(node instanceof LeafNode)
-		{
-			LeafNode n = (LeafNode)node;
-			int sz = n.keys.size();
-			for(int i=0; i<sz; i++)
-			{
-				Object k = n.keyAt(i);
-				
-				sb.sp(indent);
-				sb.a("L=");
-				sb.a(k);
-				sb.nl();
-			}
-		}
-		else
-		{
-			throw new Error("?" + node);
-		}
-	}
-	
 	
 	public void checkInvariants() throws Exception
 	{
