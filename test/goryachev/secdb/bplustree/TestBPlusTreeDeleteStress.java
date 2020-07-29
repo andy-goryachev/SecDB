@@ -7,9 +7,9 @@ import java.util.Random;
 
 
 /**
- * Tests BPlusTree Deletion 2.
+ * BPlusTree stress test.
  */
-public class TestBPlusTreeDeletion2
+public class TestBPlusTreeDeleteStress
 {
 	public static void main(String[] args)
 	{
@@ -77,6 +77,7 @@ public class TestBPlusTreeDeletion2
 		catch(Throwable e)
 		{
 			TF.print(t.dumpKeys());
+			throw e;
 		}
 		
 		for(int k=0; k<256; k++)

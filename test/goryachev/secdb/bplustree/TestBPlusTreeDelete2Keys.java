@@ -7,9 +7,9 @@ import goryachev.common.util.SB;
 
 
 /**
- * Tests BPlusTree Deletion 3.
+ * Tests BPlusTree: exhaustively deletes 2 of each keys.
  */
-public class TestBPlusTreeDeletion3
+public class TestBPlusTreeDelete2Keys
 {
 	public static void main(String[] args)
 	{
@@ -68,22 +68,5 @@ public class TestBPlusTreeDeletion3
 				TF.eq(i, Integer.parseInt(v));
 			}
 		}
-		
-//		String keys = t.dumpKeys();
-//		D.print(toDelete, keys);
-		
-//		
-//		SB sb = new SB();
-//		sb.nl();
-//		for(String s: exp)
-//		{
-//			sb.append(s).nl();
-//		}
-//		String expected = sb.toString();
-//		
-//		TF.print("result", result);
-//		TF.print("expected", expected);
-//		
-//		TF.eq(result, expected);
 	}
 }

@@ -22,6 +22,7 @@
 //	SOFTWARE.
 //
 package goryachev.secdb.bplustree;
+import goryachev.common.test.TF;
 import goryachev.common.util.SB;
 import goryachev.secdb.QueryClient;
 import java.util.ArrayList;
@@ -256,8 +257,71 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	
 	public void checkInvariants() throws Exception
 	{
-		// TODO check number of nodes
-		// TODO check increasing keys
-		// TODO check children
+		checkInvariants(root, null);
+	}
+	
+	
+	protected void checkInvariants(BPlusTreeNode<K,V> node, Comparable key) throws Exception
+	{
+		if(node instanceof InternalNode)
+		{
+			InternalNode n = (InternalNode)node;
+			int sz = n.getChildCount();
+			
+			if(n != root)
+			{
+				TF.print("child count=", n.getChildCount(), "node=", node);
+				TF.isFalse(n.isUnderflow(branchingFactor));
+				TF.isFalse(n.isOverflow(branchingFactor));
+			}
+			
+			TF.eq(sz - 1, n.keys.size());
+			
+			for(int i=0; i<sz; i++)
+			{
+				BPlusTreeNode<K,V> ch = n.childAt(i);
+				
+				int kix = i - 1;
+				if(kix < 0)
+				{
+					checkInvariants(ch, key);
+				}
+				else
+				{
+					Comparable k = n.keyAt(kix);
+					checkInvariants(ch, k);
+				}
+			}
+		}
+		else if(node instanceof LeafNode)
+		{
+			LeafNode n = (LeafNode)node;
+			int sz = n.keys.size();
+			
+			TF.eq(sz, n.values.size());
+			
+			Comparable last = null;
+			
+			for(int i=0; i<sz; i++)
+			{
+				Comparable k = n.keyAt(i);
+				
+				if(key != null)
+				{
+					TF.isTrue(key.compareTo(k) <= 0);
+				}
+
+				if(last != null)
+				{
+					TF.isTrue(last.compareTo(k) <= 0);
+				}
+				
+				last = k;
+			}
+		}
+		else
+		{
+			throw new Error("?" + node);
+		}
 	}
 }
