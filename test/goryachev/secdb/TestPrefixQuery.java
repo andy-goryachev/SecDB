@@ -50,7 +50,7 @@ public class TestPrefixQuery
 			}
 		});
 			
-		db.dumpTree();
+		db.dumpTree(System.err, " ");
 					
 		// query
 		SKey prefix = key(90);

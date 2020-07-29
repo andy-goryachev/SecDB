@@ -206,13 +206,13 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	{
 		SB sb = new SB();
 		sb.a("\n");
-		dump(sb, root, 0);
+		dumpKeys(sb, root, 0);
 		return sb.toString();
 	}
 
 
 	// do not change the format as it is used in TestBPlusTreeDeletion
-	private static <K extends Comparable<? super K>, V> void dump(SB sb, BPlusTreeNode<K,V> node, int indent) throws Exception
+	private static <K extends Comparable<? super K>, V> void dumpKeys(SB sb, BPlusTreeNode<K,V> node, int indent) throws Exception
 	{
 		if(node instanceof InternalNode)
 		{
@@ -221,13 +221,13 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			for(int i=0; i<sz; i++)
 			{
 				BPlusTreeNode<K,V> ch = n.childAt(i);
-				dump(sb, ch, indent + 1);
+				dumpKeys(sb, ch, indent + 1);
 				
 				if(i < (sz - 1))
 				{
 					Object k = n.keyAt(i);
 					
-					sb.sp(indent * 2);
+					sb.sp(indent);
 					sb.a("I=");
 					sb.a(k);
 					sb.nl();
@@ -242,7 +242,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			{
 				Object k = n.keyAt(i);
 				
-				sb.sp(indent * 2);
+				sb.sp(indent);
 				sb.a("L=");
 				sb.a(k);
 				sb.nl();
@@ -270,9 +270,16 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			
 			if(n != root)
 			{
-				TF.print("child count=", n.getChildCount(), "node=", node);
-				TF.isFalse(n.isUnderflow(branchingFactor));
-				TF.isFalse(n.isOverflow(branchingFactor));
+				try
+				{
+					TF.isFalse("underflow", n.isUnderflow(branchingFactor));
+					TF.isFalse("overflow", n.isOverflow(branchingFactor));
+				}
+				catch(Throwable e)
+				{
+					TF.print("key=", key, "node=", node);
+					throw new Exception(e);
+				}
 			}
 			
 			TF.eq(sz - 1, n.keys.size());

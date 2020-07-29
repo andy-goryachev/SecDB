@@ -235,15 +235,15 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public void dump(Appendable out, int indent) throws IOException
+	public void dump(Appendable out, String indent, int level) throws IOException
 	{
 		int sz = keys.size();
 		for(int i=0; i<sz; i++)
 		{
 			K key = keys.get(i);
-			for(int j=0; j<indent; j++)
+			for(int j=0; j<level; j++)
 			{
-				out.append("  ");
+				out.append(indent);
 			}
 			out.append("val=");
 			out.append(key.toString());

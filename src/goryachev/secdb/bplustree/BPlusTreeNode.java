@@ -72,7 +72,7 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	
 	public abstract boolean isLeafNode();
 	
-	public abstract void dump(Appendable out, int indent) throws Exception;
+	public abstract void dump(Appendable out, String indent, int level) throws Exception;
 	
 	//
 

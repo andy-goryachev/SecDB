@@ -168,7 +168,7 @@ public class SecDB
 	{
 		try
 		{
-			engine.dumpTree();
+			engine.dumpTree(System.err, " ");
 		}
 		catch(Throwable e)
 		{

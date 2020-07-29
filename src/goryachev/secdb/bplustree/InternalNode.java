@@ -296,17 +296,17 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 	
 	
-	public void dump(Appendable out, int indent) throws Exception
+	public void dump(Appendable out, String indent, int level) throws Exception
 	{
 		int sz = getChildCount();
 		for(int i=0; i<sz; i++)
 		{
 			BPlusTreeNode<K,V> ch = childAt(i);
-			ch.dump(out, indent + 1);
+			ch.dump(out, indent, level + 1);
 			
 			if(i < (sz - 1))
 			{
-				for(int j=0; j<indent; j++)
+				for(int j=0; j<level; j++)
 				{
 					out.append("  ");
 				}
