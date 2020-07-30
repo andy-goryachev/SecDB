@@ -17,6 +17,13 @@ public class TestBPlusTreeDelete2Keys
 	}
 	
 	
+//	@Test
+	public void testSpecific() throws Exception
+	{
+		t(0, 8);
+	}
+	
+	
 	@Test
 	public void test() throws Exception
 	{
@@ -38,7 +45,7 @@ public class TestBPlusTreeDelete2Keys
 	}
 	
 	
-	private void t(int first, int second) throws Exception
+	private void t(Integer first, Integer second) throws Exception
 	{
 		BPlusTree<Integer,String> t = new BPlusTree<Integer,String>(4);
 		for(int i=0; i<16; i++)
@@ -46,7 +53,12 @@ public class TestBPlusTreeDelete2Keys
 			t.insert(i, "" + i);
 		}
 		
+		String origin = t.dumpKeys();
+		
 		t.remove(first);
+		
+		String prev = t.dumpKeys();
+		
 		t.remove(second);
 		
 		for(int i=0; i<16; i++)
@@ -60,7 +72,8 @@ public class TestBPlusTreeDelete2Keys
 				}
 				else
 				{
-					throw new Error();
+					TF.print("\norigin:", origin, "\ndelete", first, ":\n", prev, "\ndelete", second, ":\n", t.dumpKeys());
+					throw new Error("missing " + i);
 				}
 			}
 			else

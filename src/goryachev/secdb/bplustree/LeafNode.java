@@ -100,7 +100,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 
 
 	@Override
-	public K getFirstLeafKey()
+	protected K getFirstLeafKey()
 	{
 		return keys.get(0);
 	}
@@ -191,10 +191,9 @@ public class LeafNode<K extends Comparable<? super K>,V>
 
 
 	@Override
-	public void merge(BPlusTreeNode<K,V> sibling) throws Exception
+	protected void merge(BPlusTreeNode<K,V> sibling) throws Exception
 	{
-		@SuppressWarnings("unchecked")
-		LeafNode node = (LeafNode)sibling;
+		LeafNode<K,V> node = (LeafNode<K,V>)sibling;
 		keys.addAll(node.keys);
 		values.addAll(node.values);
 		setModified();
@@ -202,7 +201,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	
 
 	@Override
-	public BPlusTreeNode split()
+	protected BPlusTreeNode split()
 	{
 		int to = size();
 		int from = (to + 1) / 2;
@@ -265,7 +264,6 @@ public class LeafNode<K extends Comparable<? super K>,V>
 				out.append(indent);
 			}
 			
-			out.append("L=");
 			out.append(k.toString());
 			out.append("\n");
 		}

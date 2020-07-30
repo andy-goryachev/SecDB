@@ -32,7 +32,7 @@ import java.util.List;
  * A Java implementation of B+ tree node for a key-value store.
  * Not thread safe.
  * 
- * This code is partially sourced from:
+ * Based on:
  * https://github.com/jiaguofang/b-plus-tree
  */
 public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
@@ -47,13 +47,13 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	/** returns new root node or null if no changes were made */
 	public abstract BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor) throws Exception;
 
-	public abstract K getFirstLeafKey() throws Exception;
+	protected abstract K getFirstLeafKey() throws Exception;
 	
 	protected abstract void addChild(BPlusTreeNode<K,V> n);
 
-	public abstract void merge(BPlusTreeNode<K,V> sibling) throws Exception;
+	protected abstract void merge(BPlusTreeNode<K,V> sibling) throws Exception;
 
-	public abstract BPlusTreeNode<K,V> split() throws Exception;
+	protected abstract BPlusTreeNode<K,V> split() throws Exception;
 
 	public abstract boolean isOverflow(int branchingFactor);
 

@@ -46,55 +46,6 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	
 
 	@Override
-	public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor) throws Exception
-	{
-		BPlusTreeNode<K,V> child = getChild(key);
-		BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
-		if(newRoot == null)
-		{
-			// nothing was removed
-			return null;
-		}
-		
-		setModified();
-		
-		if(child.isUnderflow(branchingFactor))
-		{
-			BPlusTreeNode<K,V> childLeftSibling = getChildLeftSibling(key);
-			BPlusTreeNode<K,V> childRightSibling = getChildRightSibling(key);
-			BPlusTreeNode<K,V> left = childLeftSibling != null ? childLeftSibling : child;
-			BPlusTreeNode<K,V> right = childLeftSibling != null ? child : childRightSibling;
-			
-			left.merge(right);
-			
-			// FIX here lies the bug
-			{
-				if(keys.contains(key))
-				{
-					deleteChild(key);
-				}
-				else
-				{
-					deleteChild(right.getFirstLeafKey()); // FIX this causes an issue if the key being deleted is also in this tree node.
-				}
-			}
-			
-			if(left.isOverflow(branchingFactor))
-			{
-				BPlusTreeNode<K,V> sibling = left.split();
-				insertChild(sibling.getFirstLeafKey(), sibling);
-			}
-			
-			if(newRoot.size() == 0)
-			{
-				return left;
-			}
-		}
-		return newRoot;
-	}
-
-
-	@Override
 	public BPlusTreeNode<K,V> insertValue(BPlusTreeNode<K,V> root, K key, V value, int branchingFactor) throws Exception
 	{
 		BPlusTreeNode<K,V> child = getChild(key);
@@ -122,7 +73,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 
 
 	@Override
-	public K getFirstLeafKey() throws Exception
+	protected K getFirstLeafKey() throws Exception
 	{
 		return childAt(0).getFirstLeafKey();
 	}
@@ -183,9 +134,8 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 
 
 	@Override
-	public void merge(BPlusTreeNode<K,V> sibling) throws Exception
+	protected void merge(BPlusTreeNode<K,V> sibling) throws Exception
 	{
-		@SuppressWarnings("unchecked")
 		InternalNode<K,V> node = (InternalNode)sibling;
 		keys.add(node.getFirstLeafKey());
 		keys.addAll(node.keys);
@@ -201,7 +151,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 
 
 	@Override
-	public BPlusTreeNode<K,V> split() throws Exception
+	protected BPlusTreeNode<K,V> split() throws Exception
 	{
 		int to = size();
 		int from = to / 2 + 1;
@@ -237,14 +187,14 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public BPlusTreeNode<K,V> getChild(K key) throws Exception
+	protected BPlusTreeNode<K,V> getChild(K key) throws Exception
 	{
 		int ix = findInsertIndex(key);
 		return childAt(ix);
 	}
 
 
-	public void deleteChild(K key)
+	protected void deleteChild(K key)
 	{
 		int ix = indexOf(key);
 		if(ix >= 0)
@@ -256,7 +206,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public void insertChild(K key, BPlusTreeNode<K,V> child)
+	protected void insertChild(K key, BPlusTreeNode<K,V> child)
 	{
 		int ix = indexOf(key);
 		if(ix >= 0)
@@ -274,7 +224,8 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public BPlusTreeNode<K,V> getChildLeftSibling(K key) throws Exception
+	@Deprecated // TODO remove
+	protected BPlusTreeNode<K,V> getChildLeftSibling(K key) throws Exception
 	{
 		int ix = findInsertIndex(key);
 		if(ix > 0)
@@ -285,7 +236,8 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public BPlusTreeNode<K,V> getChildRightSibling(K key) throws Exception
+	@Deprecated // TODO remove
+	protected BPlusTreeNode<K,V> getChildRightSibling(K key) throws Exception
 	{
 		int ix = findInsertIndex(key);
 		if(ix < size())
@@ -341,5 +293,91 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 				out.append("\n");
 			}
 		}
+	}
+	
+
+	@Override
+	public BPlusTreeNode<K,V> remove(BPlusTreeNode<K,V> root, K key, int branchingFactor) throws Exception
+	{
+		int ix = findInsertIndex(key);
+		BPlusTreeNode<K,V> child = childAt(ix);
+		
+		// FIX possibly expensive call
+		K firstKey = child.getFirstLeafKey();
+		
+		BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
+		if(newRoot == null)
+		{
+			// nothing was removed
+			return null;
+		}
+		
+		setModified();
+		
+		if(child.isUnderflow(branchingFactor))
+		{
+			BPlusTreeNode<K,V> left;
+			BPlusTreeNode<K,V> right;
+			
+			// pick the sibling to merge with
+			if(ix == 0)
+			{
+				// merge with right
+				left = child;
+				right = childAt(ix + 1);
+			}
+			else if((ix + 1) >= getChildCount())
+			{
+				// merge with left
+				left = childAt(ix - 1);
+				right = child;
+			}
+			else
+			{
+				// left or right (pick the largest)
+				BPlusTreeNode<K,V> lc = childAt(ix - 1);
+				BPlusTreeNode<K,V> rc = childAt(ix + 1);
+				
+				if(lc.size() > rc.size())
+				{
+					left = lc;
+					right = child;
+				}
+				else
+				{
+					left = child;
+					right = rc;
+				}
+			}
+			
+			if(left == child)
+			{
+				// right sibling will change
+				deleteChild(right.getFirstLeafKey());
+			}
+			
+			// deleted key is no more
+			deleteChild(firstKey);
+			
+			left.merge(right);
+			
+			if(child == left)
+			{
+				// re-insert left
+				insertChild(left.getFirstLeafKey(), left);
+			}
+			
+			if(left.isOverflow(branchingFactor))
+			{
+				BPlusTreeNode<K,V> sibling = left.split();
+				insertChild(sibling.getFirstLeafKey(), sibling);
+			}
+			
+			if(newRoot.size() == 0)
+			{
+				return left;
+			}
+		}
+		return newRoot;
 	}
 }

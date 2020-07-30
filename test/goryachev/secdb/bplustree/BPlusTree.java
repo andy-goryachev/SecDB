@@ -228,8 +228,8 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 			{
 				try
 				{
-					TF.isFalse("underflow", n.isUnderflow(branchingFactor));
-					TF.isFalse("overflow", n.isOverflow(branchingFactor));
+					TF.isFalse("underflow " + n.getFirstLeafKey(), n.isUnderflow(branchingFactor));
+					TF.isFalse("overflow " + n.getFirstLeafKey(), n.isOverflow(branchingFactor));
 				}
 				catch(Throwable e)
 				{
@@ -271,7 +271,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 				
 				if(key != null)
 				{
-					TF.isTrue(key.compareTo(k) <= 0);
+					TF.isTrue("key=" + key + ">" + k, key.compareTo(k) <= 0);
 				}
 
 				if(last != null)
