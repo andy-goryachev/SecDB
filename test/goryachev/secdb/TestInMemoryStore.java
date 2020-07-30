@@ -25,7 +25,7 @@ public class TestInMemoryStore
 	@Test
 	public void test() throws Exception
 	{
-		InMemoryStore store = new InMemoryStore();
+		InMemoryStore store = new InMemoryStore(true);
 		DBEngine<InMemoryRef> db = new DBEngine(store);
 
 		for(int i=0; i<10; i++)

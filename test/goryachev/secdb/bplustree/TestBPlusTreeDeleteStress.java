@@ -40,14 +40,16 @@ public class TestBPlusTreeDeleteStress
 		BPlusTree<Integer,String> t = new BPlusTree<Integer,String>(4);
 		CMap<Integer,String> m = new CMap();
 		
+		int max = 256;
+		
 		try
 		{
-			for(int i=0; i<10000; i++)
+			for(int i=0; i<1_000_000; i++)
 			{
 				int ct = 1 + r.nextInt(200);
 				for(int j=0; j<ct; j++)
 				{
-					int k = r.nextInt(256);
+					int k = r.nextInt(max);
 					
 					String prev = t.dumpKeys();
 					
@@ -58,7 +60,7 @@ public class TestBPlusTreeDeleteStress
 						m.put(k, v);
 						
 						TF.print("add", k);
-						check(m, t);
+						check(max, m, t);
 						t.checkInvariants();
 					}
 					catch(Throwable e)
@@ -68,9 +70,10 @@ public class TestBPlusTreeDeleteStress
 					}
 				}
 				
-				for(int j=0; j<100; j++)
+				ct = 1 + r.nextInt(200);
+				for(int j=0; j<ct; j++)
 				{
-					int k = r.nextInt(256);
+					int k = r.nextInt(max);
 					
 					String prev = t.dumpKeys();
 					
@@ -80,7 +83,7 @@ public class TestBPlusTreeDeleteStress
 						m.remove(k);
 						
 						TF.print("remove", k);
-						check(m, t);
+						check(max, m, t);
 						t.checkInvariants();
 					}
 					catch(Throwable e)
@@ -104,14 +107,13 @@ public class TestBPlusTreeDeleteStress
 			throw e;
 		}
 		
-		check(m, t);
-		
+		check(max, m, t);
 	}
 	
 	
-	protected void check(CMap<Integer,String> m, BPlusTree<Integer,String> t) throws Exception
+	protected void check(int max, CMap<Integer,String> m, BPlusTree<Integer,String> t) throws Exception
 	{
-		for(int k=0; k<256; k++)
+		for(int k=0; k<max; k++)
 		{
 			String vt = t.get(k);
 			String vm = m.get(k);

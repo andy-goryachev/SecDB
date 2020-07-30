@@ -356,6 +356,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 				deleteChild(right.getFirstLeafKey());
 			}
 			
+			// TODO this may not be correct
 			// deleted key is no more
 			deleteChild(firstKey);
 			

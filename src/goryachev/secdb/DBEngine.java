@@ -164,9 +164,16 @@ public class DBEngine<R extends IRef>
 	}
 
 
-	public void dumpTree(Appendable out, String indent) throws Exception
+	public void dump(Appendable out, String indent) throws Exception
 	{
 		BPlusTreeNode<SKey,DataHolder<R>> root = loadRoot();
 		root.dump(out, indent, 0);
+	}
+	
+	
+	public void dumpKeys(Appendable out, String indent) throws Exception
+	{
+		BPlusTreeNode<SKey,DataHolder<R>> root = loadRoot();
+		root.dumpKeys(out, indent, 0);
 	}
 }

@@ -25,7 +25,7 @@ public class TestPrefixQuery
 	@Test
 	public void test() throws Exception
 	{
-		InMemoryStore store = new InMemoryStore();
+		InMemoryStore store = new InMemoryStore(false);
 		DBEngine<InMemoryRef> db = new DBEngine(store);
 
 		db.execute(new DBTransaction<InMemoryRef>()
@@ -50,7 +50,7 @@ public class TestPrefixQuery
 			}
 		});
 			
-		db.dumpTree(System.err, " ");
+		db.dump(System.err, " ");
 					
 		// query
 		SKey prefix = key(90);

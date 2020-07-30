@@ -164,11 +164,24 @@ public class SecDB
 	}
 
 
-	public void dumpTree()
+	public void dump()
 	{
 		try
 		{
-			engine.dumpTree(System.err, " ");
+			engine.dump(System.err, " ");
+		}
+		catch(Throwable e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void dumpKeys()
+	{
+		try
+		{
+			engine.dumpKeys(System.err, " ");
 		}
 		catch(Throwable e)
 		{

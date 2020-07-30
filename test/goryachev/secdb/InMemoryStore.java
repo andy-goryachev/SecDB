@@ -22,13 +22,15 @@ import java.util.Comparator;
 public class InMemoryStore
 	implements IStore<InMemoryRef>
 {
+	protected final boolean verbose;
 	private InMemoryRef rootRef;
 	private long sequence;
 	private final CMap<InMemoryRef,byte[]> objects = new CMap();
 	
 	
-	public InMemoryStore()
+	public InMemoryStore(boolean verbose)
 	{
+		this.verbose = verbose;
 	}
 	
 	
@@ -63,14 +65,14 @@ public class InMemoryStore
 
 	public InMemoryRef getRootRef()
 	{
-		D.print("getRootRef", rootRef); // FIX
+		log("getRootRef", rootRef);
 		return rootRef;
 	}
 
 
 	public void setRootRef(InMemoryRef ref) throws Exception
 	{
-		D.print("setRootRef", ref); // FIX
+		log("setRootRef", ref);
 		rootRef = ref;
 	}
 
@@ -84,7 +86,7 @@ public class InMemoryStore
 		byte[] b = Utils.readBytes(in, Integer.MAX_VALUE);
 		objects.put(ref, b);
 		
-		D.print("store", Dump.toHexString(b), ref); // FIX
+		log("store", Dump.toHexString(b), ref);
 		
 		return ref;
 	}
@@ -93,7 +95,7 @@ public class InMemoryStore
 	public IStream load(InMemoryRef ref) throws Exception
 	{
 		byte[] b = objects.get(ref);
-		D.print("load", ref, Dump.toHexString(b)); // FIX
+		log("load", ref, Dump.toHexString(b));
 		if(b == null)
 		{
 			return null;
@@ -133,5 +135,14 @@ public class InMemoryStore
 	public long convertLength(long length, boolean whenEncrypting)
 	{
 		return length;
+	}
+	
+	
+	protected void log(Object ... items)
+	{
+		if(verbose)
+		{
+			D.print(items);
+		}
 	}
 }
