@@ -2,6 +2,7 @@
 package goryachev.secdb.bplustree;
 import goryachev.secdb.QueryClient;
 
+
 /**
  * Internal B+ Tree Node (an Index Node).
  */
@@ -223,30 +224,6 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 		setModified();
 	}
 
-
-	@Deprecated // TODO remove
-	protected BPlusTreeNode<K,V> getChildLeftSibling(K key) throws Exception
-	{
-		int ix = findInsertIndex(key);
-		if(ix > 0)
-		{
-			return childAt(ix - 1);
-		}
-		return null;
-	}
-
-
-	@Deprecated // TODO remove
-	protected BPlusTreeNode<K,V> getChildRightSibling(K key) throws Exception
-	{
-		int ix = findInsertIndex(key);
-		if(ix < size())
-		{
-			return childAt(ix + 1);
-		}
-		return null;
-	}
-	
 	
 	public void dump(Appendable out, String indent, int level) throws Exception
 	{
@@ -302,17 +279,27 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 		int ix = findInsertIndex(key);
 		BPlusTreeNode<K,V> child = childAt(ix);
 		
-		// FIX possibly expensive call
 		K firstKey = child.getFirstLeafKey();
 		
 		BPlusTreeNode<K,V> newRoot = child.remove(root, key, branchingFactor);
 		if(newRoot == null)
 		{
-			// nothing was removed
+			// no change
 			return null;
 		}
 		
 		setModified();
+		
+		if(ix > 0)
+		{
+			// correct key entry for modified child
+			if(key.equals(firstKey))
+			{
+				// child's first key has changed
+				K k = child.getFirstLeafKey();
+				keys.set(ix - 1, k);
+			}
+		}
 		
 		if(child.isUnderflow(branchingFactor))
 		{
@@ -350,23 +337,8 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 				}
 			}
 			
-			if(left == child)
-			{
-				// right sibling will change
-				deleteChild(right.getFirstLeafKey());
-			}
-			
-			// TODO this may not be correct
-			// deleted key is no more
-			deleteChild(firstKey);
-			
+			deleteChild(right.getFirstLeafKey());
 			left.merge(right);
-			
-			if(child == left)
-			{
-				// re-insert left
-				insertChild(left.getFirstLeafKey(), left);
-			}
 			
 			if(left.isOverflow(branchingFactor))
 			{
@@ -379,6 +351,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 				return left;
 			}
 		}
+
 		return newRoot;
 	}
 }
