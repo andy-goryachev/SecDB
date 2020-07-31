@@ -169,7 +169,7 @@ public class TestLarge
 		AtomicInteger ct = new AtomicInteger();
 		AtomicReference<Throwable> error = new AtomicReference();
 		
-		db.query(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
+		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
 		{
 			public boolean acceptQueryResult(SKey key, IStored st)
 			{
@@ -264,7 +264,7 @@ public class TestLarge
 	{
 		String start = "0";
 		String end = "999";
-		db.query(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
+		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
 		{
 			public boolean acceptQueryResult(SKey key, IStored st)
 			{

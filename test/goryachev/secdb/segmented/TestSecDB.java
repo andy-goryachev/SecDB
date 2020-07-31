@@ -126,7 +126,7 @@ public class TestSecDB
 		AtomicInteger ct = new AtomicInteger();
 		AtomicReference<Throwable> error = new AtomicReference();
 		
-		db.query(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
+		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
 		{
 			public boolean acceptQueryResult(SKey key, IStored value)
 			{

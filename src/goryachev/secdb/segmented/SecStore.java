@@ -159,19 +159,17 @@ public class SecStore
 		lf.appendEvent(LogEventCode.HEAD, null);
 		lf.appendEvent(LogEventCode.CLOSED);
 	}
-
-
-	public static SecStore open(File dir, OpaqueChars passphrase) throws Exception
+	
+	
+	public void checkPassword(OpaqueChars passphrase) throws Exception, SecException
 	{
-		// check directories
-		if(!dir.exists() || !dir.isDirectory())
-		{
-			throw new SecException(SecErrorCode.DIR_NOT_FOUND, dir);
-		}
-		
-		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
-		lock.checkLock();
-		
+		OpaqueBytes b = decryptKey(dir, passphrase);
+		b.clear();
+	}
+	
+	
+	private static OpaqueBytes decryptKey(File dir, OpaqueChars passphrase) throws SecException,Exception
+	{
 		byte[] encryptedKey;
 		try
 		{
@@ -182,10 +180,25 @@ public class SecStore
 			throw new SecException(SecErrorCode.FAILED_KEY_FILE_READ, e);
 		}
 		
+		return KeyFile.decrypt(encryptedKey, passphrase);
+	}
+
+
+	public static SecStore open(File dir, OpaqueChars passphrase) throws SecException,Exception
+	{
+		// check directories
+		if(!dir.exists() || !dir.isDirectory())
+		{
+			throw new SecException(SecErrorCode.DIR_NOT_FOUND, dir);
+		}
+		
+		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
+		lock.checkLock();
+		
 		try
 		{
 			// decrypt key -> missing key file, passphrase error
-			OpaqueBytes key = KeyFile.decrypt(encryptedKey, passphrase);
+			OpaqueBytes key = decryptKey(dir, passphrase);
 			
 			// TODO think of a way to derive log key from the main key
 			OpaqueBytes logKey = null;
@@ -221,7 +234,7 @@ public class SecStore
 			
 			return new SecStore(dir, lock, lf, root, key);
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
 			lock.unlock();
 			throw e;

@@ -122,17 +122,20 @@ public class LeafNode<K extends Comparable<? super K>,V>
 		for(int i=0; i<sz; i++)
 		{
 			K key = keys.get(i);
-			if(isPrefix(prefix, key))
+			if(key.compareTo(prefix) >= 0)
 			{
-				V val = values.get(i);
-				if(!client.acceptQueryResult(key, val))
+				if(isPrefix(prefix, key))
+				{
+					V val = values.get(i);
+					if(!client.acceptQueryResult(key, val))
+					{
+						return false;
+					}
+				}
+				else
 				{
 					return false;
 				}
-			}
-			else
-			{
-				return false;
 			}
 		}
 		return true;

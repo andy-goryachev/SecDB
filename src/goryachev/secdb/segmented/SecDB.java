@@ -58,6 +58,12 @@ public class SecDB
 	}
 	
 	
+	public void checkPassword(OpaqueChars passphrase) throws Exception, SecException
+	{
+		store.checkPassword(passphrase);
+	}
+	
+	
 	public void close() throws IOException
 	{
 		store.close();
@@ -138,7 +144,7 @@ public class SecDB
 	
 	
 	/** range query.  'start' may be less than, greater than, or equal to 'end'.  returns true if no exceptions have been thrown */
-	public boolean query(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
+	public boolean rangeQuery(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
 	{
 		return engine.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
 		{
@@ -158,9 +164,29 @@ public class SecDB
 	
 	
 	/** simplified range query [start,end[.  returns true if no errors */
-	public boolean query(SKey start, SKey end, QueryClient<SKey,IStored> client)
+	public boolean rangeQuery(SKey start, SKey end, QueryClient<SKey,IStored> client)
 	{
-		return query(start, true, end, false, client);
+		return rangeQuery(start, true, end, false, client);
+	}
+	
+	
+	/** prefix query.  returns true if no exceptions have been thrown */
+	public boolean prefixQuery(SKey prefix, QueryClient<SKey,IStored> client)
+	{
+		return engine.prefixQuery(prefix, new QueryClient<SKey,DataHolder<Ref>>()
+		{
+			public void onError(Throwable err)
+			{
+				client.onError(err);
+			}
+			
+			
+			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h)
+			{
+				IStored v = h.getStoredValue();
+				return client.acceptQueryResult(key, v);
+			}
+		});
 	}
 
 
