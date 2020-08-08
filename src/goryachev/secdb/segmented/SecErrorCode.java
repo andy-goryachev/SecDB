@@ -3,7 +3,7 @@ package goryachev.secdb.segmented;
 
 
 /**
- * SecDB Error Code.
+ * SecDB Error Codes.
  */
 public enum SecErrorCode
 {
@@ -29,7 +29,16 @@ public enum SecErrorCode
 	MISSING_SEGMENT_FILE,
 	
 	/** open: database may need recovery */
-	RECOVERY_REQUIRED,
+	RECOVERY_REQUIRED;
 	
-	;
+	//
+	
+	public static SecErrorCode getSecErrorCode(Throwable e)
+	{
+		if(e instanceof SecException)
+		{
+			return ((SecException)e).getErrorCode();
+		}
+		return null;
+	}
 }
