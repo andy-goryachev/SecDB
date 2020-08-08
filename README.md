@@ -1,13 +1,13 @@
 # SecDB
 
-Secure Key-Value Store with locally managed keys.
+Encrypted Key-Value Store with locally managed keys.
 
 
 ## Features
 
-- Simple key-value store
+- Encrypted key-value store
 - Range queries
-- Encrypted at rest
+- Prefix queries
 
 
 ## Why
