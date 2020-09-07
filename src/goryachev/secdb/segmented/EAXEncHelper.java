@@ -1,0 +1,82 @@
+// Copyright © 2020 Andy Goryachev <andy@goryachev.com>
+package goryachev.secdb.segmented;
+
+import goryachev.crypto.Crypto;
+import goryachev.crypto.EAXDecryptStream;
+import goryachev.crypto.EAXEncryptStream;
+import goryachev.crypto.OpaqueBytes;
+import goryachev.secdb.segmented.REMOVE.DebugInputStream;
+import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * EAXEncHelper.
+ */
+public class EAXEncHelper extends EncHelper
+{
+	private static final int MAC_OVERHEAD = 8;
+	private final OpaqueBytes key;
+	
+	
+	protected EAXEncHelper(OpaqueBytes key)
+	{
+		this.key = key;
+	}
+	
+	
+	public long convertLength(long len, boolean whenEncrypting)
+	{
+		return whenEncrypting ? len + MAC_OVERHEAD : len - MAC_OVERHEAD;
+	}
+	
+	
+	protected InputStream getDecryptionStream(byte[] nonce, InputStream in)
+	{
+		byte[] k = key.getBytes();
+		try
+		{
+			return new DebugInputStream
+			(
+				"rd:dec", 
+				1024, 
+				new EAXDecryptStream
+				(
+					k, 
+					nonce, 
+					null, 
+					new DebugInputStream("read:enc", 1024, in)
+				)
+			);
+		}
+		finally
+		{
+			Crypto.zero(k);
+		}
+	}
+
+
+	protected OutputStream getEncryptionStream(byte[] nonce, OutputStream out)
+	{
+		byte[] k = key.getBytes();
+		try
+		{
+			return new DebugOutputStream
+			(
+				"wr:dec", 
+				1024,
+				new EAXEncryptStream
+				(
+					k, 
+					nonce, 
+					null, 
+					new DebugOutputStream("wr:enc", 1024, out)
+				)
+			);
+		}
+		finally
+		{
+			Crypto.zero(k);
+		}
+	}
+}

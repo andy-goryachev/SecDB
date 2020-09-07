@@ -42,21 +42,19 @@ public class SecStore
 	private final File dir;
 	private final CFileLock lock;
 	private final LogFile logFile;
-	private final OpaqueBytes key;
 	protected final EncHelper encHelper;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
 	
 	
-	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root, OpaqueBytes key)
+	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root, EncHelper encHelper)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
 		this.root = root;
 		this.lock = lock;
-		this.key = key;
-		this.encHelper = EncHelper.create(key);
+		this.encHelper = encHelper;
 	}
 	
 	
@@ -182,6 +180,19 @@ public class SecStore
 		
 		return KeyFile.decrypt(encryptedKey, passphrase);
 	}
+	
+	
+	private static EncHelper createEncHelper(OpaqueBytes key)
+	{
+		if((key == null) || key.isEmpty())
+		{
+			return new ClearEncHelper();
+		}
+		else
+		{
+			return new EAXEncHelper(key);
+		}
+	}
 
 
 	public static SecStore open(File dir, OpaqueChars passphrase) throws SecException,Exception
@@ -199,7 +210,8 @@ public class SecStore
 		{
 			// decrypt key -> missing key file, passphrase error
 			OpaqueBytes key = decryptKey(dir, passphrase);
-			
+			EncHelper encHelper = createEncHelper(key);
+				
 			// TODO think of a way to derive log key from the main key
 			OpaqueBytes logKey = null;
 			
@@ -232,7 +244,7 @@ public class SecStore
 			// TODO
 			// load root node and do some checks
 			
-			return new SecStore(dir, lock, lf, root, key);
+			return new SecStore(dir, lock, lf, root, encHelper);
 		}
 		catch(Throwable e)
 		{
