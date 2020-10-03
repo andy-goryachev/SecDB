@@ -1,6 +1,5 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-
 import goryachev.crypto.Crypto;
 import goryachev.crypto.EAXDecryptStream;
 import goryachev.crypto.EAXEncryptStream;
@@ -10,8 +9,9 @@ import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+
 /**
- * EAXEncHelper.
+ * EAX Encryption Helper.
  */
 public class EAXEncHelper extends EncHelper
 {
