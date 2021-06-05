@@ -1,4 +1,4 @@
-// Copyright © 2005-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2005-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -931,6 +931,7 @@ public class TextTools
 		int start = 0;
 		for(;;)
 		{
+			// FIX suboptimal
 			int ix = sb.indexOfIgnoreCase(pattern, start);
 			if(ix < 0)
 			{

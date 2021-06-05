@@ -1,4 +1,4 @@
-// Copyright © 2010-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2010-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -154,6 +154,22 @@ public class SB
 			s = s.replace("&", "&amp;");
 			sb.append(s);
 		}
+	}
+	
+	
+	/** appends json-escaped value */
+	public SB safeJson(Object x)
+	{
+		if(x == null)
+		{
+			sb.append("null");
+		}
+		else
+		{
+			String s = JsonDump.toJsonString(x);
+			sb.append(s);
+		}
+		return this;
 	}
 	
 	
@@ -616,6 +632,19 @@ public class SB
 			sb.replace(ix, ix + 1, newText);
 			
 			start = ix + newText.length();
+		}
+	}
+	
+	
+	public void replace(char old, char newChar)
+	{
+		for(int i=sb.length()-1; i>=0; i--)
+		{
+			char c = sb.charAt(i);
+			if(c == old)
+			{
+				sb.setCharAt(i, newChar);
+			}
 		}
 	}
 	

@@ -1,4 +1,4 @@
-// Copyright © 2013-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
@@ -161,6 +161,14 @@ public class TF
 	public static void print(Throwable e)
 	{
 		TestCase.print(CKit.stackTrace(e));
+	}
+	
+	
+	/** prints a formatted string */
+	public static void printf(String fmt, Object ... args)
+	{
+		String s = String.format(fmt, args);
+		TestCase.print(s);
 	}
 	
 	

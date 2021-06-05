@@ -1,4 +1,4 @@
-// Copyright © 2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -198,7 +198,7 @@ public class JsonDump
 	}
 	
 	
-	protected String toJsonString(Object x)
+	public static String toJsonString(Object x)
 	{
 		String text = x.toString();
 		int len = text.length();
@@ -231,7 +231,7 @@ public class JsonDump
 	}
 	
 	
-	protected String escapeString(String text, int start)
+	protected static String escapeString(String text, int start)
 	{
 		int len = text.length();
 		SB sb = new SB(len + len);

@@ -1,8 +1,9 @@
-// Copyright © 2007-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class CList<T>
@@ -258,5 +259,11 @@ public class CList<T>
 		{
 			add(index, item);
 		}
+	}
+
+
+	public static <V> List<V> of(V ... a)
+	{
+		return new CList(a);
 	}
 }

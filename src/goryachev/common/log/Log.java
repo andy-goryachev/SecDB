@@ -1,4 +1,4 @@
-// Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.ConsoleAppender;
 import goryachev.common.util.CKit;
@@ -64,7 +64,7 @@ public class Log
 	public static void initForDebug()
 	{
 		SimpleLogConfig c = new SimpleLogConfig();
-		c.setDefaultLogLevel(LogLevel.INFO);
+		c.setDefaultLogLevel(LogLevel.DEBUG);
 		c.addAppender(new ConsoleAppender(System.out));
 		setConfig(c);
 	}
@@ -206,9 +206,11 @@ public class Log
 	}
 	
 	
-	public static void setLevel(String channel, LogLevel level)
+	/** sets log level for a specific log, does not update children */
+	public static synchronized void setLevel(String channel, LogLevel level)
 	{
-		// TODO
+		Log log = get(channel);
+		log.setLevel(level);
 	}
 	
 	

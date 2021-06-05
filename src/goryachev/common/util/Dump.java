@@ -1,4 +1,4 @@
-// Copyright © 2004-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -637,7 +637,7 @@ public class Dump
 	
 	public static void toShortString(String s, SB sb)
 	{
-		toShortString(s, sb, 26);
+		toShortString(s, sb, 80);
 	}
 	
 	

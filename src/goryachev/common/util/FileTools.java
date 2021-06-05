@@ -1,4 +1,4 @@
-// Copyright © 2004-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2021 Andy Goryachev <andy@goryachev.com>
 // Contains fragments of Apache FileNameUtils code
 // http://www.apache.org/licenses/LICENSE-2.0
 package goryachev.common.util;
@@ -465,6 +465,28 @@ public class FileTools
 		{
 			close(in);
 		}
+	}
+	
+	
+	/** @return canonical name of the parent folder */
+	public static String getFilePath(File f)
+	{
+		if(f != null)
+		{
+			File p = f.getParentFile();
+			if(p != null)
+			{
+				try
+				{
+					return p.getCanonicalPath();
+				}
+				catch(Exception e)
+				{
+					return p.getAbsolutePath();
+				}
+			}
+		}
+		return null;
 	}
 
 

@@ -1,4 +1,4 @@
-// Copyright © 2007-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -429,7 +429,7 @@ public class D
 	{
 		StackTraceElement t = new Throwable().getStackTrace()[depth];
 		String className = getClassName(t);
-		String s = className + "." + t.getMethodName() + " " + msg;
+		String s = className + "." + t.getMethodName() + ":" + t.getLineNumber() + " " + msg;
 		System.err.println(s);
 	}
 	
