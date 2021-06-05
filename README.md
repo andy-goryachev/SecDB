@@ -18,6 +18,7 @@ Something that could possibly get synchronized with a cloud-based storage.
 This database will be used in the following projects:
 
 - [Access Panel](https://github.com/andy-goryachev/AccessPanelPublic)
+- Notes
 - Secure Digital Archive
 - Secure, simple, elderly-oriented email client
 

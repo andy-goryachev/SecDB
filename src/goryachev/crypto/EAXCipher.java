@@ -1,4 +1,4 @@
-// Copyright © 2011-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.crypto;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;

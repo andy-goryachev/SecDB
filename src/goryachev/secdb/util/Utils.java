@@ -1,4 +1,4 @@
-// Copyright © 2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.util;
 import goryachev.common.util.CKit;
 import goryachev.secdb.IStream;
