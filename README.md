@@ -3,12 +3,14 @@
 Encrypted Key-Value Store with locally managed keys.
 
 
+
 ## Features
 
 - Encrypted key-value store
 - Range queries
 - Prefix queries
 - Append-only files for ease of synchronization
+
 
 
 ## Why
@@ -22,6 +24,7 @@ This database will be used in the following projects:
 - Notes
 - Secure Digital Archive
 - Secure, simple, elderly-oriented email client
+
 
 
 ## Similar Projects
