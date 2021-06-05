@@ -8,6 +8,7 @@ Encrypted Key-Value Store with locally managed keys.
 - Encrypted key-value store
 - Range queries
 - Prefix queries
+- Append-only files for ease of synchronization
 
 
 ## Why
