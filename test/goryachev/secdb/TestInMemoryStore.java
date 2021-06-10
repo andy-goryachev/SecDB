@@ -72,17 +72,10 @@ public class TestInMemoryStore
 				}
 				
 				
-				public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value)
+				public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value) throws Exception
 				{
-					try
-					{
-						byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
-						D.print("    query:", key, Hex.toHexString(b));
-					}
-					catch(Exception e)
-					{
-						e.printStackTrace();
-					}
+					byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
+					D.print("    query:", key, Hex.toHexString(b));
 					return true;
 				}
 			});

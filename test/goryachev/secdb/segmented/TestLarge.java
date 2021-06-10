@@ -167,38 +167,18 @@ public class TestLarge
 	protected int query(SecDB db, String start, String end) throws Exception
 	{
 		AtomicInteger ct = new AtomicInteger();
-		AtomicReference<Throwable> error = new AtomicReference();
 		
-		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
+		db.rangeQuery(new SKey(start), true, new  SKey(end), false, new QueryClient<SKey,IStored>()
 		{
-			public boolean acceptQueryResult(SKey key, IStored st)
+			public boolean acceptQueryResult(SKey key, IStored st) throws Exception
 			{
-				try
-				{
-					byte[] b = readBytes(st.getIStream(), 16);
-					D.print("query:", key, st.getLength(), Hex.toHexStringASCII(b));
-					check(key.toString(), st.getIStream());
-					ct.incrementAndGet();
-					return true;
-				}
-				catch(Exception e)
-				{
-					onError(e);
-					return false;
-				}
-			}
-
-			public void onError(Throwable err)
-			{
-				err.printStackTrace();
-				error.set(err);
+				byte[] b = readBytes(st.getIStream(), 16);
+				D.print("query:", key, st.getLength(), Hex.toHexStringASCII(b));
+				check(key.toString(), st.getIStream());
+				ct.incrementAndGet();
+				return true;
 			}
 		});
-		
-		if(error.get() != null)
-		{
-			throw new Exception(error.get());
-		}
 		
 		return ct.get();
 	}
@@ -265,7 +245,7 @@ public class TestLarge
 		String start = "0";
 		String end = "999";
 		
-		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
+		db.rangeQuery(new SKey(start), true, new  SKey(end), false, new QueryClient<SKey,IStored>()
 		{
 			public boolean acceptQueryResult(SKey key, IStored st) throws Exception
 			{

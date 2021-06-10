@@ -56,23 +56,10 @@ public class TestRangeQuery
 		
 		QueryClient<SKey,DataHolder<InMemoryRef>> client = new QueryClient<SKey,DataHolder<InMemoryRef>>()
 		{
-			public void onError(Throwable err)
+			public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value) throws Exception
 			{
-				err.printStackTrace();
-			}
-			
-			
-			public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value)
-			{
-				try
-				{
-					byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
-					D.print("    query:", key, new String(b, CKit.CHARSET_UTF8));
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+				byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
+				D.print("    query:", key, new String(b, CKit.CHARSET_UTF8));
 				return true;
 			}
 		};

@@ -4,7 +4,6 @@ import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
-import goryachev.common.util.Hex;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -13,7 +12,6 @@ import goryachev.secdb.util.ByteArrayIStream;
 import goryachev.secdb.util.Utils;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -58,8 +56,6 @@ public class TestSecDB
 			}
 		}
 		
-		AtomicReference<Throwable> error = new AtomicReference();
-		
 		try
 		{
 			db.execute(new Transaction()
@@ -69,14 +65,7 @@ public class TestSecDB
 					insert(new SKey("0"), v(0));
 					insert(new SKey("1"), v(1));
 				}
-
-				protected void onError(Throwable e)
-				{
-					error.set(e);
-				}
 			});
-			
-			check(error);
 			
 			db.execute(new Transaction()
 			{
@@ -85,14 +74,7 @@ public class TestSecDB
 					insert(new SKey("1"), v(2));
 					insert(new SKey("2"), v(3));
 				}
-				
-				protected void onError(Throwable e)
-				{
-					error.set(e);
-				}
 			});
-			
-			check(error);
 			
 			int ct = query(db, "0", "9");
 			TF.eq(ct, 3);
@@ -111,22 +93,11 @@ public class TestSecDB
 	}
 	
 	
-	protected void check(AtomicReference<Throwable> error)
-	{
-		Throwable e = error.get();
-		if(e != null)
-		{
-			throw new Error("transaction failed", e);
-		}
-	}
-	
-	
 	protected int query(SecDB db, String start, String end) throws Exception
 	{
 		AtomicInteger ct = new AtomicInteger();
-		AtomicReference<Throwable> error = new AtomicReference();
 		
-		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
+		db.rangeQuery(new SKey(start), true, new  SKey(end), false, new QueryClient<SKey,IStored>()
 		{
 			public boolean acceptQueryResult(SKey key, IStored value)
 			{
@@ -141,25 +112,14 @@ public class TestSecDB
 				try
 				{
 					byte[] b = Utils.readBytes(is.getIStream(), Integer.MAX_VALUE);
-					return Hex.toHexString(b);
+					return new String(b, CKit.CHARSET_ASCII);
 				}
 				catch(Exception e)
 				{
 					return CKit.stackTrace(e);
 				}
 			}
-
-			public void onError(Throwable err)
-			{
-				err.printStackTrace();
-				error.set(err);
-			}
 		});
-		
-		if(error.get() != null)
-		{
-			throw new Exception(error.get());
-		}
 		
 		return ct.get();
 	}

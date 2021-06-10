@@ -16,7 +16,7 @@ import java.util.List;
 
 
 /**
- * Secure Key-Value Database with range queries.
+ * Secure Key-Value Database with range and prefix queries.
  */
 public class SecDB
 	implements Closeable
@@ -154,13 +154,6 @@ public class SecDB
 				return client.acceptQueryResult(key, v);
 			}
 		});
-	}
-	
-	
-	/** simplified range query [start,end[. */
-	public void rangeQuery(SKey start, SKey end, QueryClient<SKey,IStored> client) throws Exception
-	{
-		rangeQuery(start, true, end, false, client);
 	}
 	
 	

@@ -78,12 +78,6 @@ public class TestBPlusTree
 				counter.incrementAndGet();
 				return true;
 			}
-
-			
-			public void onError(Throwable err)
-			{
-				err.printStackTrace();
-			}
 		};
 		t.rangeQuery(Integer.MIN_VALUE, true, Integer.MAX_VALUE, true, c);
 		TF.eq(counter.get(), 0L);
