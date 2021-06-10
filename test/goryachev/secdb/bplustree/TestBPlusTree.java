@@ -70,15 +70,11 @@ public class TestBPlusTree
 		}
 		
 		AtomicLong counter = new AtomicLong();
-		QueryClient<Integer,String> c = new QueryClient<Integer,String>()
+		t.rangeQuery(Integer.MIN_VALUE, true, Integer.MAX_VALUE, true, (k,v) ->
 		{
-			public boolean acceptQueryResult(Integer key, String value)
-			{
-				counter.incrementAndGet();
-				return true;
-			}
-		};
-		t.rangeQuery(Integer.MIN_VALUE, true, Integer.MAX_VALUE, true, c);
+			counter.incrementAndGet();
+			return true;
+		});
 		TF.eq(counter.get(), 0L);
 	}
 	
@@ -140,17 +136,14 @@ public class TestBPlusTree
 	}
 	
 
-	protected <K extends Comparable<? super K>,V> List<V> searchRange(BPlusTree<K,V> t, K start, boolean includeStart, K end, boolean includeEnd) throws Exception
+	protected <K extends Comparable<? super K>,V> List<V> rangeQuery(BPlusTree<K,V> t, K start, boolean includeStart, K end, boolean includeEnd) throws Exception
 	{
 		ArrayList<V> rv = new ArrayList<>();
 		
-		t.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<K,V>()
+		t.rangeQuery(start, includeStart, end, includeEnd, (k,v) ->
 		{
-			public boolean acceptQueryResult(K key, V value)
-			{
-				rv.add(value);
-				return true;
-			}
+			rv.add(v);
+			return true;
 		});
 		
 		return rv;
@@ -176,7 +169,7 @@ public class TestBPlusTree
 			exp[i] = String.valueOf(result[i]);
 		}
 		
-		List<String> rv = searchRange(t, start, incStart, end, incEnd);
+		List<String> rv = rangeQuery(t, start, incStart, end, incEnd);
 		TF.eq(CKit.toArray(rv), exp);
 	}
 }
