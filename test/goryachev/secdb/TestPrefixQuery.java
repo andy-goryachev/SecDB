@@ -3,11 +3,9 @@ package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
-import goryachev.common.util.D;
-import goryachev.common.util.Hex;
+import goryachev.common.util.CList;
+import goryachev.common.util.Parsers;
 import goryachev.common.util.SKey;
-import goryachev.secdb.internal.DataHolder;
-import goryachev.secdb.util.ByteArrayIStream;
 import goryachev.secdb.util.Utils;
 
 
@@ -25,52 +23,36 @@ public class TestPrefixQuery
 	@Test
 	public void test() throws Exception
 	{
-		InMemoryStore store = new InMemoryStore(false);
-		DBEngine<InMemoryRef> db = new DBEngine(store);
-
-		db.execute(new DBTransaction<InMemoryRef>()
-		{
-			protected void body() throws Exception
-			{
-				for(int i=0; i<1000; i++)
-				{
-					SKey k = key(i);
-					byte[] v = ("v." + k).getBytes(CKit.CHARSET_UTF8);
-					
-					TF.eq(containsKey(k), false);
-					
-					insert(k, new ByteArrayIStream(v));
-					
-					TF.eq(containsKey(k), true);
-					
-					DataHolder h = read(k);
-					byte[] rv = Utils.readBytes(h.getStoredValue().getIStream(), Integer.MAX_VALUE);
-					TF.eq(v, rv);
-				}
-			}
-		});
-			
-		db.dump(System.err, " ");
-					
-		// query
-		SKey prefix = key(90);
-		
-		D.print("prefix query", prefix);
-		
-		db.prefixQuery(prefix, new QueryClient<SKey,DataHolder<InMemoryRef>>()
-		{
-			public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value) throws Exception
-			{
-				byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
-				D.print("    query:", key, Hex.toHexString(b));
-				return true;
-			}
-		});
+		t(0, 1000, 90, 90, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909);
+		t(0, 1000, 123, 123);
+		t(0, 1000, 1234);
 	}
 	
 	
-	protected static SKey key(int n)
+	protected void t(int min, int max, int prefix, int ... expected) throws Exception
 	{
-		return new SKey(String.valueOf(n));
+		CList<Integer> exp = new CList<>(expected.length);
+		for(int v: expected)
+		{
+			exp.add(v);
+		}
+		
+		DBEngine<InMemoryRef> db = TestUtils.createDB(min, max);
+
+		SKey px = TestUtils.key(prefix);
+		
+		CList<Integer> result = new CList();
+		
+		db.prefixQuery(px, (key, dataHolder) ->
+		{
+			byte[] b = Utils.readBytes(dataHolder.getStoredValue().getIStream(), Integer.MAX_VALUE);
+			String s = new String(b, CKit.CHARSET_UTF8);
+			int v = Integer.parseInt(s);
+			result.add(v);
+			
+			return true;
+		});
+		
+		TF.eq(result, exp);
 	}
 }
