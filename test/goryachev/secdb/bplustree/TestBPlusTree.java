@@ -3,7 +3,6 @@ package goryachev.secdb.bplustree;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
-import goryachev.common.util.D;
 import goryachev.secdb.QueryClient;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class TestBPlusTree
 	}
 	
 	
-//	@Test
+	@Test
 	public void testBulkDelete() throws Exception
 	{
 		BPlusTree<String,String> t = new BPlusTree<String,String>(4);
@@ -27,13 +26,13 @@ public class TestBPlusTree
 		t.insert("2", "2");
 		t.insert("3", "3");
 		t.insert("4", "4");
-		D.print(t.dumpKeys());
+		TF.print(t.dumpKeys());
 		
 		t.remove("3"); // FIX breaks the tree
-		D.print(t.dumpKeys());
+		TF.print(t.dumpKeys());
 		
 		t.remove("4");
-		D.print(t.dumpKeys());
+		TF.print(t.dumpKeys());
 	}
 	
 	
@@ -48,14 +47,14 @@ public class TestBPlusTree
 		t.insert("query.000001737D82010D.47EE060C790DCD3F3581FC74933822CF829C0D33EAF531C64F81F8CD27651945", "4");
 		
 		t.remove("query.000001737D81E92F.54CD92E2FBBF7A4F45B457E9B5C911FEC969022D0EC59335283895D91FC2CE59");
-		D.print(t.dumpKeys());
+		TF.print(t.dumpKeys());
 		
 		t.remove("query.000001737D82010D.47EE060C790DCD3F3581FC74933822CF829C0D33EAF531C64F81F8CD27651945");
-		D.print(t.dumpKeys());
+		TF.print(t.dumpKeys());
 	}
 	
 	
-//	@Test
+	@Test
 	public void testLoad() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 0);
@@ -84,7 +83,7 @@ public class TestBPlusTree
 	}
 	
 	
-//	@Test
+	@Test
 	public void test() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
@@ -107,7 +106,7 @@ public class TestBPlusTree
 	}
 
 
-//	@Test
+	@Test
 	public void testForward() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
@@ -124,7 +123,7 @@ public class TestBPlusTree
 	}
 	
 	
-//	@Test
+	@Test
 	public void testBackward() throws Exception
 	{
 		BPlusTree<Integer,String> t = tree(4, 0, 9);
