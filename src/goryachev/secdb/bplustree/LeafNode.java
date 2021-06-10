@@ -142,7 +142,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
+	public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		int sz = size();
 		for(int i=0; i<sz; i++)
@@ -168,7 +168,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
-	public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
+	public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		for(int i=size()-1; i>=0; i--)
 		{

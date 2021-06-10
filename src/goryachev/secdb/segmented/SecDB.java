@@ -143,18 +143,12 @@ public class SecDB
 	}
 	
 	
-	/** range query.  'start' may be less than, greater than, or equal to 'end'.  returns true if no exceptions have been thrown */
-	public boolean rangeQuery(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client)
+	/** range query.  'start' may be less than, greater than, or equal to 'end'. */
+	public void rangeQuery(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,IStored> client) throws Exception
 	{
-		return engine.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
+		engine.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
 		{
-			public void onError(Throwable err)
-			{
-				client.onError(err);
-			}
-			
-			
-			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h)
+			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h) throws Exception
 			{
 				IStored v = h.getStoredValue();
 				return client.acceptQueryResult(key, v);
@@ -163,25 +157,19 @@ public class SecDB
 	}
 	
 	
-	/** simplified range query [start,end[.  returns true if no errors */
-	public boolean rangeQuery(SKey start, SKey end, QueryClient<SKey,IStored> client)
+	/** simplified range query [start,end[. */
+	public void rangeQuery(SKey start, SKey end, QueryClient<SKey,IStored> client) throws Exception
 	{
-		return rangeQuery(start, true, end, false, client);
+		rangeQuery(start, true, end, false, client);
 	}
 	
 	
-	/** prefix query.  returns true if no exceptions have been thrown */
-	public boolean prefixQuery(SKey prefix, QueryClient<SKey,IStored> client)
+	/** prefix query */
+	public void prefixQuery(SKey prefix, QueryClient<SKey,IStored> client) throws Exception
 	{
-		return engine.prefixQuery(prefix, new QueryClient<SKey,DataHolder<Ref>>()
+		engine.prefixQuery(prefix, new QueryClient<SKey,DataHolder<Ref>>()
 		{
-			public void onError(Throwable err)
-			{
-				client.onError(err);
-			}
-			
-			
-			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h)
+			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h) throws Exception
 			{
 				IStored v = h.getStoredValue();
 				return client.acceptQueryResult(key, v);

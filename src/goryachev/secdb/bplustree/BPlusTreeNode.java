@@ -149,24 +149,16 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public boolean rangeQuery(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
+	public boolean rangeQuery(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
-		try
+		if(start.compareTo(end) <= 0)
 		{
-			if(start.compareTo(end) <= 0)
-			{
-				return queryForward(start, includeStart, end, includeEnd, client);
-			}
-			else
-			{
-				return queryBackward(start, includeStart, end, includeEnd, client);
-			}
+			return queryForward(start, includeStart, end, includeEnd, client);
 		}
-		catch(Throwable e)
+		else
 		{
-			client.onError(e);
+			return queryBackward(start, includeStart, end, includeEnd, client);
 		}
-		return false;
 	}
 	
 	

@@ -71,38 +71,19 @@ public class DBEngine<R extends IRef>
 	}
 
 	
-	/** performs a range query, returns true if no exceptions (Throwables) have been thrown, false otherwise */
-	public boolean rangeQuery(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client)
+	/** performs a range query */
+	public void rangeQuery(SKey start, boolean includeStart, SKey end, boolean includeEnd, QueryClient<SKey,DataHolder<R>> client) throws Exception
 	{
-		try
-		{
-			loadRoot().rangeQuery(start, includeStart, end, includeEnd, client);
-			return true;
-		}
-		catch(Throwable e)
-		{
-			client.onError(e);
-			return false;
-		}
+		loadRoot().rangeQuery(start, includeStart, end, includeEnd, client);
 	}
 	
 	
 	/** 
 	 * Finds all the entries where the key "starts with" the given prefix.  
-	 * Returns true if no exceptions (Throwables) have been thrown, false otherwise
 	 */ 
-	public boolean prefixQuery(SKey prefix, QueryClient<SKey,DataHolder<R>> client)
+	public void prefixQuery(SKey prefix, QueryClient<SKey,DataHolder<R>> client) throws Exception
 	{
-		try
-		{
-			loadRoot().prefixQuery(prefix, client);
-			return true;
-		}
-		catch(Throwable e)
-		{
-			client.onError(e);
-			return false;
-		}
+		loadRoot().prefixQuery(prefix, client);
 	}
 
 

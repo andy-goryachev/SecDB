@@ -147,7 +147,7 @@ public class TestBPlusTree
 	}
 	
 
-	protected <K extends Comparable<? super K>,V> List<V> searchRange(BPlusTree<K,V> t, K start, boolean includeStart, K end, boolean includeEnd)
+	protected <K extends Comparable<? super K>,V> List<V> searchRange(BPlusTree<K,V> t, K start, boolean includeStart, K end, boolean includeEnd) throws Exception
 	{
 		ArrayList<V> rv = new ArrayList<>();
 		
@@ -157,12 +157,6 @@ public class TestBPlusTree
 			{
 				rv.add(value);
 				return true;
-			}
-			
-			
-			public void onError(Throwable err)
-			{
-				err.printStackTrace();
 			}
 		});
 		
@@ -181,7 +175,7 @@ public class TestBPlusTree
 	}
 	
 	
-	protected void query(BPlusTree<Integer,String> t, int start, boolean incStart, int end, boolean incEnd, int ... result)
+	protected void query(BPlusTree<Integer,String> t, int start, boolean incStart, int end, boolean incEnd, int ... result) throws Exception
 	{
 		String[] exp = new String[result.length];
 		for(int i=0; i<result.length; i++)

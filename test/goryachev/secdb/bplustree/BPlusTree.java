@@ -89,7 +89,7 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * @param includeEnd whether to include end key in the query
 	 * @param client handler accepts query results
 	 */
-	public boolean rangeQuery(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client)
+	public boolean rangeQuery(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		return root.rangeQuery(start, includeStart, end, includeEnd, client);
 	}

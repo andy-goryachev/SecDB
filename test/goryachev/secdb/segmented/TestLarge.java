@@ -260,30 +260,18 @@ public class TestLarge
 	}
 	
 	
-	protected void dump(SecDB db)
+	protected void dump(SecDB db) throws Exception
 	{
 		String start = "0";
 		String end = "999";
+		
 		db.rangeQuery(new SKey(start), new  SKey(end), new QueryClient<SKey,IStored>()
 		{
-			public boolean acceptQueryResult(SKey key, IStored st)
+			public boolean acceptQueryResult(SKey key, IStored st) throws Exception
 			{
-				try
-				{
-					byte[] b = readBytes(st.getIStream(), 2048);
-					TF.print(key, "\n" + Hex.toHexStringASCII(b));
-					return true;
-				}
-				catch(Throwable e)
-				{
-					onError(e);
-					return false;
-				}
-			}
-
-			public void onError(Throwable err)
-			{
-				err.printStackTrace();
+				byte[] b = readBytes(st.getIStream(), 2048);
+				TF.print(key, "\n" + Hex.toHexStringASCII(b));
+				return true;
 			}
 		});
 	}
