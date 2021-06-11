@@ -89,10 +89,16 @@ public class SegmentFile
 	
 	public void closeReader() throws Exception
 	{
-		if(reader != null)
+		RandomAccessFile rd;
+		synchronized(this)
 		{
-			reader.close();
+			rd = reader;
 			reader = null;
+		}
+		
+		if(rd != null)
+		{
+			rd.close();
 		}
 	}
 
@@ -103,7 +109,13 @@ public class SegmentFile
 		// to avoid having too many open files
 		if(reader == null)
 		{
-			reader = new RandomAccessFile(file, "r");
+			synchronized(this)
+			{
+				if(reader == null)
+				{
+					reader = new RandomAccessFile(file, "r");
+				}
+			}
 		}
 		
 		synchronized(reader)

@@ -169,6 +169,20 @@ public class SecDB
 			}
 		});
 	}
+	
+	
+	/** reverse prefix query */
+	public void prefixQueryReverse(SKey prefix, QueryClient<SKey,IStored> client) throws Exception
+	{
+		engine.prefixReverseQuery(prefix, new QueryClient<SKey,DataHolder<Ref>>()
+		{
+			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h) throws Exception
+			{
+				IStored v = h.getStoredValue();
+				return client.acceptQueryResult(key, v);
+			}
+		});
+	}
 
 
 	public void dump()
