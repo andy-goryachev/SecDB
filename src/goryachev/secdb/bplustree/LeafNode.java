@@ -156,7 +156,6 @@ public class LeafNode<K extends Comparable<? super K>,V>
 				return false;
 			}
 		}
-		// TODO not sure
 		return true;
 	}
 

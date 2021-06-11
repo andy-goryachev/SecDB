@@ -1,6 +1,5 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.bplustree;
-import goryachev.common.util.D;
 import goryachev.secdb.QueryClient;
 import java.util.function.Predicate;
 
@@ -125,12 +124,6 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	
 	protected int findReverseIndex(K prefix, Predicate<K> isPrefix)
 	{
-		int ix = findReverseIndex2(prefix, isPrefix);
-		D.print(ix, keys);
-		return ix; // FIX
-	}
-	protected int findReverseIndex2(K prefix, Predicate<K> isPrefix)
-	{
 		int sz = keys.size();
 		for(int i=sz-1; i>=0; i--)
 		{
@@ -152,7 +145,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 				return i + 1;
 			}
 		}
-		return 0; // is this right? TODO
+		return 0;
 	}
 
 	

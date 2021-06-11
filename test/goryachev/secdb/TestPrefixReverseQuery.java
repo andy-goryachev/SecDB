@@ -4,7 +4,6 @@ import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
-import goryachev.common.util.D;
 import goryachev.common.util.SKey;
 import goryachev.secdb.util.Utils;
 
@@ -23,12 +22,14 @@ public class TestPrefixReverseQuery
 	@Test
 	public void test() throws Exception
 	{
-		t(0, 1000, 90, 909, 908, 907, 906, 905, 904, 903, 902, 901, 900, 90); 
+		t(0, 10, "", 9, 8, 7, 6, 5, 4, 3, 2, 10, 1, 0);
+		t(0, 1000, "90", 909, 908, 907, 906, 905, 904, 903, 902, 901, 900, 90); 
 		t(0, 1000, 123, 123);
 		t(0, 1000, 1234);
 		t(0, 10, "a");
 		t(0, 10, ".");
-//		t(0, 10, "");
+		t(0, 1000, "0", 0);
+		t(0, 1000, "1000", 1000);
 	}
 	
 	
@@ -53,7 +54,7 @@ public class TestPrefixReverseQuery
 			int v = Integer.parseInt(s);
 			result.add(v);
 			
-			D.print(" --> " + key);
+//			D.print(" --> " + key);
 			
 			return true;
 		});

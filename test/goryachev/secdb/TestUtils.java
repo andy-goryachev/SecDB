@@ -28,7 +28,7 @@ public class TestUtils
 		{
 			protected void body() throws Exception
 			{
-				for(int i=min; i<max; i++)
+				for(int i=min; i<=max; i++)
 				{
 					SKey k = key(i);
 					byte[] v = k.toString().getBytes(CKit.CHARSET_UTF8);
