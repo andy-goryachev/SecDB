@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.Predicate;
 
 
 /**
@@ -100,9 +101,9 @@ public class BPlusTree<K extends Comparable<? super K>, V>
 	 * If the key type does not support such an operation, an UnsupportedOperationException is thrown.
 	 * Returns true if no exceptions (Throwables) have been thrown, false otherwise
 	 */ 
-	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	public boolean prefixQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
-		return root.prefixQuery(prefix, client);
+		return root.prefixQuery(prefix, isPrefix, client);
 	}
 
 

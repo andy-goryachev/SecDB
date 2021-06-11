@@ -3,6 +3,7 @@ package goryachev.secdb.bplustree;
 import goryachev.secdb.QueryClient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 
 /**
@@ -106,17 +107,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 	
 	
-	/** 
-	 * determines whether 'prefix' is the prefix of 'key'.
-	 * throws UnsupportedOperationException if K type does not support such an operation.
-	 */
-	protected boolean isPrefix(K prefix, K key) throws Exception
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	
-	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	public boolean prefixQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
 		int sz = size();
 		for(int i=0; i<sz; i++)
@@ -124,7 +115,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 			K key = keys.get(i);
 			if(key.compareTo(prefix) >= 0)
 			{
-				if(isPrefix(prefix, key))
+				if(isPrefix.test(key))
 				{
 					V val = values.get(i);
 					if(!client.acceptQueryResult(key, val))
@@ -138,6 +129,34 @@ public class LeafNode<K extends Comparable<? super K>,V>
 				}
 			}
 		}
+		return true;
+	}
+	
+	
+	public boolean prefixReverseQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
+	{
+		int sz = size();
+		for(int i=sz-1; i>=0; i--)
+		{
+			K key = keys.get(i);
+			if(key.compareTo(prefix) >= 0)
+			{
+				if(isPrefix.test(key))
+				{
+					V val = values.get(i);
+					if(!client.acceptQueryResult(key, val))
+					{
+						return false;
+					}
+				}
+				continue;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		// TODO not sure
 		return true;
 	}
 

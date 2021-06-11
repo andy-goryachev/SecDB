@@ -26,6 +26,7 @@ import goryachev.secdb.QueryClient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 
 /**
@@ -66,9 +67,16 @@ public abstract class BPlusTreeNode<K extends Comparable<? super K>, V>
 	/** 
 	 * Finds all the entries where the key "starts with" the given prefix.  
 	 * If the key type does not support such an operation, an UnsupportedOperationException is thrown.
-	 * Returns true if no exceptions (Throwables) have been thrown, false otherwise
+	 * Returns true if the query can continue, false when no more items are present.
 	 */ 
-	public abstract boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception;
+	public abstract boolean prefixQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception;
+	
+	/** 
+	 * Finds all the entries where the key "starts with" the given prefix, in reverse order.  
+	 * If the key type does not support such an operation, an UnsupportedOperationException is thrown.
+	 * Returns true if the query can continue, false when no more items are present.
+	 */ 
+	public abstract boolean prefixReverseQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception;
 	
 	public abstract boolean isLeafNode();
 	

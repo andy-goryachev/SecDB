@@ -7,6 +7,7 @@ import goryachev.secdb.internal.DBEngineIO;
 import goryachev.secdb.internal.DBLeafNode;
 import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.util.Utils;
+import java.util.function.Predicate;
 
 
 /**
@@ -83,7 +84,28 @@ public class DBEngine<R extends IRef>
 	 */ 
 	public void prefixQuery(SKey prefix, QueryClient<SKey,DataHolder<R>> client) throws Exception
 	{
-		loadRoot().prefixQuery(prefix, client);
+		loadRoot().prefixQuery(prefix, mkPrefix(prefix), client);
+	}
+	
+	
+	/** 
+	 * Finds all the entries where the key "starts with" the given prefix, in reverse order.  
+	 */ 
+	public void prefixReverseQuery(SKey prefix, QueryClient<SKey,DataHolder<R>> client) throws Exception
+	{
+		loadRoot().prefixReverseQuery(prefix, mkPrefix(prefix), client);
+	}
+	
+	
+	protected Predicate<SKey> mkPrefix(SKey prefix)
+	{
+		return new Predicate<SKey>()
+		{
+			public boolean test(SKey key)
+			{
+				return key.toString().startsWith(prefix.toString());
+			}
+		};
 	}
 
 

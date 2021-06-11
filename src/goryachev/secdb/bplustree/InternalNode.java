@@ -1,6 +1,8 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.bplustree;
+import goryachev.common.util.D;
 import goryachev.secdb.QueryClient;
+import java.util.function.Predicate;
 
 
 /**
@@ -80,7 +82,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 	
 	
-	public boolean prefixQuery(K prefix, QueryClient<K,V> client) throws Exception
+	public boolean prefixQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
 		// similar to queryForward
 		int ix = findInsertIndex(prefix);
@@ -89,13 +91,68 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 		for(int i=ix; i<sz; i++)
 		{
 			BPlusTreeNode n = childAt(i);
-			if(!n.prefixQuery(prefix, client))
+			if(!n.prefixQuery(prefix, isPrefix, client))
 			{
 				return false;
 			}
 		}
 		
 		return true;
+	}
+	
+	
+	public boolean prefixReverseQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
+	{
+		int ix = findReverseIndex(prefix, isPrefix);
+		if(ix < 0)
+		{
+			return false;
+		}
+		
+		int sz = getChildCount();
+		for(int i=ix; i>=0; i--)
+		{
+			BPlusTreeNode n = childAt(i);
+			if(!n.prefixReverseQuery(prefix, isPrefix, client))
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	protected int findReverseIndex(K prefix, Predicate<K> isPrefix)
+	{
+		int ix = findReverseIndex2(prefix, isPrefix);
+		D.print(ix, keys);
+		return ix; // FIX
+	}
+	protected int findReverseIndex2(K prefix, Predicate<K> isPrefix)
+	{
+		int sz = keys.size();
+		for(int i=sz-1; i>=0; i--)
+		{
+			K key = keys.get(i);
+			
+			if(key.compareTo(prefix) >= 0)
+			{
+				if(isPrefix.test(key))
+				{
+					return i + 1;
+				}
+				else
+				{
+					continue;
+				}
+			}
+			else
+			{
+				return i + 1;
+			}
+		}
+		return 0; // is this right? TODO
 	}
 
 	

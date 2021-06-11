@@ -58,11 +58,4 @@ public class DBLeafNode<R extends IRef>
 	{
 		return values.get(ix);
 	}
-	
-	
-	@Override
-	protected boolean isPrefix(SKey prefix, SKey key) throws Exception
-	{
-		return key.toString().startsWith(prefix.toString());
-	}
 }
