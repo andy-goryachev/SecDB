@@ -9,7 +9,7 @@ import goryachev.secdb.util.Utils;
 
 
 /**
- * Tests reverse prefix query in InMemoryStore.
+ * Tests reverse prefix query using InMemoryStore.
  */
 public class TestPrefixReverseQuery
 {
@@ -35,12 +35,7 @@ public class TestPrefixReverseQuery
 	
 	protected void t(int min, int max, Object prefix, int ... expected) throws Exception
 	{
-		CList<Integer> exp = new CList<>(expected.length);
-		for(int v: expected)
-		{
-			exp.add(v);
-		}
-		
+		CList<Integer> exp = TestUtils.asList(expected);
 		DBEngine<InMemoryRef> db = TestUtils.createDB(min, max);
 
 		SKey px = new SKey(prefix.toString());

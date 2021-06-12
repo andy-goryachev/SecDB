@@ -2,6 +2,7 @@
 package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.util.CKit;
+import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
 import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.util.ByteArrayIStream;
@@ -47,5 +48,16 @@ public class TestUtils
 		});
 		
 		return db;
+	}
+	
+	
+	public static CList<Integer> asList(int[] expected)
+	{
+		CList<Integer> rv = new CList<>(expected.length);
+		for(int v: expected)
+		{
+			rv.add(v);
+		}
+		return rv;
 	}
 }
