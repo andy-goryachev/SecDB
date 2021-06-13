@@ -1,5 +1,6 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.segmented;
+package goryachev.secdb.segmented.clear;
+import goryachev.secdb.segmented.EncHelper;
 import java.io.InputStream;
 import java.io.OutputStream;
 

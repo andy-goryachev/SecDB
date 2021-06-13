@@ -1,6 +1,7 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.crypto;
+package goryachev.crypto.eax;
 import goryachev.common.util.CKit;
+import goryachev.crypto.Crypto;
 import java.io.IOException;
 import java.io.InputStream;
 import org.bouncycastle.crypto.engines.AESEngine;

@@ -3,7 +3,7 @@ package goryachev.secdb.segmented;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.D;
-import goryachev.crypto.EAXCipher;
+import goryachev.crypto.eax.EAXCipher;
 import java.util.Random;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;

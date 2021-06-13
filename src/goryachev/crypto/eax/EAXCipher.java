@@ -1,5 +1,6 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.crypto;
+package goryachev.crypto.eax;
+import goryachev.crypto.Crypto;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;

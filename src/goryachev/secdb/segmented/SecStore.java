@@ -13,6 +13,8 @@ import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.crypto.KeyFile;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
+import goryachev.secdb.segmented.eax.EAXEncHelper;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;

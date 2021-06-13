@@ -1,9 +1,10 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.secdb.segmented;
+package goryachev.secdb.segmented.eax;
 import goryachev.crypto.Crypto;
-import goryachev.crypto.EAXDecryptStream;
-import goryachev.crypto.EAXEncryptStream;
 import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.eax.EAXDecryptStream;
+import goryachev.crypto.eax.EAXEncryptStream;
+import goryachev.secdb.segmented.EncHelper;
 import goryachev.secdb.segmented.REMOVE.DebugInputStream;
 import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
 import java.io.InputStream;
@@ -19,7 +20,7 @@ public class EAXEncHelper extends EncHelper
 	private final OpaqueBytes key;
 	
 	
-	protected EAXEncHelper(OpaqueBytes key)
+	public EAXEncHelper(OpaqueBytes key)
 	{
 		this.key = key;
 	}
