@@ -17,9 +17,9 @@ Encrypted Key-Value Store.
 **The library is not yet ready for production use**.
 
 
-## Open Source Credits
+## Acknowledgements
 
-Many thanks to the developers of the following open source projects:
+Many thanks to the developers of the following open source projects for the inspiration and parts of the code:
 
 - [XSalsa20Poly1305](https://github.com/codahale/xsalsa20poly1305) by [Coda Hale](https://github.com/codahale).
 - [b-plus-tree](https://github.com/jiaguofang/b-plus-tree) by [Jiaguo Fang](https://github.com/jiaguofang).

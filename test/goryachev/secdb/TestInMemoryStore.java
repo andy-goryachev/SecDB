@@ -64,20 +64,11 @@ public class TestInMemoryStore
 			
 			D.print("query", start, end);
 			
-			db.rangeQuery(start, true, end, true, new QueryClient<SKey,DataHolder<InMemoryRef>>()
+			db.rangeQuery(start, true, end, true, (SKey key, DataHolder<InMemoryRef> value) ->
 			{
-				public void onError(Throwable err)
-				{
-					err.printStackTrace();
-				}
-				
-				
-				public boolean acceptQueryResult(SKey key, DataHolder<InMemoryRef> value) throws Exception
-				{
-					byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
-					D.print("    query:", key, Hex.toHexString(b));
-					return true;
-				}
+				byte[] b = Utils.readBytes(value.getStoredValue().getIStream(), Integer.MAX_VALUE);
+				D.print("    query:", key, Hex.toHexString(b));
+				return true;
 			});
 		}
 	}

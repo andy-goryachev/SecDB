@@ -11,10 +11,24 @@ import java.io.OutputStream;
 public abstract class EncHelper
 {
 	public abstract long convertLength(long len, boolean whenEncrypting);
+
 	
-	protected abstract InputStream getDecryptionStream(byte[] nonce, InputStream in);
+	/** 
+	 * creates a encryption stream
+	 * @param nonce
+	 * @param cipherTextLength - the total number of ciphertext (incl. mac) bytes 
+	 * @param out
+	 */
+	protected abstract OutputStream getEncryptionStream(byte[] nonce, long cipherTextLength, OutputStream out);
+
 	
-	protected abstract OutputStream getEncryptionStream(byte[] nonce, OutputStream out);
+	/** 
+	 * creates a decryption stream
+	 * @param nonce
+	 * @param cipherTextLength - the total number of ciphertext (incl. mac) bytes 
+	 * @param in
+	 */
+	protected abstract InputStream getDecryptionStream(byte[] nonce, long cipherTextLength, InputStream in);
 	
 	
 	//

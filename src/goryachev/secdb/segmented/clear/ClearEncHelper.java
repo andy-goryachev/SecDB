@@ -22,13 +22,13 @@ public class ClearEncHelper
 	}
 	
 
-	protected InputStream getDecryptionStream(byte[] nonce, InputStream in)
+	protected InputStream getDecryptionStream(byte[] nonce, long length, InputStream in)
 	{
 		return in;
 	}
 
 
-	protected OutputStream getEncryptionStream(byte[] nonce, OutputStream out)
+	protected OutputStream getEncryptionStream(byte[] nonce, long length, OutputStream out)
 	{
 		return out;
 	}

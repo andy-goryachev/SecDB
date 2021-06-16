@@ -377,7 +377,7 @@ public class SecStore
 		Ref ref = ss.getInitialRef();
 		byte[] nonce = createNonce(ref);
 
-		OutputStream out = encHelper.getEncryptionStream(nonce, ss);
+		OutputStream out = encHelper.getEncryptionStream(nonce, storedLength, ss);
 		try
 		{
 			CKit.copy(in, out, BUFFER_SIZE);
@@ -485,7 +485,7 @@ public class SecStore
 			{
 				InputStream in = new SegmentInputStream(SecStore.this, ref);
 				byte[] nonce = createNonce(ref);
-				in = encHelper.getDecryptionStream(nonce, in);
+				in = encHelper.getDecryptionStream(nonce, len, in);
 				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
 

@@ -14,7 +14,8 @@ import java.io.OutputStream;
 /**
  * EAX Encryption Helper.
  */
-public class EAXEncHelper extends EncHelper
+public class EAXEncHelper
+	extends EncHelper
 {
 	private static final int MAC_OVERHEAD = 8;
 	private final OpaqueBytes key;
@@ -32,7 +33,7 @@ public class EAXEncHelper extends EncHelper
 	}
 	
 	
-	protected InputStream getDecryptionStream(byte[] nonce, InputStream in)
+	protected InputStream getDecryptionStream(byte[] nonce, long length, InputStream in)
 	{
 		byte[] k = key.getBytes();
 		try
@@ -57,7 +58,7 @@ public class EAXEncHelper extends EncHelper
 	}
 
 
-	protected OutputStream getEncryptionStream(byte[] nonce, OutputStream out)
+	protected OutputStream getEncryptionStream(byte[] nonce, long length, OutputStream out)
 	{
 		byte[] k = key.getBytes();
 		try
