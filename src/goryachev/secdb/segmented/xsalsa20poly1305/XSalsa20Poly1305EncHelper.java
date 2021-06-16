@@ -15,13 +15,13 @@ import java.io.OutputStream;
 /**
  * XSalsa20Poly1305 EncHelper.
  */
-public class XSalsa20Poly1305EncHelper2
+public class XSalsa20Poly1305EncHelper
 	extends EncHelper
 {
 	private final OpaqueBytes key;
 	
 	
-	public XSalsa20Poly1305EncHelper2(OpaqueBytes key)
+	public XSalsa20Poly1305EncHelper(OpaqueBytes key)
 	{
 		this.key = key;
 	}
