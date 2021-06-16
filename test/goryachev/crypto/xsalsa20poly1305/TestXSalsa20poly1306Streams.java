@@ -1,11 +1,8 @@
-package research.xsalsa20poly1305;
+package goryachev.crypto.xsalsa20poly1305;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.Hex;
-import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305DecryptStream;
-import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream;
-import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Random;
