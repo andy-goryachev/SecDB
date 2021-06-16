@@ -13,6 +13,7 @@ public class XSalsaTools
 {
 	public static final int KEY_LENGTH_BYTES = 256 / 8;
 	public static final int NONCE_LENGTH_BYTES = 192 / 8;
+	public static final int MAC_LENGTH_BYTES = 128 / 8;
 	public static final int BUFFER_SIZE = 4096;
 	
 	

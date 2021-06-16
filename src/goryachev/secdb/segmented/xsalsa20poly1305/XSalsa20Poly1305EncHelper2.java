@@ -4,6 +4,7 @@ import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305DecryptStream;
 import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream;
+import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import goryachev.secdb.segmented.EncHelper;
 import goryachev.secdb.segmented.REMOVE.DebugInputStream;
 import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
@@ -12,16 +13,15 @@ import java.io.OutputStream;
 
 
 /**
- * Xsalsa20poly1305 EncHelper.
+ * XSalsa20Poly1305 EncHelper.
  */
-public class Xsalsa20poly1305EncHelper
+public class XSalsa20Poly1305EncHelper2
 	extends EncHelper
 {
-	private static final int MAC_OVERHEAD = 8;
 	private final OpaqueBytes key;
 	
 	
-	public Xsalsa20poly1305EncHelper(OpaqueBytes key)
+	public XSalsa20Poly1305EncHelper2(OpaqueBytes key)
 	{
 		this.key = key;
 	}
@@ -29,7 +29,7 @@ public class Xsalsa20poly1305EncHelper
 	
 	public long convertLength(long len, boolean whenEncrypting)
 	{
-		return whenEncrypting ? len + MAC_OVERHEAD : len - MAC_OVERHEAD;
+		return whenEncrypting ? len + XSalsaTools.MAC_LENGTH_BYTES : len - XSalsaTools.MAC_LENGTH_BYTES;
 	}
 	
 	
