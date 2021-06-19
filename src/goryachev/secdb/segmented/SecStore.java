@@ -359,7 +359,9 @@ public class SecStore
 		SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, key);
 		
 		Ref ref = ss.getInitialRef();
-		byte[] nonce = createNonce(ref);
+		String ref1 = ref.getSegment(0);
+		long ref2 = ref.getOffset(0);
+		byte[] nonce = encHelper.createNonce(ref1, ref2);
 
 		OutputStream out = encHelper.getEncryptionStream(nonce, storedLength, ss);
 		try
@@ -468,7 +470,9 @@ public class SecStore
 			public InputStream getStream()
 			{
 				InputStream in = new SegmentInputStream(SecStore.this, ref);
-				byte[] nonce = createNonce(ref);
+				String ref1 = ref.getSegment(0);
+				long ref2 = ref.getOffset(0);
+				byte[] nonce = encHelper.createNonce(ref1, ref2);
 				in = encHelper.getDecryptionStream(nonce, len, in);
 				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
@@ -496,12 +500,5 @@ public class SecStore
 	protected static File getSegmentDir(File dir, int x)
 	{
 		return new File(dir, Hex.toHexByte(x));
-	}
-	
-	
-	protected static byte[] createNonce(Ref ref)
-	{
-		// TODO name + offset of the first segment
-		return new byte[0];
 	}
 }

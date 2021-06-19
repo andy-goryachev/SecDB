@@ -32,4 +32,10 @@ public class ClearEncHelper
 	{
 		return out;
 	}
+
+
+	protected byte[] createNonce(String a1, long a2)
+	{
+		return null;
+	}
 }

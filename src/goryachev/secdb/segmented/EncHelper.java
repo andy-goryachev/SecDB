@@ -31,6 +31,10 @@ public abstract class EncHelper
 	protected abstract InputStream getDecryptionStream(byte[] nonce, long cipherTextLength, InputStream in);
 	
 	
+	/** create appropriate nonce.  combination of the input parameters is guaranteed to be unique */
+	protected abstract byte[] createNonce(String a1, long a2);
+	
+	
 	//
 	
 	

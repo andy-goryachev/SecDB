@@ -59,8 +59,8 @@ public class TestEncryption
 		OpaqueBytes key = new OpaqueBytes(clearKey);
 		OpaqueChars passphrase = new OpaqueChars(PASSPHRASE.toCharArray());
 		EncHelper helper = 
-//			new XSalsa20Poly1305EncHelper(key);
-			new EAXEncHelper(key);
+			new XSalsa20Poly1305EncHelper(key);
+//			new EAXEncHelper(key);
 				
 		SecDB db;
 		try
