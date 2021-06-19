@@ -4,15 +4,18 @@ import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.OpaqueChars;
 import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305DecryptStream;
 import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream;
 import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
+import goryachev.secdb.crypto.KeyFile;
 import goryachev.secdb.segmented.EncHelper;
 import goryachev.secdb.segmented.REMOVE.DebugInputStream;
 import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import org.bouncycastle.crypto.digests.Blake2bDigest;
 
 
@@ -23,11 +26,13 @@ public class XSalsa20Poly1305EncHelper
 	extends EncHelper
 {
 	private final OpaqueBytes key;
+	private final SecureRandom random;
 	
 	
-	public XSalsa20Poly1305EncHelper(OpaqueBytes key)
+	public XSalsa20Poly1305EncHelper(OpaqueBytes key, SecureRandom r)
 	{
 		this.key = key;
+		this.random = r;
 	}
 	
 	
@@ -113,5 +118,17 @@ public class XSalsa20Poly1305EncHelper
 	    byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
 	    blake2b.doFinal(nonce, 0);
 	    return nonce;
+	}
+	
+	
+	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	{
+		return KeyFile.encrypt(key, passphrase, random);
+	}
+
+
+	protected OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception
+	{
+		return KeyFile.decrypt(encryptedKey, passphrase);
 	}
 }

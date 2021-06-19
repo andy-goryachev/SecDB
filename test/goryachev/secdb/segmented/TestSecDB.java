@@ -13,6 +13,7 @@ import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.Random;
 
 
@@ -34,7 +35,7 @@ public class TestSecDB
 	public static void testCreate() throws Exception
 	{
 		FileTools.deleteRecursively(DIR);
-		SecDB.create(DIR, null, null);
+		SecDB.create(DIR, null, null, null);
 	}
 	
 	
@@ -45,7 +46,7 @@ public class TestSecDB
 		OpaqueBytes key = new OpaqueBytes(keyBytes);
 		EncHelper helper = 
 //			new ClearEncHelper();
-			new XSalsa20Poly1305EncHelper(key);
+			new XSalsa20Poly1305EncHelper(key, new SecureRandom());
 
 		SecDB db;
 		try
@@ -57,7 +58,7 @@ public class TestSecDB
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null, null);
+				SecDB.create(DIR,helper, null, null);
 				db = SecDB.open(DIR, helper, null);
 				break;
 			default:

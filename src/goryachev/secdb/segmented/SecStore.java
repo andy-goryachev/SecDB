@@ -13,6 +13,7 @@ import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.crypto.KeyFile;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
@@ -48,13 +49,13 @@ public class SecStore
 	private Ref root;
 	
 	
-	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root, EncHelper encHelper)
+	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root, EncHelper h)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
 		this.root = root;
 		this.lock = lock;
-		this.encHelper = encHelper;
+		this.encHelper = (h == null ? new ClearEncHelper() : h);
 	}
 	
 	
@@ -82,8 +83,13 @@ public class SecStore
 	
 	
 	/** might throw SecException which contains error code and additional information */
-	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws SecException, Exception
+	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws SecException, Exception
 	{
+		if(encHelper == null)
+		{
+			encHelper = new ClearEncHelper();
+		}
+		
 		if(!dir.exists())
 		{
 			dir.mkdirs();
@@ -102,15 +108,7 @@ public class SecStore
 		}
 
 		// encrypt the main key
-		byte[] encryptedKey;
-		if((key == null) && (passphrase == null) && (random == null))
-		{
-			encryptedKey = new byte[0];
-		}
-		else
-		{
-			encryptedKey = KeyFile.encrypt(key, passphrase, random);
-		}
+		byte[] encryptedKey = encHelper.encryptKey(key, passphrase);
 		
 		// store key file
 		File keyFile = getKeyFile(dir);
@@ -161,12 +159,12 @@ public class SecStore
 	
 	public void checkPassword(OpaqueChars passphrase) throws Exception, SecException
 	{
-		OpaqueBytes b = decryptKey(dir, passphrase);
+		OpaqueBytes b = decryptKey(encHelper, dir, passphrase);
 		b.clear();
 	}
 	
 	
-	private static OpaqueBytes decryptKey(File dir, OpaqueChars passphrase) throws SecException,Exception
+	private static OpaqueBytes decryptKey(EncHelper encHelper, File dir, OpaqueChars passphrase) throws SecException,Exception
 	{
 		byte[] encryptedKey;
 		try
@@ -178,7 +176,7 @@ public class SecStore
 			throw new SecException(SecErrorCode.FAILED_KEY_FILE_READ, e);
 		}
 		
-		return KeyFile.decrypt(encryptedKey, passphrase);
+		return encHelper.decryptKey(encryptedKey, passphrase);
 	}
 	
 
@@ -193,10 +191,15 @@ public class SecStore
 		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
 		lock.checkLock();
 		
+		if(encHelper == null)
+		{
+			encHelper = new ClearEncHelper();
+		}
+		
 		try
 		{
 			// decrypt key -> missing key file, passphrase error
-			OpaqueBytes key = decryptKey(dir, passphrase);
+			OpaqueBytes key = decryptKey(encHelper, dir, passphrase);
 				
 			// TODO think of a way to derive log key from the main key
 			OpaqueBytes logKey = null;

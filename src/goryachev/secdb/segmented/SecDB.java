@@ -39,15 +39,9 @@ public class SecDB
 	}
 	
 	
-	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
-		create(dir, key, passphrase, new SecureRandom());
-	}
-	
-	
-	public static void create(File dir, OpaqueBytes key, OpaqueChars passphrase, SecureRandom random) throws Exception
-	{
-		SecStore.create(dir, key, passphrase, random);
+		SecStore.create(dir, encHelper, key, passphrase);
 	}
 	
 	
@@ -58,6 +52,7 @@ public class SecDB
 	}
 	
 	
+	/** checks the password against the key file (for example, to support unlocking or password check for critical operations) */
 	public void checkPassword(OpaqueChars passphrase) throws Exception, SecException
 	{
 		store.checkPassword(passphrase);

@@ -49,15 +49,15 @@ public class TestSegments
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, new ClearEncHelper(), null);
+			db = SecDB.open(DIR, null, null);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null, null);
-				db = SecDB.open(DIR, new ClearEncHelper(), null);
+				SecDB.create(DIR, null, null, null);
+				db = SecDB.open(DIR, null, null);
 				break;
 			default:
 				throw e;

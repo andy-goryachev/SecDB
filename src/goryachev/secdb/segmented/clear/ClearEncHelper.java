@@ -1,5 +1,7 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.clear;
+import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.segmented.EncHelper;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +37,18 @@ public class ClearEncHelper
 
 
 	protected byte[] createNonce(String a1, long a2)
+	{
+		return null;
+	}
+
+
+	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	{
+		return new byte[0];
+	}
+
+
+	protected OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception
 	{
 		return null;
 	}

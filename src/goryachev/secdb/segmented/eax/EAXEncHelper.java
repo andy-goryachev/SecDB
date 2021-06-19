@@ -4,14 +4,17 @@ import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.OpaqueChars;
 import goryachev.crypto.eax.EAXDecryptStream;
 import goryachev.crypto.eax.EAXEncryptStream;
+import goryachev.secdb.crypto.KeyFile;
 import goryachev.secdb.segmented.EncHelper;
 import goryachev.secdb.segmented.REMOVE.DebugInputStream;
 import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 
 
 /**
@@ -21,12 +24,14 @@ public class EAXEncHelper
 	extends EncHelper
 {
 	private static final int MAC_OVERHEAD = 8;
+	private final SecureRandom random;
 	private final OpaqueBytes key;
 	
 	
-	public EAXEncHelper(OpaqueBytes key)
+	public EAXEncHelper(OpaqueBytes key, SecureRandom r)
 	{
 		this.key = key;
+		this.random = r;
 	}
 	
 	
@@ -106,5 +111,17 @@ public class EAXEncHelper
 		}
 		
 		return b.toByteArray();
+	}
+
+
+	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	{
+		return KeyFile.encrypt(key, passphrase, random);
+	}
+
+
+	protected OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception
+	{
+		return KeyFile.decrypt(encryptedKey, passphrase);
 	}
 }

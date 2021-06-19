@@ -1,7 +1,10 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.OpaqueChars;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 
 
 /**
@@ -33,6 +36,17 @@ public abstract class EncHelper
 	
 	/** create appropriate nonce.  combination of the input parameters is guaranteed to be unique */
 	protected abstract byte[] createNonce(String a1, long a2);
+	
+	
+	/** 
+	 * encrypts the key with the provided passphrase.  
+	 * @return non-null encrypted data
+	 */ 
+	protected abstract byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception;
+	
+	
+	/** decrypts the key with the provided passphrase.  may return null */
+	protected abstract OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception;
 	
 	
 	//
