@@ -3,20 +3,15 @@ package goryachev.secdb.segmented;
 import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
-import goryachev.common.util.CKit;
 import goryachev.common.util.CSet;
 import goryachev.common.util.D;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
-import goryachev.secdb.QueryClient;
 import goryachev.secdb.segmented.clear.ClearEncHelper;
-import goryachev.secdb.util.ByteArrayIStream;
-import goryachev.secdb.util.Utils;
 import java.io.File;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -82,7 +77,7 @@ public class TestSecDB
 						{
 							String k = String.valueOf(random.nextInt(1_000));
 							keys.add(k);
-							insert(new SKey(k), v(k));
+							insert(new SKey(k), IStream.of(k));
 						}
 					}
 				});
@@ -133,44 +128,5 @@ public class TestSecDB
 		{
 			db.close();
 		}
-	}
-	
-	
-	protected static IStream v(String x)
-	{
-		byte[] b = x.getBytes(CKit.CHARSET_ASCII);
-		return new ByteArrayIStream(b);
-	}
-	
-	
-	protected int query(SecDB db, String start, String end) throws Exception
-	{
-		AtomicInteger ct = new AtomicInteger();
-		
-		db.rangeQuery(new SKey(start), true, new  SKey(end), false, new QueryClient<SKey,IStored>()
-		{
-			public boolean acceptQueryResult(SKey key, IStored value)
-			{
-				String res = printValue(value);
-				D.print(key, res);
-				ct.incrementAndGet();
-				return true;
-			}
-
-			protected String printValue(IStored is)
-			{
-				try
-				{
-					byte[] b = Utils.readBytes(is.getIStream(), Integer.MAX_VALUE);
-					return new String(b, CKit.CHARSET_ASCII);
-				}
-				catch(Exception e)
-				{
-					return CKit.stackTrace(e);
-				}
-			}
-		});
-		
-		return ct.get();
 	}
 }

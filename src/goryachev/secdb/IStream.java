@@ -16,10 +16,14 @@ public interface IStream
 	public long getLength();
 	
 	
+	//
+	
+	
 	/** returns an IStream created from UTF-8 representation of the given non-null string */
 	public static IStream of(String text)
 	{
-		return new ByteArrayIStream(text.getBytes(CKit.CHARSET_UTF8));
+		byte[] b = text.getBytes(CKit.CHARSET_UTF8);
+		return of(b);
 	}
 	
 	
