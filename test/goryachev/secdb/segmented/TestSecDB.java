@@ -1,9 +1,12 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
+import goryachev.common.util.CSet;
 import goryachev.common.util.D;
+import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -11,6 +14,7 @@ import goryachev.secdb.QueryClient;
 import goryachev.secdb.util.ByteArrayIStream;
 import goryachev.secdb.util.Utils;
 import java.io.File;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -28,9 +32,10 @@ public class TestSecDB
 	}
 	
 	
-//	@Test
-	public void testCreate() throws Exception
+	@BeforeClass
+	public static void testCreate() throws Exception
 	{
+		FileTools.deleteRecursively(DIR);
 		SecDB.create(DIR, null, null);
 	}
 	
@@ -56,28 +61,72 @@ public class TestSecDB
 			}
 		}
 		
+		Random random = new Random();
+		long seed = random.nextLong();
+		random.setSeed(seed);
+		TF.print("seed:", seed);
+		
+		CSet<String> keys = new CSet();
+		CSet<String> result = new CSet();
+		
 		try
 		{
-			db.execute(new Transaction()
+			for(int i=0; i<100; i++)
 			{
-				protected void body() throws Exception
+				db.execute(new Transaction()
 				{
-					insert(new SKey("0"), v(0));
-					insert(new SKey("1"), v(1));
-				}
+					protected void body() throws Exception
+					{
+						for(int j=0; j<100; j++)
+						{
+							String k = String.valueOf(random.nextInt(1_000));
+							keys.add(k);
+							insert(new SKey(k), v(k));
+						}
+					}
+				});
+			}
+			
+			db.prefixQuery(new SKey(""), (SKey k, IStored s) ->
+			{
+				result.add(k.toString());
+				return true;
 			});
 			
-			db.execute(new Transaction()
+			TF.eq(keys, result);
+			
+			D.print("inserted", keys.size());
+			
+			for(int i=0; i<10; i++)
 			{
-				protected void body() throws Exception
+				db.execute(new Transaction()
 				{
-					insert(new SKey("1"), v(2));
-					insert(new SKey("2"), v(3));
-				}
+					protected void body() throws Exception
+					{
+						for(String k: keys)
+						{
+							boolean remove = random.nextFloat() > 0.9f;
+							if(remove)
+							{
+								remove(new SKey(k));
+								result.remove(k);
+							}
+						}
+					}
+				});
+			}
+			
+			CSet<String> result2 = new CSet();
+			
+			db.prefixQuery(new SKey(""), (SKey k, IStored s) ->
+			{
+				result2.add(k.toString());
+				return true;
 			});
 			
-			int ct = query(db, "0", "9");
-			TF.eq(ct, 3);
+			TF.eq(result, result2);
+			
+			D.print("after removal", result2.size());
 		}
 		finally
 		{
@@ -86,9 +135,9 @@ public class TestSecDB
 	}
 	
 	
-	protected static IStream v(int x)
+	protected static IStream v(String x)
 	{
-		byte[] b = ("value=" + x).getBytes(CKit.CHARSET_ASCII);
+		byte[] b = x.getBytes(CKit.CHARSET_ASCII);
 		return new ByteArrayIStream(b);
 	}
 	
