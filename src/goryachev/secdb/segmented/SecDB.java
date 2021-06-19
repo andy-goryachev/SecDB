@@ -51,9 +51,9 @@ public class SecDB
 	}
 	
 	
-	public static SecDB open(File dir, OpaqueChars passphrase) throws Exception, SecException
+	public static SecDB open(File dir, EncHelper encHelper, OpaqueChars passphrase) throws Exception, SecException
 	{
-		SecStore st = SecStore.open(dir, passphrase);
+		SecStore st = SecStore.open(dir, encHelper, passphrase);
 		return new SecDB(st);
 	}
 	

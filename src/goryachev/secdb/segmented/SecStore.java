@@ -13,8 +13,6 @@ import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.crypto.KeyFile;
-import goryachev.secdb.segmented.clear.ClearEncHelper;
-import goryachev.secdb.segmented.eax.EAXEncHelper;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
@@ -183,21 +181,8 @@ public class SecStore
 		return KeyFile.decrypt(encryptedKey, passphrase);
 	}
 	
-	
-	private static EncHelper createEncHelper(OpaqueBytes key)
-	{
-		if((key == null) || key.isEmpty())
-		{
-			return new ClearEncHelper();
-		}
-		else
-		{
-			return new EAXEncHelper(key);
-		}
-	}
 
-
-	public static SecStore open(File dir, OpaqueChars passphrase) throws SecException,Exception
+	public static SecStore open(File dir, EncHelper encHelper, OpaqueChars passphrase) throws SecException,Exception
 	{
 		// check directories
 		if(!dir.exists() || !dir.isDirectory())
@@ -212,7 +197,6 @@ public class SecStore
 		{
 			// decrypt key -> missing key file, passphrase error
 			OpaqueBytes key = decryptKey(dir, passphrase);
-			EncHelper encHelper = createEncHelper(key);
 				
 			// TODO think of a way to derive log key from the main key
 			OpaqueBytes logKey = null;

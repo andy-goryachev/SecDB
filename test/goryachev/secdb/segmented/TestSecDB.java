@@ -11,6 +11,7 @@ import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.util.ByteArrayIStream;
 import goryachev.secdb.util.Utils;
 import java.io.File;
@@ -46,7 +47,7 @@ public class TestSecDB
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, null);
+			db = SecDB.open(DIR,  new ClearEncHelper(), null);
 		}
 		catch(SecException e)
 		{
@@ -54,7 +55,7 @@ public class TestSecDB
 			{
 			case DIR_NOT_FOUND:
 				SecDB.create(DIR, null, null);
-				db = SecDB.open(DIR, null);
+				db = SecDB.open(DIR,  new ClearEncHelper(), null);
 				break;
 			default:
 				throw e;

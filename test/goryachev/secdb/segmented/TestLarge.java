@@ -14,6 +14,7 @@ import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.QueryClient;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,7 +80,7 @@ public class TestLarge
 //	@Test
 	public void testQuery() throws Exception
 	{
-		SecDB db = SecDB.open(dir(), null);
+		SecDB db = SecDB.open(dir(), new ClearEncHelper(), null);
 		int ct = query(db, "0", "9");
 		TF.print(ct);
 	}
@@ -91,7 +92,7 @@ public class TestLarge
 		SecDB db;
 		try
 		{
-			db = SecDB.open(dir(), null);
+			db = SecDB.open(dir(),  new ClearEncHelper(), null);
 		}
 		catch(SecException e)
 		{
@@ -99,7 +100,7 @@ public class TestLarge
 			{
 			case DIR_NOT_FOUND:
 				SecDB.create(dir(), null, null);
-				db = SecDB.open(dir(), null);
+				db = SecDB.open(dir(),  new ClearEncHelper(), null);
 				break;
 			default:
 				throw e;
