@@ -1,6 +1,5 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.xsalsa20poly1305;
-import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
@@ -12,7 +11,6 @@ import goryachev.secdb.crypto.KeyFile;
 import goryachev.secdb.segmented.EncHelper;
 import goryachev.secdb.segmented.REMOVE.DebugInputStream;
 import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
@@ -91,31 +89,12 @@ public class XSalsa20Poly1305EncHelper
 	}
 	
 	
-	protected byte[] createNonce(String a1, long a2)
+	protected byte[] createNonce(String unique)
 	{
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		DWriter wr = new DWriter(b);
-		try
-		{
-			wr.writeString(a1);
-			wr.writeLong(a2);
-		}
-		catch(Exception e)
-		{
-			// should never happen
-			throw new Error("createNonce", e);
-		}
-		finally
-		{
-			CKit.close(wr);
-		}
-		
-		byte[] input = b.toByteArray();
-		
+		byte[] input = unique.getBytes(CKit.CHARSET_UTF8);
+	    byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
 	    Blake2bDigest blake2b = new Blake2bDigest(XSalsaTools.NONCE_LENGTH_BYTES);
 	    blake2b.update(input, input.length, 0);
-
-	    byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
 	    blake2b.doFinal(nonce, 0);
 	    return nonce;
 	}

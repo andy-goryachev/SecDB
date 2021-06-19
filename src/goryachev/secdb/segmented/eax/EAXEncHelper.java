@@ -1,6 +1,5 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.eax;
-import goryachev.common.io.DWriter;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
@@ -11,7 +10,6 @@ import goryachev.secdb.crypto.KeyFile;
 import goryachev.secdb.segmented.EncHelper;
 import goryachev.secdb.segmented.REMOVE.DebugInputStream;
 import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
@@ -91,26 +89,9 @@ public class EAXEncHelper
 	}
 	
 	
-	protected byte[] createNonce(String a1, long a2)
+	protected byte[] createNonce(String unique)
 	{
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		DWriter wr = new DWriter(b);
-		try
-		{
-			wr.writeString(a1);
-			wr.writeLong(a2);
-		}
-		catch(Exception e)
-		{
-			// should never happen
-			throw new Error("createNonce", e);
-		}
-		finally
-		{
-			CKit.close(wr);
-		}
-		
-		return b.toByteArray();
+		return unique.getBytes(CKit.CHARSET_UTF8);
 	}
 
 

@@ -36,7 +36,7 @@ public class ClearEncHelper
 	}
 
 
-	protected byte[] createNonce(String a1, long a2)
+	protected byte[] createNonce(String unique)
 	{
 		return null;
 	}

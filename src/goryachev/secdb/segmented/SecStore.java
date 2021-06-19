@@ -360,9 +360,8 @@ public class SecStore
 		SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, key);
 		
 		Ref ref = ss.getInitialRef();
-		String ref1 = ref.getSegment(0);
-		long ref2 = ref.getOffset(0);
-		byte[] nonce = encHelper.createNonce(ref1, ref2);
+		String s = forNonce(ref);
+		byte[] nonce = encHelper.createNonce(s);
 
 		OutputStream out = encHelper.getEncryptionStream(nonce, storedLength, ss);
 		try
@@ -471,9 +470,8 @@ public class SecStore
 			public InputStream getStream()
 			{
 				InputStream in = new SegmentInputStream(SecStore.this, ref);
-				String ref1 = ref.getSegment(0);
-				long ref2 = ref.getOffset(0);
-				byte[] nonce = encHelper.createNonce(ref1, ref2);
+				String s = forNonce(ref);
+				byte[] nonce = encHelper.createNonce(s);
 				in = encHelper.getDecryptionStream(nonce, len, in);
 				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
@@ -495,6 +493,12 @@ public class SecStore
 	public Ref readRef(DReader rd) throws Exception
 	{
 		return Ref.read(rd);
+	}
+	
+	
+	protected static String forNonce(Ref r)
+	{
+		return r.getSegment(0) + "|" + r.getOffset(0); 
 	}
 	
 	
