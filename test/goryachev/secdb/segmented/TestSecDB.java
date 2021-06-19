@@ -7,9 +7,11 @@ import goryachev.common.util.CSet;
 import goryachev.common.util.D;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
+import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
-import goryachev.secdb.segmented.clear.ClearEncHelper;
+import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
 import java.io.File;
 import java.util.Random;
 
@@ -39,10 +41,16 @@ public class TestSecDB
 	@Test
 	public void testOpen() throws Exception
 	{
+		byte[] keyBytes = new byte[XSalsaTools.KEY_LENGTH_BYTES];
+		OpaqueBytes key = new OpaqueBytes(keyBytes);
+		EncHelper helper = 
+//			new ClearEncHelper();
+			new XSalsa20Poly1305EncHelper(key);
+
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR,  new ClearEncHelper(), null);
+			db = SecDB.open(DIR, helper, null);
 		}
 		catch(SecException e)
 		{
@@ -50,7 +58,7 @@ public class TestSecDB
 			{
 			case DIR_NOT_FOUND:
 				SecDB.create(DIR, null, null);
-				db = SecDB.open(DIR,  new ClearEncHelper(), null);
+				db = SecDB.open(DIR, helper, null);
 				break;
 			default:
 				throw e;
