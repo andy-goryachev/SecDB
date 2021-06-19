@@ -9,7 +9,6 @@ import goryachev.common.util.CMap;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.log.config.JsonLogConfig;
-import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.util.ByteArrayIStream;
 import java.io.File;
 import java.util.Random;
@@ -56,7 +55,7 @@ public class TestSegments
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null, null, null);
+				SecDB.create(DIR, null, null);
 				db = SecDB.open(DIR, null, null);
 				break;
 			default:

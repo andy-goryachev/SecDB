@@ -4,7 +4,6 @@ import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.OpaqueChars;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 
 
 /**
@@ -42,7 +41,7 @@ public abstract class EncHelper
 	 * encrypts the key with the provided passphrase.  
 	 * @return non-null encrypted data
 	 */ 
-	protected abstract byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception;
+	protected abstract byte[] encryptKey(OpaqueChars passphrase) throws Exception;
 	
 	
 	/** decrypts the key with the provided passphrase.  may return null */

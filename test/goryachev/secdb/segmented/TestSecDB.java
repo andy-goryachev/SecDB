@@ -1,6 +1,5 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CSet;
@@ -8,9 +7,12 @@ import goryachev.common.util.D;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.crypto.OpaqueBytes;
+import goryachev.crypto.OpaqueChars;
 import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
+import goryachev.secdb.segmented.eax.EAXEncHelper;
 import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
 import java.io.File;
 import java.security.SecureRandom;
@@ -31,35 +33,68 @@ public class TestSecDB
 	}
 	
 	
-	@BeforeClass
-	public static void testCreate() throws Exception
+	@Test
+	public void test() throws Exception
 	{
 		FileTools.deleteRecursively(DIR);
-		SecDB.create(DIR, null, null, null);
+
+		SecureRandom random = new SecureRandom();
+		byte[] keyBytes = new byte[XSalsaTools.KEY_LENGTH_BYTES];
+		OpaqueBytes key = new OpaqueBytes(keyBytes);
+		
+		EncHelper[] hs =
+		{
+			new ClearEncHelper(),
+			new EAXEncHelper(key, random),
+			new XSalsa20Poly1305EncHelper(key, random)
+		};
+		
+		for(EncHelper h: hs)
+		{
+			test(new File(DIR, getName(h)), h);
+		}
 	}
 	
 	
-	@Test
-	public void testOpen() throws Exception
+	private String getName(EncHelper h)
 	{
-		byte[] keyBytes = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		OpaqueBytes key = new OpaqueBytes(keyBytes);
-		EncHelper helper = 
-//			new ClearEncHelper();
-			new XSalsa20Poly1305EncHelper(key, new SecureRandom());
+		if(h instanceof ClearEncHelper)
+		{
+			return "clear";
+		}
+		else if(h instanceof EAXEncHelper)
+		{
+			return "eax";
+		}
+		else if(h instanceof XSalsa20Poly1305EncHelper)
+		{
+			return "xsalsa";
+		}
+		else
+		{
+			throw new Error("?" + h);
+		}
+	}
+	
+	
+	public void test(File dir, EncHelper helper) throws Exception
+	{
+		OpaqueChars passphrase = new OpaqueChars("test".toCharArray());
+		
+		SecDB.create(dir, helper, passphrase);
 
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, helper, null);
+			db = SecDB.open(dir, helper, passphrase);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR,helper, null, null);
-				db = SecDB.open(DIR, helper, null);
+				SecDB.create(dir, helper, passphrase);
+				db = SecDB.open(dir, helper, passphrase);
 				break;
 			default:
 				throw e;

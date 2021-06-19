@@ -12,7 +12,6 @@ import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
-import goryachev.secdb.crypto.KeyFile;
 import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
@@ -23,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 import java.util.List;
 
 
@@ -83,7 +81,7 @@ public class SecStore
 	
 	
 	/** might throw SecException which contains error code and additional information */
-	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws SecException, Exception
+	public static void create(File dir, EncHelper encHelper, OpaqueChars passphrase) throws SecException, Exception
 	{
 		if(encHelper == null)
 		{
@@ -108,7 +106,7 @@ public class SecStore
 		}
 
 		// encrypt the main key
-		byte[] encryptedKey = encHelper.encryptKey(key, passphrase);
+		byte[] encryptedKey = encHelper.encryptKey(passphrase);
 		
 		// store key file
 		File keyFile = getKeyFile(dir);

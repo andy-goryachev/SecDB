@@ -42,7 +42,7 @@ public class ClearEncHelper
 	}
 
 
-	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	protected byte[] encryptKey(OpaqueChars passphrase) throws Exception
 	{
 		return new byte[0];
 	}

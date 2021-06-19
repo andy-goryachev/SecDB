@@ -39,9 +39,9 @@ public class SecDB
 	}
 	
 	
-	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	public static void create(File dir, EncHelper encHelper, OpaqueChars passphrase) throws Exception
 	{
-		SecStore.create(dir, encHelper, key, passphrase);
+		SecStore.create(dir, encHelper, passphrase);
 	}
 	
 	

@@ -12,7 +12,6 @@ import goryachev.crypto.OpaqueChars;
 import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
-import goryachev.secdb.segmented.eax.EAXEncHelper;
 import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
 import java.io.File;
 import java.security.SecureRandom;
@@ -72,7 +71,7 @@ public class TestEncryption
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, helper, key, passphrase);
+				SecDB.create(DIR, helper, passphrase);
 				db = SecDB.open(DIR, helper, passphrase);
 				break;
 			default:

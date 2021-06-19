@@ -114,7 +114,7 @@ public class EAXEncHelper
 	}
 
 
-	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	protected byte[] encryptKey(OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.encrypt(key, passphrase, random);
 	}

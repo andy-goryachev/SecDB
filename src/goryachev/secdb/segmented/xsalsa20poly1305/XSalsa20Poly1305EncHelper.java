@@ -121,7 +121,7 @@ public class XSalsa20Poly1305EncHelper
 	}
 	
 	
-	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	protected byte[] encryptKey(OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.encrypt(key, passphrase, random);
 	}
