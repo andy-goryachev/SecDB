@@ -177,7 +177,6 @@ public class SecStore
 			throw new SecException(SecErrorCode.FAILED_KEY_FILE_READ, e);
 		}
 		
-		// FIX this must set the key...
 		return encHelper.decryptKey(encryptedKey, passphrase);
 	}
 	
@@ -245,12 +244,15 @@ public class SecStore
 	}
 
 
-	// FIX does not close all the files (readers)
 	public void close() throws IOException
 	{
-		// TODO
-		// zero out the main key
-		// clear all buffers
+		// zero the main key
+		if(key != null)
+		{
+			Crypto.zero(key);
+		}
+
+		Throwable err = null;
 		
 		try
 		{
@@ -259,16 +261,11 @@ public class SecStore
 				currentSegment.closeWriter();
 			}
 		}
-		catch(IOException e)
+		catch(Throwable e)
 		{
-			throw e;
-		}
-		catch(Exception e)
-		{
-			throw new IOException(e);
+			err = e;
 		}
 		
-		boolean failedToCloseReaders = false;
 		synchronized(segments)
 		{
 			for(SegmentFile sf: segments.values())
@@ -279,43 +276,42 @@ public class SecStore
 				}
 				catch(Throwable e)
 				{
-					failedToCloseReaders = true;
+					err = (err == null ? e : new IOException(e));
 				}
 			}
-		}
-		
-		if(failedToCloseReaders)
-		{
-			throw new IOException("Failed to close readers");
 		}
 		
 		try
 		{
 			logFile.appendEvent(LogEventCode.CLOSED);
 		}
-		catch(IOException e)
+		catch(Throwable e)
 		{
-			throw e;
-		}
-		catch(Exception e)
-		{
-			throw new IOException(e);
+			err = (err == null ? e : new IOException(e));
 		}
 		
 		try
 		{
 			logFile.close();
 		}
-		catch(IOException e)
+		catch(Throwable e)
 		{
-			throw e;
-		}
-		catch(Exception e)
-		{
-			throw new IOException(e);
+			err = (err == null ? e : new IOException(e));
 		}
 		
 		lock.unlock();
+		
+		if(err != null)
+		{
+			if(err instanceof IOException)
+			{
+				throw (IOException)err;
+			}
+			else
+			{
+				throw new IOException(err);
+			}
+		}
 	}
 	
 	
@@ -360,7 +356,6 @@ public class SecStore
 		try
 		{
 			SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, k);
-			
 			Ref ref = ss.getInitialRef();
 			String s = forNonce(ref);
 			byte[] nonce = encHelper.createNonce(s);

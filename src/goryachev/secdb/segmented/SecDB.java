@@ -71,7 +71,6 @@ public class SecDB
 	
 	
 	/** executes a Transaction which inserts a single value */
-	// TODO communicate error?
 	public void store(SKey key, IStream in) throws Exception
 	{
 		execute(new Transaction()
