@@ -23,13 +23,11 @@ import org.bouncycastle.crypto.digests.Blake2bDigest;
 public class XSalsa20Poly1305EncHelper
 	extends EncHelper
 {
-	private final OpaqueBytes key;
 	private final SecureRandom random;
 	
 	
-	public XSalsa20Poly1305EncHelper(OpaqueBytes key, SecureRandom r)
+	public XSalsa20Poly1305EncHelper(SecureRandom r)
 	{
-		this.key = key;
 		this.random = r;
 	}
 	
@@ -40,52 +38,36 @@ public class XSalsa20Poly1305EncHelper
 	}
 	
 	
-	protected InputStream getDecryptionStream(byte[] nonce, long length, InputStream in)
+	protected InputStream getDecryptionStream(byte[] key, byte[] nonce, long length, InputStream in)
 	{
-		byte[] k = key.getBytes();
-		try
-		{
-			return new DebugInputStream
+		return new DebugInputStream
+		(
+			"rd:dec", 
+			1024, 
+			new XSalsa20Poly1305DecryptStream
 			(
-				"rd:dec", 
-				1024, 
-				new XSalsa20Poly1305DecryptStream
-				(
-					k, 
-					nonce,
-					length,
-					new DebugInputStream("read:enc", 1024, in)
-				)
-			);
-		}
-		finally
-		{
-			Crypto.zero(k);
-		}
+				Crypto.copy(key), 
+				nonce,
+				length,
+				new DebugInputStream("read:enc", 1024, in)
+			)
+		);
 	}
 
 
-	protected OutputStream getEncryptionStream(byte[] nonce, long length, OutputStream out)
+	protected OutputStream getEncryptionStream(byte[] key, byte[] nonce, long length, OutputStream out)
 	{
-		byte[] k = key.getBytes();
-		try
-		{
-			return new DebugOutputStream
+		return new DebugOutputStream
+		(
+			"wr:dec", 
+			1024,
+			new XSalsa20Poly1305EncryptStream
 			(
-				"wr:dec", 
-				1024,
-				new XSalsa20Poly1305EncryptStream
-				(
-					k, 
-					nonce, 
-					new DebugOutputStream("wr:enc", 1024, out)
-				)
-			);
-		}
-		finally
-		{
-			Crypto.zero(k);
-		}
+				Crypto.copy(key), 
+				nonce, 
+				new DebugOutputStream("wr:enc", 1024, out)
+			)
+		);
 	}
 	
 	
@@ -100,7 +82,7 @@ public class XSalsa20Poly1305EncHelper
 	}
 	
 	
-	protected byte[] encryptKey(OpaqueChars passphrase) throws Exception
+	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.encrypt(key, passphrase, random);
 	}

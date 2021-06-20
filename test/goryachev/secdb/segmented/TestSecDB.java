@@ -1,5 +1,6 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
+import goryachev.common.log.Log;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CSet;
@@ -29,6 +30,7 @@ public class TestSecDB
 	
 	public static void main(String[] args)
 	{
+		Log.initForDebug();
 		TF.run();
 	}
 	
@@ -41,17 +43,18 @@ public class TestSecDB
 		SecureRandom random = new SecureRandom();
 		byte[] keyBytes = new byte[XSalsaTools.KEY_LENGTH_BYTES];
 		OpaqueBytes key = new OpaqueBytes(keyBytes);
+		OpaqueChars passphrase = new OpaqueChars("test".toCharArray());
 		
 		EncHelper[] hs =
 		{
 			new ClearEncHelper(),
-			new EAXEncHelper(key, random),
-			new XSalsa20Poly1305EncHelper(key, random)
+			new EAXEncHelper(random),
+			new XSalsa20Poly1305EncHelper(random)
 		};
 		
 		for(EncHelper h: hs)
 		{
-			test(new File(DIR, getName(h)), h);
+			test(new File(DIR, getName(h)), h, key, passphrase);
 		}
 	}
 	
@@ -77,11 +80,9 @@ public class TestSecDB
 	}
 	
 	
-	public void test(File dir, EncHelper helper) throws Exception
+	public void test(File dir, EncHelper helper, OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
-		OpaqueChars passphrase = new OpaqueChars("test".toCharArray());
-		
-		SecDB.create(dir, helper, passphrase);
+		SecDB.create(dir, helper, key, passphrase);
 
 		SecDB db;
 		try
@@ -93,7 +94,7 @@ public class TestSecDB
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(dir, helper, passphrase);
+				SecDB.create(dir, helper, key, passphrase);
 				db = SecDB.open(dir, helper, passphrase);
 				break;
 			default:

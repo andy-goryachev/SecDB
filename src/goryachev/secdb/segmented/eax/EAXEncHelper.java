@@ -23,12 +23,10 @@ public class EAXEncHelper
 {
 	private static final int MAC_OVERHEAD = 8;
 	private final SecureRandom random;
-	private final OpaqueBytes key;
 	
 	
-	public EAXEncHelper(OpaqueBytes key, SecureRandom r)
+	public EAXEncHelper(SecureRandom r)
 	{
-		this.key = key;
 		this.random = r;
 	}
 	
@@ -39,54 +37,38 @@ public class EAXEncHelper
 	}
 	
 	
-	protected InputStream getDecryptionStream(byte[] nonce, long length, InputStream in)
+	protected InputStream getDecryptionStream(byte[] key, byte[] nonce, long length, InputStream in)
 	{
-		byte[] k = key.getBytes();
-		try
-		{
-			return new DebugInputStream
+		return new DebugInputStream
+		(
+			"rd:dec", 
+			1024, 
+			new EAXDecryptStream
 			(
-				"rd:dec", 
-				1024, 
-				new EAXDecryptStream
-				(
-					k, 
-					nonce, 
-					null, 
-					new DebugInputStream("read:enc", 1024, in)
-				)
-			);
-		}
-		finally
-		{
-			Crypto.zero(k);
-		}
+				Crypto.copy(key), 
+				nonce, 
+				null, 
+				new DebugInputStream("read:enc", 1024, in)
+			)
+		);
 	}
 
 
-	protected OutputStream getEncryptionStream(byte[] nonce, long length, OutputStream out)
+	protected OutputStream getEncryptionStream(byte[] key, byte[] nonce, long length, OutputStream out)
 	{
-		byte[] k = key.getBytes();
-		try
-		{
-			return new DebugOutputStream
+		return new DebugOutputStream
+		(
+			"wr:dec", 
+			1024,
+			new EAXEncryptStream
 			(
-				"wr:dec", 
-				1024,
-				new EAXEncryptStream
-				(
-					k, 
-					nonce, 
-					null, 
-					new DebugOutputStream("wr:enc", 1024, out)
-				)
-			);
-		}
-		finally
-		{
-			Crypto.zero(k);
-		}
-	}
+				Crypto.copy(key), 
+				nonce, 
+				null, 
+				new DebugOutputStream("wr:enc", 1024, out)
+			)
+		);
+}
 	
 	
 	protected byte[] createNonce(String unique)
@@ -95,7 +77,7 @@ public class EAXEncHelper
 	}
 
 
-	protected byte[] encryptKey(OpaqueChars passphrase) throws Exception
+	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.encrypt(key, passphrase, random);
 	}

@@ -358,4 +358,12 @@ public class Crypto
 			Crypto.zero(decrypted);
 		}
 	}
+	
+	
+	public static byte[] copy(byte[] key)
+	{
+		byte[] rv = new byte[key.length];
+		System.arraycopy(key, 0, rv, 0, key.length);
+		return rv;
+	}
 }

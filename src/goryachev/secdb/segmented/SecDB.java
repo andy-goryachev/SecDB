@@ -11,7 +11,6 @@ import goryachev.secdb.internal.DataHolder;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.List;
 
 
@@ -39,9 +38,9 @@ public class SecDB
 	}
 	
 	
-	public static void create(File dir, EncHelper encHelper, OpaqueChars passphrase) throws Exception
+	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
-		SecStore.create(dir, encHelper, passphrase);
+		SecStore.create(dir, encHelper, key, passphrase);
 	}
 	
 	

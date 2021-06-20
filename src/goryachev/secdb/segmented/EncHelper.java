@@ -21,7 +21,7 @@ public abstract class EncHelper
 	 * @param cipherTextLength - the total number of ciphertext (incl. mac) bytes 
 	 * @param out
 	 */
-	protected abstract OutputStream getEncryptionStream(byte[] nonce, long cipherTextLength, OutputStream out);
+	protected abstract OutputStream getEncryptionStream(byte[] key, byte[] nonce, long cipherTextLength, OutputStream out);
 
 	
 	/** 
@@ -30,7 +30,7 @@ public abstract class EncHelper
 	 * @param cipherTextLength - the total number of ciphertext (incl. mac) bytes 
 	 * @param in
 	 */
-	protected abstract InputStream getDecryptionStream(byte[] nonce, long cipherTextLength, InputStream in);
+	protected abstract InputStream getDecryptionStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in);
 	
 	
 	/** create appropriate nonce.  input parameter is guaranteed to be unique for all objects in the store */
@@ -41,7 +41,7 @@ public abstract class EncHelper
 	 * encrypts the key with the provided passphrase.  
 	 * @return non-null encrypted data
 	 */ 
-	protected abstract byte[] encryptKey(OpaqueChars passphrase) throws Exception;
+	protected abstract byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception;
 	
 	
 	/** decrypts the key with the provided passphrase.  may return null */

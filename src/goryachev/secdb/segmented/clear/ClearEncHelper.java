@@ -24,13 +24,13 @@ public class ClearEncHelper
 	}
 	
 
-	protected InputStream getDecryptionStream(byte[] nonce, long length, InputStream in)
+	protected InputStream getDecryptionStream(byte[] key, byte[] nonce, long length, InputStream in)
 	{
 		return in;
 	}
 
 
-	protected OutputStream getEncryptionStream(byte[] nonce, long length, OutputStream out)
+	protected OutputStream getEncryptionStream(byte[] key, byte[] nonce, long length, OutputStream out)
 	{
 		return out;
 	}
@@ -42,7 +42,7 @@ public class ClearEncHelper
 	}
 
 
-	protected byte[] encryptKey(OpaqueChars passphrase) throws Exception
+	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
 		return new byte[0];
 	}

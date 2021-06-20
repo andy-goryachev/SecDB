@@ -58,7 +58,7 @@ public class TestEncryption
 		OpaqueBytes key = new OpaqueBytes(clearKey);
 		OpaqueChars passphrase = new OpaqueChars(PASSPHRASE.toCharArray());
 		EncHelper helper = 
-			new XSalsa20Poly1305EncHelper(key, random);
+			new XSalsa20Poly1305EncHelper(random);
 //			new EAXEncHelper(key);
 				
 		SecDB db;
@@ -71,7 +71,7 @@ public class TestEncryption
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, helper, passphrase);
+				SecDB.create(DIR, helper, key, passphrase);
 				db = SecDB.open(DIR, helper, passphrase);
 				break;
 			default:

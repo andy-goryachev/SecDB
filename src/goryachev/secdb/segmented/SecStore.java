@@ -8,6 +8,7 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GUID256;
 import goryachev.common.util.Hex;
+import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
@@ -42,18 +43,20 @@ public class SecStore
 	private final CFileLock lock;
 	private final LogFile logFile;
 	protected final EncHelper encHelper;
+	protected final OpaqueBytes key;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
 	
 	
-	public SecStore(File dir, CFileLock lock, LogFile logFile, Ref root, EncHelper h)
+	public SecStore(File dir, CFileLock lock, LogFile logFile, EncHelper h, OpaqueBytes key, Ref root)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
 		this.root = root;
 		this.lock = lock;
 		this.encHelper = (h == null ? new ClearEncHelper() : h);
+		this.key = key;
 	}
 	
 	
@@ -81,7 +84,7 @@ public class SecStore
 	
 	
 	/** might throw SecException which contains error code and additional information */
-	public static void create(File dir, EncHelper encHelper, OpaqueChars passphrase) throws SecException, Exception
+	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws SecException, Exception
 	{
 		if(encHelper == null)
 		{
@@ -106,7 +109,7 @@ public class SecStore
 		}
 
 		// encrypt the main key
-		byte[] encryptedKey = encHelper.encryptKey(passphrase);
+		byte[] encryptedKey = encHelper.encryptKey(key, passphrase);
 		
 		// store key file
 		File keyFile = getKeyFile(dir);
@@ -174,6 +177,7 @@ public class SecStore
 			throw new SecException(SecErrorCode.FAILED_KEY_FILE_READ, e);
 		}
 		
+		// FIX this must set the key...
 		return encHelper.decryptKey(encryptedKey, passphrase);
 	}
 	
@@ -231,7 +235,7 @@ public class SecStore
 			// TODO
 			// load root node and do some checks
 			
-			return new SecStore(dir, lock, lf, root, encHelper);
+			return new SecStore(dir, lock, lf, encHelper, key, root);
 		}
 		catch(Throwable e)
 		{
@@ -340,13 +344,6 @@ public class SecStore
 	// TODO mutex
 	public Ref store(IStream inp, boolean isTree) throws Exception
 	{
-		// if isTree, use the main key
-		// if !isTree, generate a random data key
-		byte[] key = null; // TODO
-		
-		// TODO nonce = segment(*1) + offset + segment count
-		// *1: multi-segment blocks use the first segment name for nonce
-		
 		long len = inp.getLength();
 		if(len <= 0)
 		{
@@ -356,27 +353,37 @@ public class SecStore
 		long storedLength = convertLength(len, true);
 		
 		InputStream in = inp.getStream();
-				
-		SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, key);
-		
-		Ref ref = ss.getInitialRef();
-		String s = forNonce(ref);
-		byte[] nonce = encHelper.createNonce(s);
-
-		OutputStream out = encHelper.getEncryptionStream(nonce, storedLength, ss);
+			
+		// if isTree, use the main key
+		// if !isTree, generate a random data key TODO
+		byte[] k = (key == null ? null : key.getBytes());
 		try
 		{
-			CKit.copy(in, out, BUFFER_SIZE);
+			SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, k);
+			
+			Ref ref = ss.getInitialRef();
+			String s = forNonce(ref);
+			byte[] nonce = encHelper.createNonce(s);
+
+			OutputStream out = encHelper.getEncryptionStream(k, nonce, storedLength, ss);
+			try
+			{
+				CKit.copy(in, out, BUFFER_SIZE);
+			}
+			finally
+			{
+				CKit.close(in);
+				CKit.close(out);
+			}
+			
+			Ref rv = ss.getRef();
+			log.trace("STORE len=%d ref=%s", len,  rv);
+			return rv;
 		}
 		finally
 		{
-			CKit.close(in);
-			CKit.close(out);
+			Crypto.zero(k);
 		}
-		
-		Ref rv = ss.getRef();
-		log.trace("STORE len=%d ref=%s", len,  rv);
-		return rv;
 	}
 	
 	
@@ -472,8 +479,16 @@ public class SecStore
 				InputStream in = new SegmentInputStream(SecStore.this, ref);
 				String s = forNonce(ref);
 				byte[] nonce = encHelper.createNonce(s);
-				in = encHelper.getDecryptionStream(nonce, len, in);
-				return new BufferedInputStream(in, BUFFER_SIZE);
+				byte[] k = (key == null ? null : key.getBytes());
+				try
+				{
+					in = encHelper.getDecryptionStream(k, nonce, len, in);
+					return new BufferedInputStream(in, BUFFER_SIZE);
+				}
+				finally
+				{
+					Crypto.zero(k);
+				}
 			}
 
 			public long getLength()
