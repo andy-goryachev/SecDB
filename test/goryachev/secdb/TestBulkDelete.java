@@ -3,7 +3,6 @@ package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
-import goryachev.common.util.D;
 import goryachev.common.util.SKey;
 import goryachev.secdb.util.ByteArrayIStream;
 
@@ -35,7 +34,7 @@ public class TestBulkDelete
 	}
 	
 	
-	protected void add(DBEngine<InMemoryRef> db, int start, int end)
+	protected void add(DBEngine<InMemoryRef> db, int start, int end) throws Exception
 	{
 		db.execute(new DBTransaction<InMemoryRef>()
 		{
@@ -53,7 +52,7 @@ public class TestBulkDelete
 	}
 	
 	
-	protected void delete(DBEngine<InMemoryRef> db, int start, int end)
+	protected void delete(DBEngine<InMemoryRef> db, int start, int end) throws Exception
 	{
 		db.execute(new DBTransaction<InMemoryRef>()
 		{

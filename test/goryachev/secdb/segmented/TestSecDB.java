@@ -30,7 +30,7 @@ public class TestSecDB
 	
 	public static void main(String[] args)
 	{
-		Log.initForDebug();
+//		Log.initForDebug();
 		TF.run();
 	}
 	
@@ -41,7 +41,10 @@ public class TestSecDB
 		FileTools.deleteRecursively(DIR);
 
 		SecureRandom random = new SecureRandom();
+		
 		byte[] keyBytes = new byte[XSalsaTools.KEY_LENGTH_BYTES];
+		random.nextBytes(keyBytes);
+		
 		OpaqueBytes key = new OpaqueBytes(keyBytes);
 		OpaqueChars passphrase = new OpaqueChars("test".toCharArray());
 		

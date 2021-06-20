@@ -71,11 +71,6 @@ public class TestSegments
 				{
 					txBody(this, d);
 				}
-
-				protected void onError(Throwable e)
-				{
-					TF.fail(e);
-				}
 			});
 		}
 		

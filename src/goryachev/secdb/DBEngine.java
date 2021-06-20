@@ -109,7 +109,7 @@ public class DBEngine<R extends IRef>
 	}
 
 
-	public synchronized void execute(DBTransaction<R> tx)
+	public synchronized void execute(DBTransaction<R> tx) throws Exception
 	{
 		try
 		{

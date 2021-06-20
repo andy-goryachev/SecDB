@@ -93,12 +93,6 @@ public class TestEncryption
 					{
 						insert(new SKey(kv), IStream.of(kv));
 					}
-	
-					protected void onError(Throwable e)
-					{
-						e.printStackTrace();
-						errors.add(e);
-					}
 				});
 			}
 		}

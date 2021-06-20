@@ -15,11 +15,11 @@ public abstract class DBTransaction<R extends IRef>
 {
 	protected abstract void body() throws Exception;
 	
-	protected void onSuccess() { }
+	protected final void onSuccess() { }
 	
-	protected void onError(Throwable e) { log.error(e); }
+	protected final void onError(Throwable e) { log.error(e); }
 	
-	protected void onFinish() { }
+	protected final void onFinish() { }
 	
 	//
 	

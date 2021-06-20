@@ -64,7 +64,7 @@ public class SecDB
 	}
 	
 	
-	public void execute(Transaction tx)
+	public void execute(Transaction tx) throws Exception
 	{
 		engine.execute(tx);
 	}
@@ -72,7 +72,7 @@ public class SecDB
 	
 	/** executes a Transaction which inserts a single value */
 	// TODO communicate error?
-	public void store(SKey key, IStream in, Runnable onFinish)
+	public void store(SKey key, IStream in) throws Exception
 	{
 		execute(new Transaction()
 		{
@@ -80,20 +80,11 @@ public class SecDB
 			{
 				insert(key, in);
 			}
-			
-			
-			protected void onFinish() 
-			{
-				if(onFinish != null)
-				{
-					onFinish.run();
-				}
-			}
 		});
 	}
 	
 	
-	public void remove(SKey key)
+	public void remove(SKey key) throws Exception
 	{
 		execute(new Transaction()
 		{
@@ -101,16 +92,11 @@ public class SecDB
 			{
 				remove(key);
 			}
-			
-			
-			protected void onFinish() 
-			{
-			}
 		});
 	}
 	
 	
-	public void remove(List<SKey> keys)
+	public void remove(List<SKey> keys) throws Exception
 	{
 		execute(new Transaction()
 		{
@@ -120,11 +106,6 @@ public class SecDB
 				{
 					remove(k);
 				}
-			}
-			
-			
-			protected void onFinish() 
-			{
 			}
 		});
 	}

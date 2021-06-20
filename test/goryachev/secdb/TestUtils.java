@@ -20,7 +20,7 @@ public class TestUtils
 	}
 	
 	
-	public static DBEngine<InMemoryRef> createDB(int min, int max)
+	public static DBEngine<InMemoryRef> createDB(int min, int max) throws Exception
 	{
 		InMemoryStore store = new InMemoryStore(false);
 		DBEngine<InMemoryRef> db = new DBEngine(store);

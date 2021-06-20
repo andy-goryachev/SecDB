@@ -18,7 +18,6 @@ import goryachev.secdb.segmented.clear.ClearEncHelper;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -107,8 +106,6 @@ public class TestLarge
 			}
 		}
 		
-		AtomicReference<Throwable> error = new AtomicReference();
-		
 		try
 		{
 			db.execute(new Transaction()
@@ -118,15 +115,9 @@ public class TestLarge
 					insert(new SKey("0"), createStream(0));
 					insert(new SKey("1"), createStream(1));
 				}
-
-				protected void onError(Throwable e)
-				{
-					error.set(e);
-				}
 			});
 			
 			dump(db);
-			check(error);
 			
 			db.execute(new Transaction()
 			{
@@ -135,15 +126,9 @@ public class TestLarge
 					insert(new SKey("1"), createStream(1));
 					insert(new SKey("2"), createStream(2));
 				}
-				
-				protected void onError(Throwable e)
-				{
-					error.set(e);
-				}
 			});
 			
 			dump(db);
-			check(error);
 			
 			int ct = query(db, "0", "9");
 			TF.eq(ct, 3);
@@ -151,16 +136,6 @@ public class TestLarge
 		finally
 		{
 			db.close();
-		}
-	}
-	
-	
-	protected void check(AtomicReference<Throwable> error)
-	{
-		Throwable e = error.get();
-		if(e != null)
-		{
-			throw new Error("transaction failed", e);
 		}
 	}
 	
