@@ -14,12 +14,6 @@ public abstract class DBTransaction<R extends IRef>
 {
 	protected abstract void body() throws Exception;
 	
-	protected final void onSuccess() { }
-	
-	protected final void onError(Throwable e) { log.error(e); }
-	
-	protected final void onFinish() { }
-	
 	//
 	
 	private IStore<R> store;

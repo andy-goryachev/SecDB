@@ -110,49 +110,15 @@ public class DBEngine<R extends IRef>
 
 	public synchronized void execute(DBTransaction<R> tx) throws Exception
 	{
-		try
+		BPlusTreeNode<SKey,DataHolder<R>> root = loadRoot();
+		tx.setRoot(store, root, BRANCHING_FACTOR);
+
+		tx.body();
+
+		BPlusTreeNode<SKey,DataHolder<R>> newRoot = tx.getRoot();
+		if(newRoot != null)
 		{
-			BPlusTreeNode<SKey,DataHolder<R>> root = loadRoot(); 
-			tx.setRoot(store, root, BRANCHING_FACTOR);
-			
-			tx.body();
-			
-			BPlusTreeNode<SKey,DataHolder<R>> newRoot = tx.getRoot();
-			if(newRoot != null)
-			{
-				commit(newRoot);
-			}
-			
-			try
-			{
-				tx.onSuccess();
-			}
-			catch(Throwable e)
-			{
-				log.error(e);
-			}
-		}
-		catch(Throwable err)
-		{
-			try
-			{
-				tx.onError(err);
-			}
-			catch(Throwable e)
-			{
-				log.error(e);
-			}
-		}
-		finally
-		{
-			try
-			{
-				tx.onFinish();
-			}
-			catch(Throwable e)
-			{
-				log.error(e);
-			}
+			commit(newRoot);
 		}
 	}
 	
