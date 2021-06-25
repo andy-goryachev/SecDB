@@ -6,7 +6,6 @@ import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
 import goryachev.secdb.internal.DataHolder;
 import goryachev.secdb.util.ByteArrayIStream;
-import goryachev.secdb.util.Utils;
 
 
 /**
@@ -41,7 +40,7 @@ public class TestUtils
 					TF.eq(containsKey(k), true);
 					
 					DataHolder h = read(k);
-					byte[] rv = Utils.readBytes(h.getStoredValue().getIStream(), Integer.MAX_VALUE);
+					byte[] rv = h.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
 					TF.eq(v, rv);
 				}
 			}

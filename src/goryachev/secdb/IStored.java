@@ -11,4 +11,11 @@ public interface IStored
 	
 	
 	public IStream getIStream() throws Exception;
+	
+	
+	/** reads data into a new byte array, as long as the object size is below the limit; throws an exception otherwise */
+	default public byte[] readBytes(int limit) throws Exception
+	{
+		return getIStream().readBytes(limit);
+	}
 }

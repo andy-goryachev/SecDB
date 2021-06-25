@@ -1,7 +1,6 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.util;
 import goryachev.common.util.CKit;
-import goryachev.secdb.IStream;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.InputStream;
@@ -55,28 +54,5 @@ public class Utils
 		}
 		
 		return count;
-	}
-	
-	
-	/** read data into a new byte array, as long as the object size is below the limit */
-	public static byte[] readBytes(IStream inp, int limit) throws Exception
-	{
-		long len = inp.getLength();
-		if(len > limit)
-		{
-			throw new Exception("object is too large: size=" + len + ", limit=" + limit);
-		}
-		
-		byte[] b = new byte[(int)len];
-		InputStream is = inp.getStream();
-		try
-		{
-			CKit.readFully(is, b);
-			return b;
-		}
-		finally
-		{
-			CKit.close(is);
-		}
 	}
 }

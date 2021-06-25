@@ -2,6 +2,7 @@
 package goryachev.secdb;
 import goryachev.common.util.CKit;
 import goryachev.secdb.util.ByteArrayIStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -14,6 +15,29 @@ public interface IStream
 	
 	
 	public long getLength();
+	
+	
+	/** reads data into a new byte array, as long as the object size is below the limit; throws an exception otherwise */
+	default public byte[] readBytes(int limit) throws Exception
+	{
+		long len = getLength();
+		if(len > limit)
+		{
+			throw new IOException("object is too large: size=" + len + ", limit=" + limit);
+		}
+		
+		byte[] b = new byte[(int)len];
+		InputStream is = getStream();
+		try
+		{
+			CKit.readFully(is, b);
+			return b;
+		}
+		finally
+		{
+			CKit.close(is);
+		}
+	}
 	
 	
 	//

@@ -5,7 +5,6 @@ import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SKey;
-import goryachev.secdb.util.Utils;
 
 
 /**
@@ -42,7 +41,7 @@ public class TestPrefixQuery
 		
 		db.prefixQuery(px, (key, dataHolder) ->
 		{
-			byte[] b = Utils.readBytes(dataHolder.getStoredValue().getIStream(), Integer.MAX_VALUE);
+			byte[] b = dataHolder.getStoredValue().getIStream().readBytes(Integer.MAX_VALUE);
 			String s = new String(b, CKit.CHARSET_UTF8);
 			int v = Integer.parseInt(s);
 			result.add(v);

@@ -2,8 +2,8 @@
 package goryachev.secdb.internal;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
+import goryachev.secdb.IStream;
 import goryachev.secdb.bplustree.BPlusTreeNode;
-import goryachev.secdb.util.Utils;
 
 
 /**
@@ -31,7 +31,8 @@ public class NodeHolder<R extends IRef>
 	{
 		if(node == null)
 		{
-			byte[] b = Utils.readBytes(dataHolder.getStoredValue().getIStream(), Integer.MAX_VALUE);
+			IStream is = dataHolder.getStoredValue().getIStream();
+			byte[] b = is.readBytes(Integer.MAX_VALUE);
 			node = DBEngineIO.read(dataHolder.getIStore(), b);
 		}
 		return node;

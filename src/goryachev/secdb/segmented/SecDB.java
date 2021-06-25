@@ -11,7 +11,7 @@ import goryachev.secdb.internal.DataHolder;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 
 /**
@@ -95,7 +95,7 @@ public class SecDB
 	}
 	
 	
-	public void remove(List<SKey> keys) throws Exception
+	public void remove(Collection<SKey> keys) throws Exception
 	{
 		execute(new Transaction()
 		{

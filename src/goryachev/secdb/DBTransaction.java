@@ -3,9 +3,8 @@ package goryachev.secdb;
 import goryachev.common.log.Log;
 import goryachev.common.util.SKey;
 import goryachev.secdb.bplustree.BPlusTreeNode;
-import goryachev.secdb.internal.DataHolder;
-import goryachev.secdb.util.Utils;
 import goryachev.secdb.internal.DBEngineIO;
+import goryachev.secdb.internal.DataHolder;
 
 
 /**
@@ -55,20 +54,20 @@ public abstract class DBTransaction<R extends IRef>
 //	}
 	
 	
-	public void insert(SKey key, IStream in) throws Exception
+	public void insert(SKey key, IStream is) throws Exception
 	{
 		DataHolder<R> h;
 		
-		if(in.getLength() < DBEngineIO.MAX_INLINE_SIZE)
+		if(is.getLength() < DBEngineIO.MAX_INLINE_SIZE)
 		{
 			// store value inline
-			byte[] b = Utils.readBytes(in, DBEngineIO.MAX_INLINE_SIZE);
+			byte[] b = is.readBytes(DBEngineIO.MAX_INLINE_SIZE);
 			h = new DataHolder.ValueHolder(store, b);
 		}
 		else
 		{
 			// store value in a separate segment
-			R ref = store.store(in, false);
+			R ref = store.store(is, false);
 			h = new DataHolder.RefHolder<R>(store, ref);
 		}
 		
