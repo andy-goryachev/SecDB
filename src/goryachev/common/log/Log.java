@@ -63,8 +63,14 @@ public class Log
 	
 	public static void initForDebug()
 	{
+		initAll(LogLevel.DEBUG);
+	}
+	
+	
+	public static void initAll(LogLevel level)
+	{
 		SimpleLogConfig c = new SimpleLogConfig();
-		c.setDefaultLogLevel(LogLevel.DEBUG);
+		c.setDefaultLogLevel(level);
 		c.addAppender(new ConsoleAppender(System.out));
 		setConfig(c);
 	}

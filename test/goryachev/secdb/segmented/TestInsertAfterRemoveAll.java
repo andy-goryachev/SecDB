@@ -1,22 +1,16 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.log.Log;
+import goryachev.common.log.LogLevel;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CSet;
 import goryachev.common.util.D;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
-import goryachev.crypto.OpaqueBytes;
-import goryachev.crypto.OpaqueChars;
-import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
-import goryachev.secdb.segmented.clear.ClearEncHelper;
-import goryachev.secdb.segmented.eax.EAXEncHelper;
-import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
 import java.io.File;
-import java.security.SecureRandom;
 import java.util.Random;
 
 
@@ -30,7 +24,7 @@ public class TestInsertAfterRemoveAll
 	
 	public static void main(String[] args)
 	{
-//		Log.initForDebug();
+		Log.initAll(LogLevel.DEBUG);
 		TF.run();
 	}
 	
@@ -94,6 +88,9 @@ public class TestInsertAfterRemoveAll
 			
 			TF.eq(keys, result);
 			
+			// except one key
+			keys.remove("0");
+			
 			D.print("inserted", keys.size());
 			
 			db.execute(new Transaction()
@@ -105,6 +102,17 @@ public class TestInsertAfterRemoveAll
 						remove(new SKey(k));
 						result.remove(k);
 					}
+				}
+			});
+			
+			D.print("remaining", keys.size());
+			
+			db.execute(new Transaction()
+			{
+				protected void body() throws Exception
+				{
+					remove(new SKey("0"));
+					result.remove("0");
 				}
 			});
 			
@@ -122,6 +130,7 @@ public class TestInsertAfterRemoveAll
 			
 			// and finally, the bug
 			
+			// loadRoot loads internal node
 			db.execute(new Transaction()
 			{
 				protected void body() throws Exception

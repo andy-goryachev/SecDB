@@ -27,9 +27,6 @@ public abstract class DBTransaction<R extends IRef>
 	}
 	
 	
-	// TODO read bytes
-	
-	
 	public DataHolder read(SKey key) throws Exception
 	{
 		return root.getValue(key);
@@ -40,12 +37,6 @@ public abstract class DBTransaction<R extends IRef>
 	{
 		return root.containsKey(key);
 	}
-	
-	
-//	public void insert(SKey key, byte[] bytes) throws Exception
-//	{
-//		// TODO maybe
-//	}
 	
 	
 	public void insert(SKey key, IStream is) throws Exception

@@ -74,7 +74,7 @@ public class DBEngineIO
 		{
 			// TODO perhaps add constructors that take arrays of (keys,refs/values)
 			int sz = rd.readInt8();
-			if(sz > 0)
+			if(sz >= 0)
 			{
 				// leaf node
 				DBLeafNode n = new DBLeafNode(store);
