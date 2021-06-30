@@ -3,6 +3,7 @@ package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.secdb.bplustree.TestBPlusTree;
 import goryachev.secdb.segmented.TestEAX;
+import goryachev.secdb.segmented.TestEncHelper;
 import goryachev.secdb.segmented.TestEncryption;
 import goryachev.secdb.segmented.TestLarge;
 import goryachev.secdb.segmented.TOffsetIStream;
@@ -19,6 +20,7 @@ public class TestAll
 		(
 			TestBPlusTree.class,
 			TestEAX.class,
+			TestEncHelper.class,
 			TestEncryption.class,
 			TestInMemoryStore.class,
 //			TestLarge.class,

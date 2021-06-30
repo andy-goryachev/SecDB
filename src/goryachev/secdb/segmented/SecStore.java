@@ -43,7 +43,8 @@ public class SecStore
 	private final CFileLock lock;
 	private final LogFile logFile;
 	protected final EncHelper encHelper;
-	protected final OpaqueBytes key;
+	protected final OpaqueBytes key = new OpaqueBytes();
+	protected final OpaqueBytes maskingKey = new OpaqueBytes();
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
@@ -56,10 +57,42 @@ public class SecStore
 		this.root = root;
 		this.lock = lock;
 		this.encHelper = (h == null ? new ClearEncHelper() : h);
-		this.key = key;
+		this.key.setValue(key);
+		
+		byte[] k = this.key.getBytes();
+		try
+		{
+			byte[] mk = encHelper.deriveMaskingKey(k);
+			try
+			{
+				this.maskingKey.setValue(mk);
+			}
+			finally
+			{
+				Crypto.zero(mk);
+			}
+		}
+		finally
+		{
+			Crypto.zero(k);
+		}
 	}
 	
 	
+	private static byte[] deriveMaskingKey(OpaqueBytes k)
+	{
+		byte[] b = k.getBytes();
+		if(b == null)
+		{
+			return null;
+		}
+		
+		
+		
+		return null;
+	}
+
+
 	/** checks the directory for database files, returns true if all required files are present. */
 	public static boolean isPresent(File dir)
 	{
@@ -170,7 +203,8 @@ public class SecStore
 		byte[] encryptedKey;
 		try
 		{
-			encryptedKey = CKit.readBytes(getKeyFile(dir));
+			File f = getKeyFile(dir);
+			encryptedKey = CKit.readBytes(f);
 		}
 		catch(Throwable e)
 		{
@@ -515,5 +549,33 @@ public class SecStore
 	protected static File getSegmentDir(File dir, int x)
 	{
 		return new File(dir, Hex.toHexByte(x));
+	}
+	
+	
+	protected final byte[] encryptSecret(EncHelper encHelper, char[] cs)
+	{
+		byte[] key = maskingKey.getValue();
+		try
+		{
+			return encHelper.encryptSecret(key, cs);
+		}
+		finally
+		{
+			Crypto.zero(key);
+		}
+	}
+	
+	
+	protected final char[] decryptSecret(EncHelper encHelper, byte[] ciphertext)
+	{
+		byte[] key = maskingKey.getValue();
+		try
+		{
+			return encHelper.decryptSecret(key, ciphertext);
+		}
+		finally
+		{
+			Crypto.zero(key);
+		}
 	}
 }

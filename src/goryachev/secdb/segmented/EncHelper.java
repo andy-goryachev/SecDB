@@ -12,6 +12,10 @@ import java.io.OutputStream;
  */
 public abstract class EncHelper
 {
+	/** generates main key */
+	public abstract OpaqueBytes generateKey();
+	
+	
 	public abstract long convertLength(long len, boolean whenEncrypting);
 
 	
@@ -21,7 +25,7 @@ public abstract class EncHelper
 	 * @param cipherTextLength - the total number of ciphertext (incl. mac) bytes 
 	 * @param out
 	 */
-	protected abstract OutputStream getEncryptionStream(byte[] key, byte[] nonce, long cipherTextLength, OutputStream out);
+	public abstract OutputStream getEncryptionStream(byte[] key, byte[] nonce, long cipherTextLength, OutputStream out);
 
 	
 	/** 
@@ -30,28 +34,37 @@ public abstract class EncHelper
 	 * @param cipherTextLength - the total number of ciphertext (incl. mac) bytes 
 	 * @param in
 	 */
-	protected abstract InputStream getDecryptionStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in);
+	public abstract InputStream getDecryptionStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in);
 	
 	
 	/** create appropriate nonce.  input parameter is guaranteed to be unique for all objects in the store */
-	protected abstract byte[] createNonce(String unique);
+	public abstract byte[] createNonce(String unique);
 	
 	
 	/** 
 	 * encrypts the key with the provided passphrase.  
 	 * @return non-null encrypted data
 	 */ 
-	protected abstract byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception;
+	public abstract byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception;
 	
 	
 	/** decrypts the key with the provided passphrase.  may return null */
-	protected abstract OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception;
+	public abstract OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception;
+	
+	
+	public abstract byte[] encryptSecret(byte[] key, char[] secret);
+	
+	
+	public abstract char[] decryptSecret(byte[] key, byte[] ciphertext);
+
+
+	public abstract byte[] deriveMaskingKey(byte[] key);
 	
 	
 	//
 	
 	
-	protected EncHelper()
+	public EncHelper()
 	{
 	}
 }

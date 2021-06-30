@@ -28,6 +28,26 @@ abstract class OpaqueMemObject
 	}
 	
 	
+	protected void setFrom(OpaqueMemObject x)
+	{
+		if(x == null)
+		{
+			encrypted = null;
+		}
+		else
+		{
+			if(x.getClass() == getClass())
+			{
+				encrypted = x.encrypted;
+			}
+			else
+			{
+				encrypted = null;
+			}
+		}
+	}
+	
+	
 	public final boolean isNull()
 	{
 		return (encrypted == null);

@@ -12,7 +12,7 @@ import goryachev.crypto.OpaqueChars;
 import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
-import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
+import goryachev.secdb.segmented.xsalsa.XSalsaEncHelper;
 import java.io.File;
 import java.security.SecureRandom;
 
@@ -58,7 +58,7 @@ public class TestEncryption
 		OpaqueBytes key = new OpaqueBytes(clearKey);
 		OpaqueChars passphrase = new OpaqueChars(PASSPHRASE.toCharArray());
 		EncHelper helper = 
-			new XSalsa20Poly1305EncHelper(random);
+			new XSalsaEncHelper(random);
 //			new EAXEncHelper(key);
 				
 		SecDB db;

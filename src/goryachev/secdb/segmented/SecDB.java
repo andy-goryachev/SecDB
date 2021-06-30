@@ -183,4 +183,16 @@ public class SecDB
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public final byte[] encryptSecret(EncHelper encHelper, char[] cs)
+	{
+		return store.encryptSecret(encHelper, cs);
+	}
+	
+	
+	public final char[] decryptSecret(EncHelper encHelper, byte[] ciphertext)
+	{
+		return store.decryptSecret(encHelper, ciphertext);
+	}
 }

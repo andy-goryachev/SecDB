@@ -72,22 +72,9 @@ public final class OpaqueChars
 	
 	public final void set(char[] cs)
 	{
-		byte[] b = null;
+		byte[] b = Crypto.chars2bytes(cs);
 		try
 		{
-			if(cs != null)
-			{
-				int sz = cs.length;
-				b = new byte[sz + sz];
-				int ix = 0;
-				for(int i=0; i<sz; i++)
-				{
-					int c = cs[i];
-					b[ix++] = (byte)(c >>> 8);
-					b[ix++] = (byte)c;
-				}
-			}
-			
 			setBytes(b);
 		}
 		finally
@@ -99,26 +86,10 @@ public final class OpaqueChars
 	
 	public final char[] getChars()
 	{
-		byte[] b = null;
+		byte[] b = getBytes();
 		try
 		{
-			b = getBytes();
-			if(b == null)
-			{
-				return null;
-			}
-			int sz = b.length/2;
-			
-			char[] cs = new char[sz];
-			int ix = 0;
-			for(int i=0; i<sz; i++)
-			{
-				int c = (b[ix++] & 0xff) << 8;
-				c |= (b[ix++] & 0xff);
-				cs[i] = (char)c;
-			}
-			
-			return cs;
+			return Crypto.bytes2chars(b);
 		}
 		finally
 		{

@@ -5,12 +5,8 @@ import goryachev.crypto.Crypto;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
-import java.util.Optional;
-import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.macs.Poly1305;
-import org.bouncycastle.crypto.modes.EAXBlockCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
@@ -76,44 +72,6 @@ public class XSalsa20Poly1305DecryptStream
 		}
 	}
 	
-	
-	// TODO remove
-	private static Optional<byte[]> decrypt(byte[] key, byte[] nonce, byte[] ciphertext)
-	{
-		final XSalsa20Engine xsalsa20 = new XSalsa20Engine();
-		final Poly1305 poly1305 = new Poly1305();
-
-		// initialize XSalsa20
-		xsalsa20.init(false, new ParametersWithIV(new KeyParameter(key), nonce));
-
-		// generate mac subkey
-		final byte[] subkey = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		xsalsa20.processBytes(subkey, 0, subkey.length, subkey, 0);
-
-		// hash ciphertext
-		poly1305.init(new KeyParameter(subkey));
-		
-		final int len = Math.max(ciphertext.length - poly1305.getMacSize(), 0);
-		poly1305.update(ciphertext, poly1305.getMacSize(), len);
-		final byte[] calculatedMAC = new byte[poly1305.getMacSize()];
-		poly1305.doFinal(calculatedMAC, 0);
-
-		// extract mac
-		final byte[] presentedMAC = new byte[poly1305.getMacSize()];
-		System.arraycopy(ciphertext, 0, presentedMAC, 0, Math.min(ciphertext.length, poly1305.getMacSize()));
-
-		// compare macs
-		if(!MessageDigest.isEqual(calculatedMAC, presentedMAC))
-		{
-			return Optional.empty();
-		}
-
-		// decrypt ciphertext
-		final byte[] plaintext = new byte[len];
-		xsalsa20.processBytes(ciphertext, poly1305.getMacSize(), plaintext.length, plaintext, 0);
-		return Optional.of(plaintext);
-	}
-
 
 	public int read() throws IOException
 	{

@@ -22,7 +22,6 @@ public class XSalsa20Poly1305EncryptStream
 	private byte[] out;
 
 
-	// TODO hash the nonce?
 	public XSalsa20Poly1305EncryptStream(byte[] key, byte[] nonce, OutputStream os)
 	{
 		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)

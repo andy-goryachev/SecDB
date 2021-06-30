@@ -366,4 +366,45 @@ public class Crypto
 		System.arraycopy(key, 0, rv, 0, key.length);
 		return rv;
 	}
+	
+	
+	public static byte[] chars2bytes(char[] cs)
+	{
+		if(cs == null)
+		{
+			return null;
+		}
+		
+		int sz = cs.length;
+		byte[] b = new byte[sz + sz];
+		int ix = 0;
+		for(int i=0; i<sz; i++)
+		{
+			int c = cs[i];
+			b[ix++] = (byte)(c >>> 8);
+			b[ix++] = (byte)c;
+		}
+		return b;
+	}
+	
+	
+	public static char[] bytes2chars(byte[] b)
+	{
+		if(b == null)
+		{
+			return null;
+		}
+		
+		int sz = b.length/2;
+		char[] cs = new char[sz];
+		int ix = 0;
+		for(int i=0; i<sz; i++)
+		{
+			int c = (b[ix++] & 0xff) << 8;
+			c |= (b[ix++] & 0xff);
+			cs[i] = (char)c;
+		}
+		
+		return cs;
+	}
 }

@@ -1,6 +1,5 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
-import goryachev.common.log.Log;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CSet;
@@ -14,7 +13,7 @@ import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.segmented.eax.EAXEncHelper;
-import goryachev.secdb.segmented.xsalsa20poly1305.XSalsa20Poly1305EncHelper;
+import goryachev.secdb.segmented.xsalsa.XSalsaEncHelper;
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -52,7 +51,7 @@ public class TestSecDB
 		{
 			new ClearEncHelper(),
 			new EAXEncHelper(random),
-			new XSalsa20Poly1305EncHelper(random)
+			new XSalsaEncHelper(random)
 		};
 		
 		for(EncHelper h: hs)
@@ -72,7 +71,7 @@ public class TestSecDB
 		{
 			return "eax";
 		}
-		else if(h instanceof XSalsa20Poly1305EncHelper)
+		else if(h instanceof XSalsaEncHelper)
 		{
 			return "xsalsa";
 		}

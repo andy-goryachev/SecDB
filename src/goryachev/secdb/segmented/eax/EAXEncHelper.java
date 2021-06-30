@@ -37,7 +37,7 @@ public class EAXEncHelper
 	}
 	
 	
-	protected InputStream getDecryptionStream(byte[] key, byte[] nonce, long length, InputStream in)
+	public InputStream getDecryptionStream(byte[] key, byte[] nonce, long length, InputStream in)
 	{
 		return new DebugInputStream
 		(
@@ -54,7 +54,7 @@ public class EAXEncHelper
 	}
 
 
-	protected OutputStream getEncryptionStream(byte[] key, byte[] nonce, long length, OutputStream out)
+	public OutputStream getEncryptionStream(byte[] key, byte[] nonce, long length, OutputStream out)
 	{
 		return new DebugOutputStream
 		(
@@ -68,23 +68,51 @@ public class EAXEncHelper
 				new DebugOutputStream("wr:enc", 1024, out)
 			)
 		);
-}
+	}
 	
 	
-	protected byte[] createNonce(String unique)
+	public byte[] createNonce(String unique)
 	{
 		return unique.getBytes(CKit.CHARSET_UTF8);
 	}
 
 
-	protected byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	public byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.encrypt(key, passphrase, random);
 	}
 
 
-	protected OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception
+	public OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.decrypt(encryptedKey, passphrase);
+	}
+	
+	
+	public byte[] encryptSecret(byte[] key, char[] secret)
+	{
+		// TODO replace with EAX
+		return Crypto.chars2bytes(secret);
+	}
+
+
+	public char[] decryptSecret(byte[] key, byte[] ciphertext)
+	{
+		// TODO replace with EAX
+		return Crypto.bytes2chars(ciphertext);
+	}
+
+
+	public byte[] deriveMaskingKey(byte[] key)
+	{
+		// TODO derive
+		return null;
+	}
+	
+	
+	public OpaqueBytes generateKey()
+	{
+		// TODO
+		return null;
 	}
 }
