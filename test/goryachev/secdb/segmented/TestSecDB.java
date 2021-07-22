@@ -12,7 +12,6 @@ import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.clear.ClearEncHelper;
-import goryachev.secdb.segmented.eax.EAXEncHelper;
 import goryachev.secdb.segmented.xsalsa.XSalsaEncHelper;
 import java.io.File;
 import java.security.SecureRandom;
@@ -50,7 +49,6 @@ public class TestSecDB
 		EncHelper[] hs =
 		{
 			new ClearEncHelper(),
-			new EAXEncHelper(random),
 			new XSalsaEncHelper(random)
 		};
 		
@@ -66,10 +64,6 @@ public class TestSecDB
 		if(h instanceof ClearEncHelper)
 		{
 			return "clear";
-		}
-		else if(h instanceof EAXEncHelper)
-		{
-			return "eax";
 		}
 		else if(h instanceof XSalsaEncHelper)
 		{

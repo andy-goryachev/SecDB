@@ -69,19 +69,19 @@ public class XSalsaEncHelper
 			)
 		);
 	}
-	
-	
+
+
 	public byte[] createNonce(String unique)
 	{
 		byte[] input = unique.getBytes(CKit.CHARSET_UTF8);
-	    byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
-	    Blake2bDigest blake2b = new Blake2bDigest(XSalsaTools.NONCE_LENGTH_BYTES);
-	    blake2b.update(input, input.length, 0);
-	    blake2b.doFinal(nonce, 0);
-	    return nonce;
+		byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
+		Blake2bDigest blake2b = new Blake2bDigest(XSalsaTools.NONCE_LENGTH_BYTES);
+		blake2b.update(input, 0, input.length);
+		blake2b.doFinal(nonce, 0);
+		return nonce;
 	}
-	
-	
+
+
 	public byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
 	{
 		return KeyFile.encrypt(key, passphrase, random);
@@ -143,7 +143,7 @@ public class XSalsaEncHelper
 	    Blake2bDigest blake2b = new Blake2bDigest(len);
 	    if(key != null)
 	    {
-	    	blake2b.update(key, key.length, 0);
+	    	blake2b.update(key, 0, key.length);
 	    }
 	    blake2b.update((byte)'m');
 	    blake2b.update((byte)'a');
@@ -168,5 +168,22 @@ public class XSalsaEncHelper
 		{
 			Crypto.zero(key);
 		}
+	}
+
+
+	public byte[] deriveKey(String id, String appendix)
+	{
+		byte[] b1 = id.getBytes(CKit.CHARSET_UTF8);
+		byte[] b2 = appendix.getBytes(CKit.CHARSET_UTF8);
+		
+		int len = XSalsaTools.KEY_LENGTH_BYTES;
+	    Blake2bDigest blake2b = new Blake2bDigest(len);
+    	blake2b.update(b1, 0, b1.length);
+    	blake2b.update((byte)0);
+    	blake2b.update(b2, 0, b2.length);
+	    
+	    byte[] rv = new byte[len];
+	    blake2b.doFinal(rv, 0);
+		return rv;
 	}
 }

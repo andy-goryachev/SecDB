@@ -61,6 +61,13 @@ public abstract class EncHelper
 	public abstract byte[] deriveMaskingKey(byte[] key);
 	
 	
+	/** 
+	 * derive (generate) a key from the two specified strings.  
+	 * subsequent calls to this method using the same parameters must return the same key.
+	 */ 
+	public abstract byte[] deriveKey(String id, String appendix);
+	
+	
 	//
 	
 	

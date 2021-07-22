@@ -542,6 +542,23 @@ public class SB
 	{
 		sb.getChars(srcBegin, srcEnd, dst, dstBegin);
 	}
+	
+	
+	public char[] getChars()
+	{
+		int sz = sb.length();
+		char[] rv = new char[sz];
+		sb.getChars(0, sz, rv, 0);
+		return rv;
+	}
+	
+	
+	public char[] getCharsAndClear()
+	{
+		char[] rv = getChars();
+		sb.setLength(0);
+		return rv;
+	}
 
 
 	public String getAndClear()

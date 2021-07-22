@@ -362,6 +362,10 @@ public class Crypto
 	
 	public static byte[] copy(byte[] key)
 	{
+		if(key == null)
+		{
+			return null;
+		}
 		byte[] rv = new byte[key.length];
 		System.arraycopy(key, 0, rv, 0, key.length);
 		return rv;

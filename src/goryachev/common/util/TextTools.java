@@ -23,6 +23,19 @@ public class TextTools
 	// attempt to trim on the word boundary up to max characters
 	public static String trimNicely(String s, int max)
 	{
+		try
+		{
+			return trimNicely_FIX(s, max);
+		}
+		catch(Exception e)
+		{
+			return s;
+		}
+	}
+	// FIX throws an exception
+	// in the middle of this: "- https://icons.theforgesmith.com/"
+	private static String trimNicely_FIX(String s, int max)
+	{
 		if(s == null)
 		{
 			return "";

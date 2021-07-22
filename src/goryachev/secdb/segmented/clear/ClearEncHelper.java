@@ -77,4 +77,10 @@ public class ClearEncHelper
 	{
 		return null;
 	}
+
+
+	public byte[] deriveKey(String id, String appendix)
+	{
+		return null;
+	}
 }
