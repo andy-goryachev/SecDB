@@ -12,10 +12,6 @@ import java.io.OutputStream;
  */
 public abstract class EncHelper
 {
-	/** generates main key */
-	public abstract OpaqueBytes generateKey();
-	
-	
 	public abstract long convertLength(long len, boolean whenEncrypting);
 
 	
@@ -59,13 +55,6 @@ public abstract class EncHelper
 
 
 	public abstract byte[] deriveMaskingKey(byte[] key);
-	
-	
-	/** 
-	 * derive (generate) a key from the two specified strings.  
-	 * subsequent calls to this method using the same parameters must return the same key.
-	 */ 
-	public abstract byte[] deriveKey(String id, String appendix);
 	
 	
 	//

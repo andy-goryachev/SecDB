@@ -154,36 +154,4 @@ public class XSalsaEncHelper
 	    blake2b.doFinal(rv, 0);
 		return rv;
 	}
-	
-	
-	public OpaqueBytes generateKey()
-	{
-		byte[] key = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		try
-		{
-			random.nextBytes(key);
-			return new OpaqueBytes(key);
-		}
-		finally
-		{
-			Crypto.zero(key);
-		}
-	}
-
-
-	public byte[] deriveKey(String id, String appendix)
-	{
-		byte[] b1 = id.getBytes(CKit.CHARSET_UTF8);
-		byte[] b2 = appendix.getBytes(CKit.CHARSET_UTF8);
-		
-		int len = XSalsaTools.KEY_LENGTH_BYTES;
-	    Blake2bDigest blake2b = new Blake2bDigest(len);
-    	blake2b.update(b1, 0, b1.length);
-    	blake2b.update((byte)0);
-    	blake2b.update(b2, 0, b2.length);
-	    
-	    byte[] rv = new byte[len];
-	    blake2b.doFinal(rv, 0);
-		return rv;
-	}
 }

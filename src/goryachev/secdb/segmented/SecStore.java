@@ -6,7 +6,7 @@ import goryachev.common.log.Log;
 import goryachev.common.util.CFileLock;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
-import goryachev.common.util.GUID256;
+import goryachev.common.util.GUID;
 import goryachev.common.util.Hex;
 import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
@@ -35,10 +35,11 @@ import java.util.List;
 public class SecStore
 	implements Closeable,IStore<Ref>
 {
+	protected static final Log log = Log.get("SecStore");
 	protected static final String LOCK_FILE = "lock";
 	protected static final String KEY_FILE = "key";
 	protected static final int BUFFER_SIZE = 4096;
-	protected static final Log log = Log.get("SecStore");
+	private static final int SEGMENT_FILE_LENGTH = 48;
 	private final File dir;
 	private final CFileLock lock;
 	private final LogFile logFile;
@@ -416,18 +417,6 @@ public class SecStore
 	}
 	
 	
-	protected File toSegmentFile(String name)
-	{
-		if(name.length() < 64)
-		{
-			throw new Error("illegal segment file name: " + name);
-		}
-		
-		String subdir = name.substring(0, 2);
-		return new File(dir, subdir + "/" + name);
-	}
-	
-	
 	protected static File getKeyFile(File dir)
 	{
 		return new File(dir, KEY_FILE);
@@ -436,7 +425,8 @@ public class SecStore
 	
 	protected SegmentFile newSegmentFile()
 	{
-		String name = GUID256.generateHexString();
+		byte[] b = GUID.generate();
+		String name = Hex.toHexString(b, 0, SEGMENT_FILE_LENGTH/2);
 		File f = toSegmentFile(name);
 		SegmentFile sf =  new SegmentFile(f, name);
 
@@ -445,6 +435,18 @@ public class SecStore
 			segments.put(name, sf);
 		}
 		return sf;
+	}
+	
+	
+	protected File toSegmentFile(String name)
+	{
+		if(name.length() != SEGMENT_FILE_LENGTH)
+		{
+			throw new Error("illegal segment file name: " + name);
+		}
+		
+		String subdir = name.substring(0, 2);
+		return new File(dir, subdir + "/" + name);
 	}
 	
 	

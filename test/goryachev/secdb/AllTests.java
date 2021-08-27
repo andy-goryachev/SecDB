@@ -12,7 +12,7 @@ import goryachev.secdb.segmented.TestSegments;
 import goryachev.secdb.segmented.TestStreams;
 
 
-public class TestAll
+public class AllTests
 {
 	public static void main(String[] args)
 	{
