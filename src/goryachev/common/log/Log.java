@@ -250,6 +250,7 @@ public class Log
 	}
 	
 	
+	// FIX this method should be fast.  avoid traversing the hierarchy
 	protected boolean isEnabled(LogLevel lv)
 	{
 		if(level == null)

@@ -10,7 +10,7 @@ import java.io.OutputStream;
  * Encryption Helper provides an interface for crypto operations for the 
  * database data streams.
  */
-public abstract class EncHelper
+public interface EncHelper
 {
 	public abstract long convertLength(long len, boolean whenEncrypting);
 
@@ -55,12 +55,4 @@ public abstract class EncHelper
 
 
 	public abstract byte[] deriveMaskingKey(byte[] key);
-	
-	
-	//
-	
-	
-	public EncHelper()
-	{
-	}
 }

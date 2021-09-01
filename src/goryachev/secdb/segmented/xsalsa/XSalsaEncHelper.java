@@ -21,7 +21,7 @@ import org.bouncycastle.crypto.digests.Blake2bDigest;
  * EncryptionHelper based on XSalsa20 cipher and Poly1305 MAC.
  */
 public class XSalsaEncHelper
-	extends EncHelper
+	implements EncHelper
 {
 	private final SecureRandom random;
 	

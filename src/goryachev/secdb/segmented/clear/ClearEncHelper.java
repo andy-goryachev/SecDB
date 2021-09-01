@@ -12,7 +12,7 @@ import java.io.OutputStream;
  * Clear Text EncHelper.
  */
 public class ClearEncHelper
-	extends EncHelper
+	implements EncHelper
 {
 	public ClearEncHelper()
 	{
