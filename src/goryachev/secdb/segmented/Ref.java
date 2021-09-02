@@ -45,13 +45,11 @@ public abstract class Ref
 	protected static final String MULTIPLE = "M";
 	protected static final char SEP = '.';
 	protected final long length;
-	protected final byte[] dataKey;
 
 
-	protected Ref(long length, byte[] dataKey)
+	protected Ref(long length)
 	{
 		this.length = length;
-		this.dataKey = dataKey;
 	}
 	
 	
@@ -85,13 +83,12 @@ public abstract class Ref
 		}
 
 		long len = rd.readLong();
-		byte[] dataKey = rd.readByteArray(512);
 
 		if(sz == 1)
 		{
 			String segment = rd.readString();
 			long offset = rd.readLong();
-			return new SingleSegment(len, dataKey, segment, offset);
+			return new SingleSegment(len, segment, offset);
 		}
 		else
 		{
@@ -104,7 +101,7 @@ public abstract class Ref
 				offsets[i] = rd.readLong();
 			}
 			
-			return new MultiSegment(len, dataKey, segments, offsets);
+			return new MultiSegment(len, segments, offsets);
 		}
 	}
 	
@@ -112,12 +109,6 @@ public abstract class Ref
 	public long getLength()
 	{
 		return length;
-	}
-	
-	
-	public byte[] getDataKey()
-	{
-		return dataKey;
 	}
 
 	
@@ -131,9 +122,9 @@ public abstract class Ref
 		private final long offset;
 
 		
-		public SingleSegment(long length, byte[] dataKey, String segment, long offset)
+		public SingleSegment(long length, String segment, long offset)
 		{
-			super(length, dataKey);
+			super(length);
 			this.segment = segment;
 			this.offset = offset;
 		}
@@ -142,7 +133,7 @@ public abstract class Ref
 		protected static SingleSegment parseSingleSegment(String text) throws Exception
 		{
 			String[] ss = CKit.split(text, SEP);
-			if(ss.length != 4)
+			if(ss.length != 3)
 			{
 				throw new Exception("not a Ref: " + text);
 			}
@@ -153,22 +144,21 @@ public abstract class Ref
 				throw new Exception("negative length: " + text);
 			}
 			
-			byte[] key = Parsers.parseByteArray(ss[1]);
-			String seg = ss[2];
-			long off = Long.parseLong(ss[3]);
-			return new SingleSegment(len, key, seg, off);
+			String seg = ss[1];
+			long off = Long.parseLong(ss[2]);
+			if(off < 0)
+			{
+				throw new Exception("negative offset: " + text);
+			}
+			
+			return new SingleSegment(len, seg, off);
 		}
 
 		
 		public String toPersistentString()
 		{
-			SB sb = new SB();
+			SB sb = new SB(32);
 			sb.a(length);
-			sb.a(SEP);
-			if(dataKey != null)
-			{
-				sb.a(Hex.toHexString(dataKey));
-			}
 			sb.a(SEP);
 			sb.a(segment);
 			sb.a(SEP);
@@ -181,7 +171,6 @@ public abstract class Ref
 		{
 			wr.writeShort(1);
 			wr.writeLong(length);
-			wr.writeByteArray(dataKey);
 			wr.writeString(segment);
 			wr.writeLong(offset);
 		}
@@ -275,7 +264,7 @@ public abstract class Ref
 				off
 			};
 			
-			return new Ref.MultiSegment(length, dataKey, segments, offsets);
+			return new Ref.MultiSegment(length, segments, offsets);
 		}
 		
 		
@@ -296,9 +285,9 @@ public abstract class Ref
 		private final long[] offsets;
 		
 		
-		public MultiSegment(long length, byte[] dataKey, String[] segments, long[] offsets)
+		public MultiSegment(long length, String[] segments, long[] offsets)
 		{
-			super(length, dataKey);
+			super(length);
 			
 			this.segments = segments;
 			this.offsets = offsets;
@@ -327,8 +316,6 @@ public abstract class Ref
 				throw new Exception("negative length: " + text);
 			}
 			
-			byte[] key = Parsers.parseByteArray(ss[ix++]);
-			
 			String[] segments = new String[sz];
 			long[] offsets = new long[sz];
 			
@@ -338,7 +325,7 @@ public abstract class Ref
 				offsets[i] = Parsers.parseLong(ss[ix++]);
 			}
 
-			return new MultiSegment(len, key, segments, offsets);
+			return new MultiSegment(len, segments, offsets);
 		}
 
 
@@ -346,17 +333,12 @@ public abstract class Ref
 		{
 			int sz = getSegmentCount();
 
-			SB sb = new SB();
+			SB sb = new SB(64);
 			sb.a(MULTIPLE);
 			sb.a(SEP);
 			sb.a(sz);
 			sb.a(SEP);
 			sb.a(length);
-			sb.a(SEP);
-			if(dataKey != null)
-			{
-				sb.a(Hex.toHexString(dataKey));
-			}
 			sb.a(SEP);
 			
 			for(int i=0; i<sz; i++)
@@ -375,7 +357,6 @@ public abstract class Ref
 			int sz = getSegmentCount();
 			wr.writeShort(sz);
 			wr.writeLong(length);
-			wr.writeByteArray(dataKey);
 			
 			for(int i=0; i<sz; i++)
 			{
@@ -463,7 +444,7 @@ public abstract class Ref
 			System.arraycopy(offsets, 0, offs, 0, ct);
 			offs[ct] = off;
 			
-			return new Ref.MultiSegment(length, dataKey, segs, offs);
+			return new Ref.MultiSegment(length, segs, offs);
 		}
 
 		

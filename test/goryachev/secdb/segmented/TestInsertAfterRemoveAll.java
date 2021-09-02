@@ -10,6 +10,7 @@ import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
 import java.io.File;
 import java.util.Random;
 
@@ -33,21 +34,23 @@ public class TestInsertAfterRemoveAll
 	public void testRemoveAll() throws Exception
 	{
 		FileTools.deleteRecursively(DIR);
+		
+		ClearEncHelper h = new ClearEncHelper();
 
-		SecDB.create(DIR, null, null, null);
+		SecDB.create(DIR, h);
 
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, null, null);
+			db = SecDB.open(DIR, h);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null, null, null);
-				db = SecDB.open(DIR, null, null);
+				SecDB.create(DIR, h);
+				db = SecDB.open(DIR, h);
 				break;
 			default:
 				throw e;

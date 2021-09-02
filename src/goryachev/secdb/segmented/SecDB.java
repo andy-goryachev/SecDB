@@ -2,7 +2,6 @@
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
 import goryachev.crypto.OpaqueBytes;
-import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -38,23 +37,16 @@ public class SecDB
 	}
 	
 	
-	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	public static void create(File dir, IEncHelper encHelper) throws Exception
 	{
-		SecStore.create(dir, encHelper, key, passphrase);
+		SecStore.create(dir, encHelper);
 	}
 	
 	
-	public static SecDB open(File dir, EncHelper encHelper, OpaqueChars passphrase) throws Exception, SecException
+	public static SecDB open(File dir, IEncHelper encHelper) throws Exception, SecException
 	{
-		SecStore st = SecStore.open(dir, encHelper, passphrase);
+		SecStore st = SecStore.open(dir, encHelper);
 		return new SecDB(st);
-	}
-	
-	
-	/** checks the password against the key file (for example, to support unlocking or password check for critical operations) */
-	public void checkPassword(OpaqueChars passphrase) throws Exception, SecException
-	{
-		store.checkPassword(passphrase);
 	}
 	
 	
@@ -182,17 +174,5 @@ public class SecDB
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	
-	public final byte[] encryptSecret(EncHelper encHelper, char[] cs)
-	{
-		return store.encryptSecret(encHelper, cs);
-	}
-	
-	
-	public final char[] decryptSecret(EncHelper encHelper, byte[] ciphertext)
-	{
-		return store.decryptSecret(encHelper, ciphertext);
 	}
 }

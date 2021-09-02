@@ -13,19 +13,17 @@ public class SegmentOutputStream
 	private final SecStore store;
 	private final long length;
 	private final boolean isTree;
-	private final byte[] key;
 	private SegmentFile sf;
 	private long position;
 	private Ref ref;
 	private Ref finalRef;
 	
 	
-	public SegmentOutputStream(SecStore store, long length, boolean isTree, byte[] key)
+	public SegmentOutputStream(SecStore store, long length, boolean isTree)
 	{
 		this.store = store;
 		this.length = length;
 		this.isTree = isTree;
-		this.key = key;
 	}
 	
 	
@@ -46,7 +44,7 @@ public class SegmentOutputStream
 			
 			if(ref == null)
 			{
-				ref = new Ref.SingleSegment(length, key, name, position);
+				ref = new Ref.SingleSegment(length, name, position);
 			}
 			else
 			{
@@ -69,7 +67,7 @@ public class SegmentOutputStream
 		{
 			for(;;)
 			{
-				int written = sf().write(buf, off, len, key);
+				int written = sf().write(buf, off, len);
 				if(written < 0)
 				{
 					sf.closeWriter();

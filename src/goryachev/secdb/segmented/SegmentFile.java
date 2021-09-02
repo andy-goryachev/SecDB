@@ -49,7 +49,7 @@ public class SegmentFile
 
 	
 	/** writes as much as possible to the segment file.  returns the number of bytes written, or -1 if the segment is full */
-	public int write(byte[] buf, int off, int len, byte[] key) throws Exception
+	public int write(byte[] buf, int off, int len) throws Exception
 	{
 		long seglen = getLength();
 		long available = SEGMENT_SIZE - seglen;

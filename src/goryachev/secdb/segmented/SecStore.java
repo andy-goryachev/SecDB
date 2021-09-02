@@ -8,12 +8,9 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GUID;
 import goryachev.common.util.Hex;
-import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
-import goryachev.crypto.OpaqueChars;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
-import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.segmented.log.LogEventCode;
 import goryachev.secdb.segmented.log.LogFile;
 import goryachev.secdb.util.Utils;
@@ -37,46 +34,24 @@ public class SecStore
 {
 	protected static final Log log = Log.get("SecStore");
 	protected static final String LOCK_FILE = "lock";
-	protected static final String KEY_FILE = "key";
 	protected static final int BUFFER_SIZE = 4096;
 	private static final int SEGMENT_FILE_LENGTH = 48;
 	private final File dir;
 	private final CFileLock lock;
 	private final LogFile logFile;
-	protected final EncHelper encHelper;
-	protected final OpaqueBytes key = new OpaqueBytes();
-	protected final OpaqueBytes maskingKey = new OpaqueBytes();
+	protected final IEncHelper encHelper;
 	private final CMap<String,SegmentFile> segments = new CMap();
 	private SegmentFile currentSegment;
 	private Ref root;
 	
 	
-	public SecStore(File dir, CFileLock lock, LogFile logFile, EncHelper h, OpaqueBytes key, Ref root)
+	public SecStore(File dir, CFileLock lock, LogFile logFile, IEncHelper h, Ref root)
 	{
 		this.dir = dir;
 		this.logFile = logFile;
 		this.root = root;
 		this.lock = lock;
-		this.encHelper = (h == null ? new ClearEncHelper() : h);
-		this.key.setValue(key);
-		
-		byte[] k = this.key.getBytes();
-		try
-		{
-			byte[] mk = encHelper.deriveMaskingKey(k);
-			try
-			{
-				this.maskingKey.setValue(mk);
-			}
-			finally
-			{
-				Crypto.zero(mk);
-			}
-		}
-		finally
-		{
-			Crypto.zero(k);
-		}
+		this.encHelper = h;
 	}
 	
 	
@@ -107,23 +82,14 @@ public class SecStore
 			return false;
 		}
 		
-		File keyFile = getKeyFile(dir);
-		if(!keyFile.exists())
-		{
-			return false;
-		}
-		
 		return true;
 	}
 	
 	
 	/** might throw SecException which contains error code and additional information */
-	public static void create(File dir, EncHelper encHelper, OpaqueBytes key, OpaqueChars passphrase) throws SecException, Exception
+	public static void create(File dir, IEncHelper encHelper) throws SecException, Exception
 	{
-		if(encHelper == null)
-		{
-			encHelper = new ClearEncHelper();
-		}
+		// OpaqueBytes key, OpaqueChars passphrase
 		
 		if(!dir.exists())
 		{
@@ -142,45 +108,6 @@ public class SecStore
 			}
 		}
 
-		// encrypt the main key
-		byte[] encryptedKey = encHelper.encryptKey(key, passphrase);
-		
-		// store key file
-		File keyFile = getKeyFile(dir);
-		try
-		{
-			boolean created = keyFile.createNewFile();
-			if(!created)
-			{
-				throw new Exception("failed to create " + keyFile);
-			}
-			// this is madness
-			keyFile.setReadable(false, false);
-			keyFile.setReadable(true, true);
-			keyFile.setWritable(false, false);
-			keyFile.setWritable(true, true);
-			
-			// TODO verify permissions
-						
-			CKit.write(encryptedKey, keyFile);
-			
-			// TODO verify permissions
-			
-			byte[] chk = CKit.readBytes(keyFile);
-			if(CKit.notEquals(encryptedKey, chk))
-			{
-				throw new Exception("key file content mismatch");
-			}
-		}
-		catch(SecException e)
-		{
-			throw e;
-		}
-		catch(Throwable e)
-		{
-			throw new SecException(SecErrorCode.FAILED_KEY_FILE_WRITE, e);
-		}
-		
 		// TODO generate log key
 		OpaqueBytes logKey = null;
 		// TODO write key --> exception if unable
@@ -191,32 +118,8 @@ public class SecStore
 		lf.appendEvent(LogEventCode.CLOSED);
 	}
 	
-	
-	public void checkPassword(OpaqueChars passphrase) throws Exception, SecException
-	{
-		OpaqueBytes b = decryptKey(encHelper, dir, passphrase);
-		b.clear();
-	}
-	
-	
-	private static OpaqueBytes decryptKey(EncHelper encHelper, File dir, OpaqueChars passphrase) throws SecException,Exception
-	{
-		byte[] encryptedKey;
-		try
-		{
-			File f = getKeyFile(dir);
-			encryptedKey = CKit.readBytes(f);
-		}
-		catch(Throwable e)
-		{
-			throw new SecException(SecErrorCode.FAILED_KEY_FILE_READ, e);
-		}
-		
-		return encHelper.decryptKey(encryptedKey, passphrase);
-	}
-	
 
-	public static SecStore open(File dir, EncHelper encHelper, OpaqueChars passphrase) throws SecException,Exception
+	public static SecStore open(File dir, IEncHelper encHelper) throws SecException,Exception
 	{
 		// check directories
 		if(!dir.exists() || !dir.isDirectory())
@@ -227,16 +130,8 @@ public class SecStore
 		CFileLock lock = new CFileLock(new File(dir, LOCK_FILE));
 		lock.checkLock();
 		
-		if(encHelper == null)
-		{
-			encHelper = new ClearEncHelper();
-		}
-		
 		try
 		{
-			// decrypt key -> missing key file, passphrase error
-			OpaqueBytes key = decryptKey(encHelper, dir, passphrase);
-				
 			// TODO think of a way to derive log key from the main key
 			OpaqueBytes logKey = null;
 			
@@ -269,7 +164,7 @@ public class SecStore
 			// TODO
 			// load root node and do some checks
 			
-			return new SecStore(dir, lock, lf, encHelper, key, root);
+			return new SecStore(dir, lock, lf, encHelper, root);
 		}
 		catch(Throwable e)
 		{
@@ -281,12 +176,6 @@ public class SecStore
 
 	public void close() throws IOException
 	{
-		// zero the main key
-		if(key != null)
-		{
-			Crypto.zero(key);
-		}
-
 		Throwable err = null;
 		
 		try
@@ -385,41 +274,24 @@ public class SecStore
 		
 		InputStream in = inp.getStream();
 			
-		// if isTree, use the main key
-		// if !isTree, generate a random data key TODO
-		byte[] k = (key == null ? null : key.getBytes());
+		SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree);
+		Ref ref = ss.getInitialRef();
+		String nonce = forNonce(ref);
+		
+		OutputStream out = encHelper.getEncryptionStream(nonce, storedLength, ss);
 		try
 		{
-			SegmentOutputStream ss = new SegmentOutputStream(this, storedLength, isTree, k);
-			Ref ref = ss.getInitialRef();
-			String s = forNonce(ref);
-			byte[] nonce = encHelper.createNonce(s);
-
-			OutputStream out = encHelper.getEncryptionStream(k, nonce, storedLength, ss);
-			try
-			{
-				CKit.copy(in, out, BUFFER_SIZE);
-			}
-			finally
-			{
-				CKit.close(in);
-				CKit.close(out);
-			}
-			
-			Ref rv = ss.getRef();
-			log.trace("STORE len=%d ref=%s", len,  rv);
-			return rv;
+			CKit.copy(in, out, BUFFER_SIZE);
 		}
 		finally
 		{
-			Crypto.zero(k);
+			CKit.close(in);
+			CKit.close(out);
 		}
-	}
-	
-	
-	protected static File getKeyFile(File dir)
-	{
-		return new File(dir, KEY_FILE);
+		
+		Ref rv = ss.getRef();
+		log.trace("STORE len=%d ref=%s", len,  rv);
+		return rv;
 	}
 	
 	
@@ -507,19 +379,11 @@ public class SecStore
 			@SuppressWarnings("resource")
 			public InputStream getStream()
 			{
-				InputStream in = new SegmentInputStream(SecStore.this, ref);
-				String s = forNonce(ref);
-				byte[] nonce = encHelper.createNonce(s);
-				byte[] k = (key == null ? null : key.getBytes());
-				try
-				{
-					in = encHelper.getDecryptionStream(k, nonce, len, in);
-					return new BufferedInputStream(in, BUFFER_SIZE);
-				}
-				finally
-				{
-					Crypto.zero(k);
-				}
+				SegmentInputStream ss = new SegmentInputStream(SecStore.this, ref);
+				String nonce = forNonce(ref);
+
+				InputStream in = encHelper.getDecryptionStream(nonce, len, ss);
+				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
 
 			public long getLength()
@@ -551,33 +415,5 @@ public class SecStore
 	protected static File getSegmentDir(File dir, int x)
 	{
 		return new File(dir, Hex.toHexByte(x));
-	}
-	
-	
-	protected final byte[] encryptSecret(EncHelper encHelper, char[] cs)
-	{
-		byte[] key = maskingKey.getValue();
-		try
-		{
-			return encHelper.encryptSecret(key, cs);
-		}
-		finally
-		{
-			Crypto.zero(key);
-		}
-	}
-	
-	
-	protected final char[] decryptSecret(EncHelper encHelper, byte[] ciphertext)
-	{
-		byte[] key = maskingKey.getValue();
-		try
-		{
-			return encHelper.decryptSecret(key, ciphertext);
-		}
-		finally
-		{
-			Crypto.zero(key);
-		}
 	}
 }

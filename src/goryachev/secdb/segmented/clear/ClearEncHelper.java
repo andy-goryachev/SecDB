@@ -1,9 +1,6 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.clear;
-import goryachev.crypto.Crypto;
-import goryachev.crypto.OpaqueBytes;
-import goryachev.crypto.OpaqueChars;
-import goryachev.secdb.segmented.EncHelper;
+import goryachev.secdb.segmented.IEncHelper;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -12,7 +9,7 @@ import java.io.OutputStream;
  * Clear Text EncHelper.
  */
 public class ClearEncHelper
-	implements EncHelper
+	implements IEncHelper
 {
 	public ClearEncHelper()
 	{
@@ -25,50 +22,14 @@ public class ClearEncHelper
 	}
 	
 
-	public InputStream getDecryptionStream(byte[] key, byte[] nonce, long length, InputStream in)
+	public InputStream getDecryptionStream(String nonce, long length, InputStream in)
 	{
 		return in;
 	}
 
 
-	public OutputStream getEncryptionStream(byte[] key, byte[] nonce, long length, OutputStream out)
+	public OutputStream getEncryptionStream(String nonce, long length, OutputStream out)
 	{
 		return out;
-	}
-
-
-	public byte[] createNonce(String unique)
-	{
-		return null;
-	}
-
-
-	public byte[] encryptKey(OpaqueBytes key, OpaqueChars passphrase) throws Exception
-	{
-		return new byte[0];
-	}
-
-
-	public OpaqueBytes decryptKey(byte[] encryptedKey, OpaqueChars passphrase) throws Exception
-	{
-		return null;
-	}
-	
-	
-	public byte[] encryptSecret(byte[] key, char[] secret)
-	{
-		return Crypto.chars2bytes(secret);
-	}
-
-
-	public char[] decryptSecret(byte[] key, byte[] ciphertext)
-	{
-		return Crypto.bytes2chars(ciphertext);
-	}
-
-
-	public byte[] deriveMaskingKey(byte[] key)
-	{
-		return null;
 	}
 }

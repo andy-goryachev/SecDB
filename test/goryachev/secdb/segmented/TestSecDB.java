@@ -44,22 +44,21 @@ public class TestSecDB
 		random.nextBytes(keyBytes);
 		
 		OpaqueBytes key = new OpaqueBytes(keyBytes);
-		OpaqueChars passphrase = new OpaqueChars("test".toCharArray());
 		
-		EncHelper[] hs =
+		IEncHelper[] hs =
 		{
 			new ClearEncHelper(),
-			new XSalsaEncHelper(random)
+			new XSalsaEncHelper(random, key)
 		};
 		
-		for(EncHelper h: hs)
+		for(IEncHelper h: hs)
 		{
-			test(new File(DIR, getName(h)), h, key, passphrase);
+			test(new File(DIR, getName(h)), h);
 		}
 	}
 	
 	
-	private String getName(EncHelper h)
+	private String getName(IEncHelper h)
 	{
 		if(h instanceof ClearEncHelper)
 		{
@@ -76,22 +75,22 @@ public class TestSecDB
 	}
 	
 	
-	public void test(File dir, EncHelper helper, OpaqueBytes key, OpaqueChars passphrase) throws Exception
+	public void test(File dir, IEncHelper helper) throws Exception
 	{
-		SecDB.create(dir, helper, key, passphrase);
+		SecDB.create(dir, helper);
 
 		SecDB db;
 		try
 		{
-			db = SecDB.open(dir, helper, passphrase);
+			db = SecDB.open(dir, helper);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(dir, helper, key, passphrase);
-				db = SecDB.open(dir, helper, passphrase);
+				SecDB.create(dir, helper);
+				db = SecDB.open(dir, helper);
 				break;
 			default:
 				throw e;

@@ -72,14 +72,14 @@ public class TestLarge
 //	@Test
 	public void testCreate() throws Exception
 	{
-		SecDB.create(dir(), null, null, null);
+		SecDB.create(dir(), new ClearEncHelper());
 	}
 	
 	
 //	@Test
 	public void testQuery() throws Exception
 	{
-		SecDB db = SecDB.open(dir(), new ClearEncHelper(), null);
+		SecDB db = SecDB.open(dir(), new ClearEncHelper());
 		int ct = query(db, "0", "9");
 		TF.print(ct);
 	}
@@ -88,18 +88,19 @@ public class TestLarge
 	@Test
 	public void testTransactions() throws Exception
 	{
+		ClearEncHelper h = new ClearEncHelper();
 		SecDB db;
 		try
 		{
-			db = SecDB.open(dir(),  new ClearEncHelper(), null);
+			db = SecDB.open(dir(),  h);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(dir(), null, null, null);
-				db = SecDB.open(dir(),  new ClearEncHelper(), null);
+				SecDB.create(dir(), h);
+				db = SecDB.open(dir(), h);
 				break;
 			default:
 				throw e;

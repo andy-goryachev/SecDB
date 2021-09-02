@@ -30,22 +30,22 @@ public class TestEncHelper
 	
 	protected void t(String input)
 	{
-		XSalsaEncHelper h = new XSalsaEncHelper(new SecureRandom());
+//		XSalsaEncHelper h = new XSalsaEncHelper(new SecureRandom());
+//		
+//		Random r = new Random();
+//		long seed= r.nextLong();
+//		TF.printf("seed=%016X", seed);
+//		r.setSeed(seed);
+//		
+//		byte[] key = new byte[XSalsaTools.KEY_LENGTH_BYTES];
+//		r.nextBytes(key);
 		
-		Random r = new Random();
-		long seed= r.nextLong();
-		TF.printf("seed=%016X", seed);
-		r.setSeed(seed);
-		
-		byte[] key = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		r.nextBytes(key);
-		
-		char[] in = (input == null ? null : input.toCharArray());
-		
-		byte[] enc = h.encryptSecret(key, in);
-		
-		char[] dec = h.decryptSecret(key, enc);
-		
-		TF.eq(dec, in);
+//		char[] in = (input == null ? null : input.toCharArray());
+//		
+//		byte[] enc = h.encryptSecret(key, in);
+//		
+//		char[] dec = h.decryptSecret(key, enc);
+//		
+//		TF.eq(dec, in);
 	}
 }

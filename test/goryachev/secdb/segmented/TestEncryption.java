@@ -8,7 +8,6 @@ import goryachev.common.util.CList;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.crypto.OpaqueBytes;
-import goryachev.crypto.OpaqueChars;
 import goryachev.log.config.JsonLogConfig;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
@@ -56,23 +55,22 @@ public class TestEncryption
 		random.nextBytes(clearKey);
 		
 		OpaqueBytes key = new OpaqueBytes(clearKey);
-		OpaqueChars passphrase = new OpaqueChars(PASSPHRASE.toCharArray());
-		EncHelper helper = 
-			new XSalsaEncHelper(random);
+		IEncHelper helper = 
+			new XSalsaEncHelper(random, key);
 //			new EAXEncHelper(key);
 				
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, helper, passphrase);
+			db = SecDB.open(DIR, helper);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, helper, key, passphrase);
-				db = SecDB.open(DIR, helper, passphrase);
+				SecDB.create(DIR, helper);
+				db = SecDB.open(DIR, helper);
 				break;
 			default:
 				throw e;
@@ -113,7 +111,7 @@ public class TestEncryption
 		
 		// verify
 		
-		db = SecDB.open(DIR, helper, passphrase);
+		db = SecDB.open(DIR, helper);
 		
 		try
 		{

@@ -18,7 +18,7 @@ abstract class OpaqueMemObject
 	
 	protected OpaqueMemObject(OpaqueMemObject x)
 	{
-		encrypted = x.encrypted;
+		encrypted = clone(x.encrypted);
 	}
 	
 	
@@ -38,13 +38,19 @@ abstract class OpaqueMemObject
 		{
 			if(x.getClass() == getClass())
 			{
-				encrypted = x.encrypted;
+				encrypted = clone(x.encrypted);
 			}
 			else
 			{
 				encrypted = null;
 			}
 		}
+	}
+	
+	
+	private static byte[] clone(byte[] b)
+	{
+		return (b == null) ? null : b.clone();
 	}
 	
 	

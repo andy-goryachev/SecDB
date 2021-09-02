@@ -898,14 +898,10 @@ public class FileTools
 	}
 	
 
-	/** returns true if the specified file is either an empty directory or does not exist */
+	/** returns true if the specified directory contains no files */
 	public static boolean isEmptyDirectory(File f)
 	{
-		if(!f.exists())
-		{
-			return true;
-		}
-		else if(f.isDirectory())
+		if(f.isDirectory())
 		{
 			File[] fs = f.listFiles();
 			if(fs == null)

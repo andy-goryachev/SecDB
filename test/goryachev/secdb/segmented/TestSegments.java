@@ -9,6 +9,7 @@ import goryachev.common.util.CMap;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
 import goryachev.log.config.JsonLogConfig;
+import goryachev.secdb.segmented.clear.ClearEncHelper;
 import goryachev.secdb.util.ByteArrayIStream;
 import java.io.File;
 import java.util.Random;
@@ -44,19 +45,20 @@ public class TestSegments
 		int txCount = 10;
 		
 		CMap<String,String> d = new CMap();
+		ClearEncHelper h = new ClearEncHelper();
 		
 		SecDB db;
 		try
 		{
-			db = SecDB.open(DIR, null, null);
+			db = SecDB.open(DIR, h);
 		}
 		catch(SecException e)
 		{
 			switch(e.getErrorCode())
 			{
 			case DIR_NOT_FOUND:
-				SecDB.create(DIR, null, null, null);
-				db = SecDB.open(DIR, null, null);
+				SecDB.create(DIR, h);
+				db = SecDB.open(DIR, h);
 				break;
 			default:
 				throw e;
