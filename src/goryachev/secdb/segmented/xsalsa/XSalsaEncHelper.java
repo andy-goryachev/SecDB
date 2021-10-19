@@ -1,13 +1,12 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.xsalsa;
 import goryachev.common.util.CKit;
+import goryachev.crypto.Crypto;
 import goryachev.crypto.OpaqueBytes;
 import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305DecryptStream;
 import goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream;
 import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
 import goryachev.secdb.segmented.IEncHelper;
-import goryachev.secdb.segmented.REMOVE.DebugInputStream;
-import goryachev.secdb.segmented.REMOVE.DebugOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
@@ -41,19 +40,14 @@ public final class XSalsaEncHelper
 	{
 		byte[] iv = createNonce(nonce);
 		byte[] key = mainKey.getBytes();
-		
-		return new DebugInputStream
-		(
-			"rd:dec", 
-			1024, 
-			new XSalsa20Poly1305DecryptStream
-			(
-				key, 
-				iv,
-				length,
-				new DebugInputStream("read:enc", 1024, in)
-			)
-		);
+		try
+		{
+			return new XSalsa20Poly1305DecryptStream(key, iv, length, in);
+		}
+		finally
+		{
+			Crypto.zero(key);
+		}
 	}
 
 
@@ -61,18 +55,14 @@ public final class XSalsaEncHelper
 	{
 		byte[] iv = createNonce(nonce);
 		byte[] key = mainKey.getBytes();
-		
-		return new DebugOutputStream
-		(
-			"wr:dec", 
-			1024,
-			new XSalsa20Poly1305EncryptStream
-			(
-				key, 
-				iv, 
-				new DebugOutputStream("wr:enc", 1024, out)
-			)
-		);
+		try
+		{
+			return new XSalsa20Poly1305EncryptStream(key, iv, out);
+		}
+		finally
+		{
+			Crypto.zero(key);
+		}
 	}
 
 
