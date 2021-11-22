@@ -6,9 +6,8 @@ import goryachev.common.util.CSet;
 import goryachev.common.util.D;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
-import goryachev.crypto.OpaqueBytes;
-import goryachev.crypto.OpaqueChars;
-import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.OpaqueBytes;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.clear.ClearEncHelper;
@@ -38,17 +37,13 @@ public class TestSecDB
 	{
 		FileTools.deleteRecursively(DIR);
 
-		SecureRandom random = new SecureRandom();
-		
-		byte[] keyBytes = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		random.nextBytes(keyBytes);
-		
+		CByteArray keyBytes = TUtils.generateKey();
 		OpaqueBytes key = new OpaqueBytes(keyBytes);
 		
 		IEncHelper[] hs =
 		{
 			new ClearEncHelper(),
-			new XSalsaEncHelper(random, key)
+			new XSalsaEncHelper(new SecureRandom(), key)
 		};
 		
 		for(IEncHelper h: hs)

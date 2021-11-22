@@ -23,6 +23,7 @@ Many thanks to the developers of the following open source projects for the insp
 
 - [XSalsa20Poly1305](https://github.com/codahale/xsalsa20poly1305) by [Coda Hale](https://github.com/codahale).
 - [b-plus-tree](https://github.com/jiaguofang/b-plus-tree) by [Jiaguo Fang](https://github.com/jiaguofang).
+- [BouncyCastle](https://github.com/bcgit/bc-java)
 
 
 

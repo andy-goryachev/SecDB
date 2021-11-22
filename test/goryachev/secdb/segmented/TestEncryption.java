@@ -7,8 +7,9 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.FileTools;
 import goryachev.common.util.SKey;
-import goryachev.crypto.OpaqueBytes;
 import goryachev.log.config.JsonLogConfig;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.OpaqueBytes;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.xsalsa.XSalsaEncHelper;
@@ -49,15 +50,10 @@ public class TestEncryption
 			throw new Exception("directory has not been removed: " + DIR);
 		}
 		
-		SecureRandom random = new SecureRandom();
-		
-		byte[] clearKey = new byte[256/8];
-		random.nextBytes(clearKey);
+		CByteArray clearKey = TUtils.generateKey();
 		
 		OpaqueBytes key = new OpaqueBytes(clearKey);
-		IEncHelper helper = 
-			new XSalsaEncHelper(random, key);
-//			new EAXEncHelper(key);
+		IEncHelper helper = new XSalsaEncHelper(new SecureRandom(), key);
 				
 		SecDB db;
 		try

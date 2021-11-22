@@ -2,10 +2,6 @@
 package goryachev.secdb.segmented;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
-import goryachev.crypto.xsalsa20poly1305.XSalsaTools;
-import goryachev.secdb.segmented.xsalsa.XSalsaEncHelper;
-import java.security.SecureRandom;
-import java.util.Random;
 
 
 /**

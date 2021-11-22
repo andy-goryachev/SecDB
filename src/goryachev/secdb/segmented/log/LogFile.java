@@ -5,7 +5,7 @@ import goryachev.common.util.CComparator;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
-import goryachev.crypto.OpaqueBytes;
+import goryachev.memsafecrypto.OpaqueBytes;
 import goryachev.secdb.segmented.Ref;
 import java.io.Closeable;
 import java.io.File;

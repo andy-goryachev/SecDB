@@ -8,7 +8,7 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GUID;
 import goryachev.common.util.Hex;
-import goryachev.crypto.OpaqueBytes;
+import goryachev.memsafecrypto.OpaqueBytes;
 import goryachev.secdb.IStore;
 import goryachev.secdb.IStream;
 import goryachev.secdb.segmented.log.LogEventCode;
@@ -54,20 +54,6 @@ public class SecStore
 		this.encHelper = h;
 	}
 	
-	
-	private static byte[] deriveMaskingKey(OpaqueBytes k)
-	{
-		byte[] b = k.getBytes();
-		if(b == null)
-		{
-			return null;
-		}
-		
-		
-		
-		return null;
-	}
-
 
 	/** checks the directory for database files, returns true if all required files are present. */
 	public static boolean isPresent(File dir)

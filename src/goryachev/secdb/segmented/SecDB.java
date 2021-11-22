@@ -1,7 +1,6 @@
 // Copyright © 2019-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
-import goryachev.crypto.OpaqueBytes;
 import goryachev.secdb.DBEngine;
 import goryachev.secdb.IStored;
 import goryachev.secdb.IStream;
