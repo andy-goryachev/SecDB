@@ -11,6 +11,7 @@ import goryachev.secdb.segmented.TestSegments;
 import goryachev.secdb.segmented.TestStreams;
 
 
+/** all secDB tests */
 public class AllTests
 {
 	public static void main(String[] args)

@@ -75,6 +75,10 @@ public final class CByteArray
 	
 	public static CByteArray readOnly(byte[] src)
 	{
+		if(src == null)
+		{
+			return null;
+		}
 		return readOnly(src, 0, src.length);
 	}
 	
@@ -83,6 +87,19 @@ public final class CByteArray
 	{
 		CByteArray b = new CByteArray(len);
 		b.set(0, src, offset, len);
+		b.setReadOnly();
+		return b;
+	}
+	
+	
+	public static CByteArray readOnly(CByteArray src)
+	{
+		if(src == null)
+		{
+			return null;
+		}
+		
+		CByteArray b = new CByteArray(src);
 		b.setReadOnly();
 		return b;
 	}
@@ -240,5 +257,26 @@ public final class CByteArray
 			}
 		}
 		return true;
+	}
+	
+	
+	public void xor(int index, byte value)
+	{
+		checkWriteable();
+		
+		byte v = buffer.get(index);
+		v ^= value;
+		buffer.put(index, v);
+	}
+	
+	
+	public byte incrementAndGet(int index)
+	{
+		checkWriteable();
+		
+		byte v = buffer.get(index);
+		v++;
+		buffer.put(index, v);
+		return v;
 	}
 }
