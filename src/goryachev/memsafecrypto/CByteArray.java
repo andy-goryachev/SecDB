@@ -15,9 +15,15 @@ public final class CByteArray
 	}
 	
 	
-	public CByteArray(CByteArray b)
+	public CByteArray(CByteArray src)
 	{
-		super(b);
+		super(src);
+	}
+	
+	
+	public CByteArray(CByteArray src, int offset, int length)
+	{
+		super(src, offset, length);
 	}
 	
 	
@@ -105,6 +111,17 @@ public final class CByteArray
 	}
 	
 	
+	public static CByteArray readOnly(CByteArray src, int offset, int len)
+	{
+		if(src == null)
+		{
+			return null;
+		}
+		
+		return src.toReadOnly(offset, len);
+	}
+	
+	
 	public void write(int b)
 	{
 		checkWriteable();
@@ -157,7 +174,7 @@ public final class CByteArray
 	}
 	
 	
-	public void copy(int destPos, byte[] src, int srcPos, int length)
+	public void copyFrom(byte[] src, int srcPos, int length, int destPos)
 	{
 		checkWriteable();
 		
@@ -169,7 +186,7 @@ public final class CByteArray
 	}
 	
 
-	public void copy(int destPos, CByteArray src, int srcPos, int length)
+	public void copyFrom(CByteArray src, int srcPos, int length, int destPos)
 	{
 		checkWriteable();
 		
@@ -193,47 +210,6 @@ public final class CByteArray
 		return rv;
 	}
 	
-	
-	public static CByteArray charsToBytes(CCharArray a)
-	{
-		if(a == null)
-		{
-			return null;
-		}
-		
-		int sz = a.length();
-		CByteArray b = new CByteArray(sz * CCharArray.BYTES_PER_CHAR);
-		for(int i=0; i<sz; i++)
-		{
-			char c = a.get(i);
-			b.buffer.putChar(i * CCharArray.BYTES_PER_CHAR, c);
-		}
-		return b;
-	}
-	
-	
-	public static CCharArray bytesToChars(CByteArray b)
-	{
-		if(b == null)
-		{
-			return null;
-		}
-		
-		int sz = b.length() / 2;
-		if((sz * 2) != b.length())
-		{
-			throw new IllegalArgumentException("length must be even: " + b.length());
-		}
-		
-		CCharArray a = new CCharArray(sz);
-		for(int i=0; i<sz; i++)
-		{
-			char c = b.buffer.getChar(i * 2);
-			a.set(i, c);
-		}
-		return a;
-	}
-
 
 	public boolean sameContentAs(CByteArray b)
 	{
@@ -278,5 +254,19 @@ public final class CByteArray
 		v++;
 		buffer.put(index, v);
 		return v;
+	}
+	
+	
+	public void setInt(int index, int value)
+	{
+		checkWriteable();
+		
+		buffer.putInt(index, value);
+	}
+	
+	
+	public int getInt(int index)
+	{
+		return buffer.getInt(index);
 	}
 }

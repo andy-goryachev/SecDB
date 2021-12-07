@@ -19,10 +19,9 @@ import java.security.MessageDigest;
 public class XSalsa20Poly1305DecryptStream
 	extends InputStream
 {
-	public static final int BUFFER_SIZE = 4096;
+	private static final int BUFFER_SIZE = 4096;
 	private InputStream in;
 	private long toRead;
-	// FIX CByteArray
 	private byte[] buf;
 	private CByteArray out;
 	private int index;
@@ -43,15 +42,22 @@ public class XSalsa20Poly1305DecryptStream
 		this.out = new CByteArray(BUFFER_SIZE);
 		this.buf = new byte[BUFFER_SIZE];
 		
-		KeyParameter keyParameter = new KeyParameter(key);
+		KeyParameter kp = new KeyParameter(key);
 		try
 		{
-			ParametersWithIV iv = new ParametersWithIV(keyParameter, nonce);
-			xsalsa20.init(false, iv);
+			ParametersWithIV param = new ParametersWithIV(kp, nonce);
+			try
+			{
+				xsalsa20.init(false, param);
+			}
+			finally
+			{
+				param.zero();
+			}
 		}
 		finally
 		{
-			keyParameter.zero();
+			kp.zero();
 		}
 		
 		CByteArray subkey = new CByteArray(XSalsaTools.KEY_LENGTH_BYTES);
@@ -59,14 +65,14 @@ public class XSalsa20Poly1305DecryptStream
 		{
 			xsalsa20.processBytes(subkey, 0, subkey.length(), subkey, 0);
 			
-			KeyParameter kp = new KeyParameter(subkey);
+			KeyParameter skp = new KeyParameter(subkey);
 			try
 			{
-				poly1305.init(kp);
+				poly1305.init(skp);
 			}
 			finally
 			{
-				kp.zero();
+				skp.zero();
 			}
 		}
 		finally

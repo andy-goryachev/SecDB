@@ -2,6 +2,7 @@
 package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 /**
@@ -10,6 +11,7 @@ import goryachev.memsafecrypto.Crypto;
  * that stays constant during JVM session per hashCode() contract.
  */
 public abstract class OpaqueMemObject
+	implements ICryptoZeroable
 {
 	private CByteArray encrypted;
 	
@@ -28,6 +30,12 @@ public abstract class OpaqueMemObject
 	protected OpaqueMemObject(CByteArray b)
 	{
 		setBytes(b);
+	}
+	
+	
+	protected OpaqueMemObject(CByteArray b, int offset, int len)
+	{
+		setBytes(b, offset, len);
 	}
 	
 	
@@ -90,18 +98,26 @@ public abstract class OpaqueMemObject
 	}
 	
 	
-//	protected final void setBytes(CByteArray value, int off, int len)
-//	{
-//		try
-//		{
-//			encrypted = MemCrypt.encrypt(value);
-//		}
-//		catch(Exception e)
-//		{
-//			// should not happen
-//			throw new Error(e);
-//		}
-//	}
+	protected final void setBytes(CByteArray value, int off, int len)
+	{
+		CByteArray b = CByteArray.readOnly(value, off, len);
+		try
+		{
+			try
+			{
+				encrypted = MemCrypt.encrypt(b);
+			}
+			catch(Exception e)
+			{
+				// should not happen
+				throw new Error(e);
+			}
+		}
+		finally
+		{
+			b.zero();
+		}
+	}
 	
 	
 	public final String toString()
@@ -145,5 +161,11 @@ public abstract class OpaqueMemObject
 	{
 		Crypto.zero(encrypted);
 		encrypted = null;
+	}
+	
+	
+	public final void zero()
+	{
+		clear();
 	}
 }

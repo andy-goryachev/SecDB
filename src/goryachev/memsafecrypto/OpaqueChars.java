@@ -81,7 +81,7 @@ public final class OpaqueChars
 	
 	public final void set(CCharArray cs)
 	{
-		CByteArray b = CByteArray.charsToBytes(cs);
+		CByteArray b = CUtils.charsToBytes(cs);
 		try
 		{
 			setBytes(b);
@@ -93,16 +93,16 @@ public final class OpaqueChars
 	}
 	
 	
-	protected final CCharArray getChars()
+	public final CCharArray getChars()
 	{
 		CByteArray b = getCByteArray();
 		try
 		{
-			return CByteArray.bytesToChars(b);
+			return CUtils.bytesToChars(b);
 		}
 		finally
 		{
-			b.zero();
+			Crypto.zero(b);
 		}
 	}
 	
