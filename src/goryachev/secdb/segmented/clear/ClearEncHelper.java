@@ -1,4 +1,4 @@
-// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.clear;
 import goryachev.secdb.segmented.IEncHelper;
 import java.io.InputStream;

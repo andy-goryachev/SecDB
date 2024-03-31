@@ -1,10 +1,10 @@
-// Copyright © 2021-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.xsalsa;
 import goryachev.common.util.CKit;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
 import goryachev.memsafecrypto.OpaqueBytes;
-import goryachev.memsafecrypto.bc.Blake2bDigest;
+import goryachev.memsafecrypto.bc.crypto.digests.Blake2bDigest;
 import goryachev.memsafecrypto.salsa.XSalsa20Poly1305DecryptStream;
 import goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream;
 import goryachev.memsafecrypto.salsa.XSalsaTools;

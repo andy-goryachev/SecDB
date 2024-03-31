@@ -1,9 +1,9 @@
-// Copyright © 2021-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 import goryachev.common.util.CDigest;
 import goryachev.common.util.api.IMessageDigest;
 import goryachev.common.util.api.IMessageDigestBlake2b;
-import goryachev.memsafecrypto.bc.Blake2bDigest;
+import goryachev.memsafecrypto.bc.crypto.digests.Blake2bDigest;
 
 
 /**

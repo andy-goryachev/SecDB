@@ -25,7 +25,7 @@ public class TestInsertAfterRemoveAll
 	
 	public static void main(String[] args)
 	{
-		Log.initAll(LogLevel.DEBUG);
+		Log.initConsole(LogLevel.DEBUG);
 		TF.run();
 	}
 	

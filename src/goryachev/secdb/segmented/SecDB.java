@@ -1,4 +1,4 @@
-// Copyright © 2019-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
 import goryachev.secdb.DBEngine;

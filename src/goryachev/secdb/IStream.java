@@ -1,4 +1,4 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.util.CKit;
 import goryachev.secdb.util.ByteArrayIStream;
