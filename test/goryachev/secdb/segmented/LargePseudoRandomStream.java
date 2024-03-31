@@ -1,4 +1,4 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.secdb.IStream;
 import java.io.IOException;

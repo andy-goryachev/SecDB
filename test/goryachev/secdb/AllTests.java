@@ -1,4 +1,4 @@
-// Copyright © 2012-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.secdb.bplustree.TestBPlusTree;
