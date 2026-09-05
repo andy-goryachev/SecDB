@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.util.CKit;
@@ -26,6 +26,7 @@ public class TestUtils
 
 		db.execute(new DBTransaction<InMemoryRef>()
 		{
+			@Override
 			protected void body() throws Exception
 			{
 				for(int i=min; i<=max; i++)

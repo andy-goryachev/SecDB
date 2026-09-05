@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
@@ -83,6 +83,7 @@ public class TestEncryption
 				
 				db.execute(new Transaction()
 				{
+					@Override
 					protected void body() throws Exception
 					{
 						insert(new SKey(kv), IStream.of(kv));

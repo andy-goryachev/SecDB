@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
@@ -38,6 +38,7 @@ public class TestBulkDelete
 	{
 		db.execute(new DBTransaction<InMemoryRef>()
 		{
+			@Override
 			protected void body() throws Exception
 			{
 				for(int i=start; i<end; i++)
@@ -56,6 +57,7 @@ public class TestBulkDelete
 	{
 		db.execute(new DBTransaction<InMemoryRef>()
 		{
+			@Override
 			protected void body() throws Exception
 			{
 				for(int i=start; i<end; i++)

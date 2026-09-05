@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.secdb.IStream;
 import java.io.IOException;
@@ -20,12 +20,14 @@ public class TOffsetIStream
 	}
 	
 	
+	@Override
 	public long getLength()
 	{
 		return length;
 	}
 
 
+	@Override
 	public InputStream getStream()
 	{
 		return new InputStream()
@@ -50,6 +52,7 @@ public class TOffsetIStream
 				return v;
 			}
 		
+			@Override
 			public int read() throws IOException
 			{
 				if(pos < length)
@@ -61,6 +64,7 @@ public class TOffsetIStream
 			}
 			
 			
+			@Override
 			public int read(byte[] buf, int off, int len) throws IOException
 			{
 				long remain = length - pos;

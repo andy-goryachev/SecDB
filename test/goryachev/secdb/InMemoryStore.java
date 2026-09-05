@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
@@ -43,6 +43,7 @@ public class InMemoryStore
 		CList<InMemoryRef> keys = objects.keys();
 		Collections.sort(keys, new Comparator<InMemoryRef>()
 		{
+			@Override
 			public int compare(InMemoryRef a, InMemoryRef b)
 			{
 				return CKit.compare(a.getSeq(), b.getSeq());
@@ -62,6 +63,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public InMemoryRef getRootRef()
 	{
 		log("getRootRef", rootRef);
@@ -69,6 +71,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public void setRootRef(InMemoryRef ref) throws Exception
 	{
 		log("setRootRef", ref);
@@ -76,6 +79,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public synchronized InMemoryRef store(IStream is, boolean isTree) throws Exception
 	{
 		long seq = sequence++;
@@ -91,6 +95,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public IStream load(InMemoryRef ref) throws Exception
 	{
 		byte[] b = objects.get(ref);
@@ -116,6 +121,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public void writeRef(InMemoryRef ref, DWriter wr) throws Exception
 	{
 		wr.writeLong(ref.getSeq());
@@ -123,6 +129,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public InMemoryRef readRef(DReader rd) throws Exception
 	{
 		long seq = rd.readLong();
@@ -131,6 +138,7 @@ public class InMemoryStore
 	}
 
 
+	@Override
 	public long convertLength(long length, boolean whenEncrypting)
 	{
 		return length;

@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.util.FH;
 import goryachev.common.util.Hex;
@@ -28,12 +28,14 @@ public class InMemoryRef
 	}
 
 	
+	@Override
 	public long getLength()
 	{
 		return length;
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(Ref.class);
@@ -42,6 +44,7 @@ public class InMemoryRef
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -62,6 +65,7 @@ public class InMemoryRef
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return "InMemoryRef:" + Hex.toHexString(seq) + ":" + Hex.toHexString(length);

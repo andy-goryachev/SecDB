@@ -9,7 +9,7 @@ Encrypted Key-Value Store.
 - Encrypted key-value store
 - Bi-directional range queries
 - Bi-directional prefix queries
-- Append-only files for ease of synchronization
+- Append-only file segments
 
 
 ## How to Use

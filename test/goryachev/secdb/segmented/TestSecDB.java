@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
@@ -106,6 +106,7 @@ public class TestSecDB
 			{
 				db.execute(new Transaction()
 				{
+					@Override
 					protected void body() throws Exception
 					{
 						for(int j=0; j<100; j++)
@@ -132,6 +133,7 @@ public class TestSecDB
 			{
 				db.execute(new Transaction()
 				{
+					@Override
 					protected void body() throws Exception
 					{
 						for(String k: keys)

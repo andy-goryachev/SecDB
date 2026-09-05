@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.log.Log;
 import goryachev.common.log.LogLevel;
@@ -71,6 +71,7 @@ public class TestInsertAfterRemoveAll
 			{
 				db.execute(new Transaction()
 				{
+					@Override
 					protected void body() throws Exception
 					{
 						for(int j=0; j<100; j++)
@@ -98,6 +99,7 @@ public class TestInsertAfterRemoveAll
 			
 			db.execute(new Transaction()
 			{
+				@Override
 				protected void body() throws Exception
 				{
 					for(String k: keys)
@@ -112,6 +114,7 @@ public class TestInsertAfterRemoveAll
 			
 			db.execute(new Transaction()
 			{
+				@Override
 				protected void body() throws Exception
 				{
 					remove(new SKey("0"));
@@ -136,6 +139,7 @@ public class TestInsertAfterRemoveAll
 			// loadRoot loads internal node
 			db.execute(new Transaction()
 			{
+				@Override
 				protected void body() throws Exception
 				{
 					for(String k: keys)

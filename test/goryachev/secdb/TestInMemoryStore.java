@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
@@ -39,6 +39,7 @@ public class TestInMemoryStore
 
 			db.execute(new DBTransaction<InMemoryRef>()
 			{
+				@Override
 				protected void body() throws Exception
 				{
 					byte[] v = ("v." + k).getBytes(CKit.CHARSET_UTF8);

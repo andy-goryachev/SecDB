@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.test.BeforeClass;
 import goryachev.common.test.TF;
@@ -111,6 +111,7 @@ public class TestLarge
 		{
 			db.execute(new Transaction()
 			{
+				@Override
 				protected void body() throws Exception
 				{
 					insert(new SKey("0"), createStream(0));
@@ -122,6 +123,7 @@ public class TestLarge
 			
 			db.execute(new Transaction()
 			{
+				@Override
 				protected void body() throws Exception
 				{
 					insert(new SKey("1"), createStream(1));
@@ -147,6 +149,7 @@ public class TestLarge
 		
 		db.rangeQuery(new SKey(start), true, new  SKey(end), false, new QueryClient<SKey,IStored>()
 		{
+			@Override
 			public boolean acceptQueryResult(SKey key, IStored st) throws Exception
 			{
 				byte[] b = readBytes(st.getIStream(), 16);
@@ -224,6 +227,7 @@ public class TestLarge
 		
 		db.rangeQuery(new SKey(start), true, new  SKey(end), false, new QueryClient<SKey,IStored>()
 		{
+			@Override
 			public boolean acceptQueryResult(SKey key, IStored st) throws Exception
 			{
 				byte[] b = readBytes(st.getIStream(), 2048);
