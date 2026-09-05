@@ -1,10 +1,11 @@
-// Copyright © 2017-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.ConsoleAppender;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CSet;
 import goryachev.common.util.SB;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
@@ -35,7 +36,7 @@ public class Log
 	private Log parent;
 	private LogLevel level;
 	private int effectiveLevel;
-	private final CMap<String,Log> children = new CMap(0); // TODO null by default
+	private final CMap<String,Log> children = new CMap<>(0); // TODO null by default
 
 
 	protected Log(Log parent, String name, String fullName)
@@ -203,11 +204,22 @@ public class Log
 	}
 	
 	
-	/** sets log level for a specific log, does not update children */
-	public static synchronized void setLevel(String channel, LogLevel level)
+	/** sets the log level for the specific channel, not updating the children */
+	public static synchronized void setLevel(LogLevel level, String channel)
 	{
 		Log log = get(channel);
 		log.setLevel(level);
+	}
+	
+	
+	/** sets the log level for the specified channels only, not updating the children */
+	public static synchronized void setLevel(LogLevel level, String channel1, String ... channels)
+	{
+		setLevel(level, channel1);
+		for(String ch: channels)
+		{
+			setLevel(level, ch);			
+		}
 	}
 	
 	
@@ -385,11 +397,11 @@ public class Log
 	}
 	
 	
-	protected static String format(String fmt, Object[] args)
+	private static String format(String fmt, Object[] args)
 	{
 		try
 		{
-			return String.format(fmt, args);
+			return MessageFormat.format(fmt, args);
 		}
 		catch(Throwable e)
 		{

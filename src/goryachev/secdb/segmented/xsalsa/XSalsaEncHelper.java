@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.xsalsa;
 import goryachev.common.util.CKit;
 import goryachev.memsafecrypto.CByteArray;
@@ -31,12 +31,14 @@ public final class XSalsaEncHelper
 	}
 	
 	
+	@Override
 	public long convertLength(long len, boolean whenEncrypting)
 	{
 		return whenEncrypting ? len + XSalsaTools.MAC_LENGTH_BYTES : len - XSalsaTools.MAC_LENGTH_BYTES;
 	}
 	
 	
+	@Override
 	public InputStream getDecryptionStream(String nonce, long length, InputStream in)
 	{
 		CByteArray iv = createNonce(nonce);
@@ -52,6 +54,7 @@ public final class XSalsaEncHelper
 	}
 
 
+	@Override
 	public OutputStream getEncryptionStream(String nonce, long length, OutputStream out)
 	{
 		CByteArray iv = createNonce(nonce);

@@ -128,6 +128,7 @@ public class HKDFParameters
 	}
 
 
+	@Override
 	public void zero()
 	{
 		Crypto.zero(ikm);

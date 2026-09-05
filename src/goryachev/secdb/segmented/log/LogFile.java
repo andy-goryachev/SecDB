@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.log;
 import goryachev.common.io.CReader;
 import goryachev.common.util.CComparator;
@@ -63,6 +63,7 @@ public class LogFile
 		
 		File[] fs = dir.listFiles(new FileFilter()
 		{
+			@Override
 			public boolean accept(File f)
 			{
 				return f.isFile() && f.getName().startsWith(NAME_PREFIX);
@@ -82,6 +83,7 @@ public class LogFile
 		// recent first
 		Collections.sort(lfs, new CComparator<LogFile>()
 		{
+			@Override
 			public int compare(LogFile a, LogFile b)
 			{
 				return compareLong(b.getLastTime(), a.getLastTime());
@@ -177,6 +179,7 @@ public class LogFile
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		CKit.close(out);

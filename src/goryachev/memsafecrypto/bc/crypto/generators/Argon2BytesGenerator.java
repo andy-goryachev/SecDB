@@ -12,7 +12,7 @@ import goryachev.memsafecrypto.util.CUtils;
 /**
  * Argon2 PBKDF - Based on the results of https://password-hashing.net/ and https://www.ietf.org/archive/id/draft-irtf-cfrg-argon2-03.txt
  * 
- * @see https://en.wikipedia.org/wiki/Argon2
+ * @see "https://en.wikipedia.org/wiki/Argon2"
  */
 public class Argon2BytesGenerator
 {

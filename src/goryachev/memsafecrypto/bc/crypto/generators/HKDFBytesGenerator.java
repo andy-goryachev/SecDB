@@ -41,6 +41,7 @@ public class HKDFBytesGenerator
 	}
 
 
+	@Override
 	public void init(DerivationParameters param)
 	{
 		if(!(param instanceof HKDFParameters))
@@ -124,6 +125,7 @@ public class HKDFBytesGenerator
 	}
 
 
+	@Override
 	public int generateBytes(CByteArray out, int outOff, int len) throws DataLengthException, IllegalArgumentException
 	{
 		if(generatedBytes + len > 255 * hashLen)
@@ -164,6 +166,7 @@ public class HKDFBytesGenerator
 	}
 
 
+	@Override
 	public void zero()
 	{
 		Crypto.zero(currentT);

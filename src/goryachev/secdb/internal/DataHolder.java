@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.internal;
 import goryachev.secdb.IRef;
 import goryachev.secdb.IStore;
@@ -58,22 +58,26 @@ public abstract class DataHolder<R>
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "RefHolder[ref=" + ref + "]";
 		}
 
 
+		@Override
 		public boolean hasValue()
 		{
 			return false;
 		}
 		
 		
+		@Override
 		public IStored getStoredValue()
 		{
 			return new IStored()
 			{
+				@Override
 				public long getLength()
 				{
 					long len = ref.getLength();
@@ -81,6 +85,7 @@ public abstract class DataHolder<R>
 				}
 
 
+				@Override
 				public IStream getIStream() throws Exception
 				{
 					return store.load(ref);
@@ -89,18 +94,21 @@ public abstract class DataHolder<R>
 		}
 
 
+		@Override
 		public R getRef()
 		{
 			return ref;
 		}
 
 
+		@Override
 		public boolean isRef()
 		{
 			return true;
 		}
 
 
+		@Override
 		protected byte[] getBytes()
 		{
 			return null;
@@ -123,28 +131,33 @@ public abstract class DataHolder<R>
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "ValueHolder[size=" + bytes.length + "]";
 		}
 
 
+		@Override
 		public boolean hasValue()
 		{
 			return true;
 		}
 		
 		
+		@Override
 		public IStored getStoredValue()
 		{
 			return new IStored()
 			{
+				@Override
 				public long getLength()
 				{
 					return bytes.length;
 				}
 
 
+				@Override
 				public IStream getIStream()
 				{
 					return new ByteArrayIStream(bytes);
@@ -153,18 +166,21 @@ public abstract class DataHolder<R>
 		}
 
 		
+		@Override
 		public R getRef()
 		{
 			return null;
 		}
 		
 		
+		@Override
 		public boolean isRef()
 		{
 			return false;
 		}
 		
 		
+		@Override
 		protected byte[] getBytes()
 		{
 			return bytes;

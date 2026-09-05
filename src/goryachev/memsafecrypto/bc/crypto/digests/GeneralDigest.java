@@ -66,6 +66,7 @@ public abstract class GeneralDigest
 	}
 
 
+	@Override
 	public void update(byte in)
 	{
 		xBuf.set(xBufOff++, in);
@@ -80,6 +81,7 @@ public abstract class GeneralDigest
 	}
 
 
+	@Override
 	public void update(byte[] in, int inOff, int len)
 	{
 		len = Math.max(0, len);
@@ -117,6 +119,7 @@ public abstract class GeneralDigest
 	}
 	
 	
+	@Override
 	public void update(CByteArray in, int inOff, int len)
 	{
 		len = Math.max(0, len);
@@ -174,6 +177,7 @@ public abstract class GeneralDigest
 	}
 
 
+	@Override
 	public void reset()
 	{
 		byteCount = 0;
@@ -194,6 +198,7 @@ public abstract class GeneralDigest
 	}
 
 
+	@Override
 	public int getByteLength()
 	{
 		return BYTE_LENGTH;

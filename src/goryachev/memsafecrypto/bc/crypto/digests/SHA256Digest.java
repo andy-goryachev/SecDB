@@ -108,18 +108,21 @@ public class SHA256Digest
 	}
 
 
+	@Override
 	public String getAlgorithmName()
 	{
 		return "SHA-256";
 	}
 
 
+	@Override
 	public int getDigestSize()
 	{
 		return DIGEST_LENGTH;
 	}
 
 
+	@Override
 	protected void processWord(byte[] in, int inOff)
 	{
 		// Note: Inlined for performance
@@ -137,6 +140,7 @@ public class SHA256Digest
 	}
 	
 	
+	@Override
 	protected void processWord(CByteArray in, int inOff)
 	{
 		// Note: Inlined for performance
@@ -154,6 +158,7 @@ public class SHA256Digest
 	}
 
 
+	@Override
 	protected void processLength(long bitLength)
 	{
 		if(xOff > 14)
@@ -166,6 +171,7 @@ public class SHA256Digest
 	}
 
 
+	@Override
 	public int doFinal(byte[] out, int outOff)
 	{
 		finish();
@@ -185,6 +191,7 @@ public class SHA256Digest
 	}
 	
 	
+	@Override
 	public int doFinal(CByteArray out, int outOff)
 	{
 		finish();
@@ -207,6 +214,7 @@ public class SHA256Digest
 	/**
 	 * reset the chaining variables
 	 */
+	@Override
 	public void reset()
 	{
 		super.reset();
@@ -233,12 +241,14 @@ public class SHA256Digest
 	}
 	
 	
+	@Override
 	public void zero()
 	{
 		reset();
 	}
 
 
+	@Override
 	protected void processBlock()
 	{
 		// expand 16 word block into 64 word blocks.
@@ -365,12 +375,14 @@ public class SHA256Digest
 	}
 	
 
+	@Override
 	public Memoable copy()
 	{
 		return new SHA256Digest(this);
 	}
 
 
+	@Override
 	public void reset(Memoable other)
 	{
 		SHA256Digest d = (SHA256Digest)other;
@@ -379,6 +391,7 @@ public class SHA256Digest
 	}
 
 
+	@Override
 	public CByteArray getEncodedState()
 	{
 		CByteArray state = new CByteArray(52 + xOff * 4);

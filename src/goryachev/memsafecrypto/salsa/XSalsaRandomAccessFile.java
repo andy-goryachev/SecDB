@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.io.CIOTools;
 import goryachev.common.util.CKit;
@@ -244,6 +244,7 @@ public class XSalsaRandomAccessFile
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		Crypto.zero(keyParameter);

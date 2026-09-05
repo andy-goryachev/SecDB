@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.bplustree;
 import goryachev.secdb.QueryClient;
 import java.util.ArrayList;
@@ -21,12 +21,14 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public boolean isLeafNode()
 	{
 		return true;
 	}
 	
 	
+	@Override
 	protected void addChild(BPlusTreeNode<K,V> n)
 	{
 		throw new Error();
@@ -107,6 +109,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public boolean prefixQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
 		int sz = size();
@@ -133,6 +136,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public boolean prefixReverseQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
 		int sz = size();
@@ -160,6 +164,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
+	@Override
 	public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		int sz = size();
@@ -186,6 +191,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
+	@Override
 	public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		for(int i=size()-1; i>=0; i--)
@@ -254,6 +260,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 
 
+	@Override
 	public void dump(Appendable out, String indent, int level) throws Exception
 	{
 		int sz = keys.size();
@@ -273,6 +280,7 @@ public class LeafNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public void dumpKeys(Appendable out, String indent, int level) throws Exception
 	{
 		int sz = keys.size();

@@ -1,4 +1,4 @@
-// Copyright © 2007-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +62,7 @@ public class CList<T>
 	
 	
 	// why ArrayList declares this method as protected is unclear
+	@Override
 	public void removeRange(int fromInclusive, int toExclusive)
 	{
 		super.removeRange(fromInclusive,toExclusive);
@@ -77,6 +78,7 @@ public class CList<T>
 	}
 	
 	
+	@Override
 	public Object clone()
 	{
 		return copyCList();
@@ -89,23 +91,23 @@ public class CList<T>
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
 		{
 			return true;
 		}
-		else if(x instanceof CList)
+		else if(x instanceof List list)
 		{
-			CList o = (CList)x;
 			// adding check for size makes it slightly faster than the superclass implementation
 			// in case of different lists
-			if(size() == o.size())
+			if(size() == list.size())
 			{
 				int sz = size();
 				for(int i=0; i<sz; i++)
 				{
-					if(CKit.notEquals(get(i), o.get(i)))
+					if(CKit.notEquals(get(i), list.get(i)))
 					{
 						return false;
 					}
@@ -118,6 +120,7 @@ public class CList<T>
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		return CList.class.hashCode() ^ super.hashCode();
@@ -192,6 +195,7 @@ public class CList<T>
 	 * keep in mind this method does not distingush between two scenarios:
 	 * when the list is empty and when the last element is null.
 	 */
+	@Override
 	public T getLast()
 	{
 		if(size() > 0)
@@ -203,6 +207,7 @@ public class CList<T>
 	
 	
 	/** removes last element */
+	@Override
 	public T removeLast()
 	{
 		int ix = size() - 1;

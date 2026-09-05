@@ -6,7 +6,7 @@ import goryachev.memsafecrypto.bc.crypto.PasswordConverter;
 
 
 /**
- * @see https://www.rfc-editor.org/rfc/rfc9106.html
+ * @see "https://www.rfc-editor.org/rfc/rfc9106.html"
  */
 public class Argon2Parameters
 {
@@ -35,7 +35,7 @@ public class Argon2Parameters
 	
 
 	/**
-	 * @param version: either ARGON2_VERSION_10 or ARGON2_VERSION_13
+	 * @param version either ARGON2_VERSION_10 or ARGON2_VERSION_13
 	 */
 	protected Argon2Parameters(int type, CByteArray salt, CByteArray secret, CByteArray additional, int iterations, int memory, int lanes, int version, CharToByteConverter converter)
 	{

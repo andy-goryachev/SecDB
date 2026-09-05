@@ -1,4 +1,4 @@
-// Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import java.io.IOException;
@@ -39,6 +39,7 @@ public class CByteArrayInputStreamWrapper
 	}
 
 
+	@Override
 	public synchronized int read()
 	{
 		if(position < size)
@@ -52,6 +53,7 @@ public class CByteArrayInputStreamWrapper
 	}
 
 
+	@Override
 	public synchronized int read(byte[] b, int off, int len)
 	{
 		if(b == null)
@@ -87,6 +89,7 @@ public class CByteArrayInputStreamWrapper
 	}
 
 
+	@Override
 	public synchronized long skip(long n)
 	{
 		long p = size - position;
@@ -100,12 +103,14 @@ public class CByteArrayInputStreamWrapper
 	}
 
 
+	@Override
 	public synchronized int available()
 	{
 		return size - position;
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 	}

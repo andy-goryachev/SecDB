@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
@@ -160,6 +160,7 @@ public class SecStore
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		Throwable err = null;
@@ -225,18 +226,21 @@ public class SecStore
 	}
 	
 	
+	@Override
 	public long convertLength(long len, boolean whenEncrypting)
 	{
 		return encHelper.convertLength(len, whenEncrypting);
 	}
 
 
+	@Override
 	public Ref getRootRef()
 	{
 		return root;
 	}
 
 
+	@Override
 	public void setRootRef(Ref ref) throws Exception
 	{
 		// TODO synchronize?
@@ -248,6 +252,7 @@ public class SecStore
 
 
 	// TODO mutex
+	@Override
 	public Ref store(IStream inp, boolean isTree) throws Exception
 	{
 		long len = inp.getLength();
@@ -276,7 +281,7 @@ public class SecStore
 		}
 		
 		Ref rv = ss.getRef();
-		log.trace("STORE len=%d ref=%s", len,  rv);
+		log.trace("STORE len={0,number} ref={1}", len,  rv);
 		return rv;
 	}
 	
@@ -353,6 +358,7 @@ public class SecStore
 	}
 
 
+	@Override
 	public IStream load(Ref ref) throws Exception
 	{
 		// TODO need to explicitly clear the ref (because of the data key)
@@ -362,6 +368,7 @@ public class SecStore
 		
 		return new IStream()
 		{
+			@Override
 			@SuppressWarnings("resource")
 			public InputStream getStream()
 			{
@@ -372,6 +379,7 @@ public class SecStore
 				return new BufferedInputStream(in, BUFFER_SIZE);
 			}
 
+			@Override
 			public long getLength()
 			{
 				return dataLength;
@@ -380,12 +388,14 @@ public class SecStore
 	}
 
 
+	@Override
 	public void writeRef(Ref ref, DWriter wr) throws Exception
 	{
 		ref.write(wr);
 	}
 
 
+	@Override
 	public Ref readRef(DReader rd) throws Exception
 	{
 		return Ref.read(rd);

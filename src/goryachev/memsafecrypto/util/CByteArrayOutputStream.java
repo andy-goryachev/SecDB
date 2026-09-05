@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
@@ -62,6 +62,7 @@ public class CByteArrayOutputStream
 	}
 
 
+	@Override
 	public synchronized void write(byte[] src, int offset, int length)
 	{
 		if((offset < 0) || (offset > src.length) || (length < 0) || ((offset + length) - src.length > 0))
@@ -88,6 +89,7 @@ public class CByteArrayOutputStream
 	}
 
 
+	@Override
 	public synchronized void write(int b)
 	{
 		ensureCapacity(size + 1);
@@ -101,12 +103,14 @@ public class CByteArrayOutputStream
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		buffer.zero();
 	}
 
 
+	@Override
 	public void zero()
 	{
 		buffer.zero();

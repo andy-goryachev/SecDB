@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 
 
@@ -10,7 +10,9 @@ public interface IRef
 	/** returns the amount of storage used (data length + storage and encryption overhead) */
 	public long getLength();
 	
+	@Override
 	public int hashCode();
 	
+	@Override
 	public boolean equals(Object x);
 }

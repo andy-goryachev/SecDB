@@ -75,6 +75,7 @@ public class Salsa20Engine
 	 * @exception IllegalArgumentException if the params argument is
 	 * inappropriate.
 	 */
+	@Override
 	public void init(boolean forEncryption, CipherParameters params)
 	{
 		/* 
@@ -127,6 +128,7 @@ public class Salsa20Engine
 	}
 
 
+	@Override
 	public String getAlgorithmName()
 	{
 		String name = "Salsa20";
@@ -138,6 +140,7 @@ public class Salsa20Engine
 	}
 
 
+	@Override
 	public byte returnByte(byte in)
 	{
 		if(limitExceeded())
@@ -314,6 +317,7 @@ public class Salsa20Engine
 	}
 
 
+	@Override
 	public int processBytes(CByteArray in, int inOff, int len, CByteArray out, int outOff)
 	{
 		if(!initialised)
@@ -390,6 +394,7 @@ public class Salsa20Engine
 	}
 
 
+	@Override
 	public long skip(long numberOfBytes)
 	{
 		if(numberOfBytes >= 0)
@@ -444,6 +449,7 @@ public class Salsa20Engine
 	}
 
 
+	@Override
 	public long seekTo(long position)
 	{
 		reset();
@@ -452,12 +458,14 @@ public class Salsa20Engine
 	}
 
 
+	@Override
 	public long getPosition()
 	{
 		return getCounter() * 64 + index;
 	}
 
 
+	@Override
 	public void reset()
 	{
 		index = 0;
@@ -646,6 +654,7 @@ public class Salsa20Engine
 	}
 	
 	
+	@Override
 	public void zero()
 	{
 		keyStream.zero();

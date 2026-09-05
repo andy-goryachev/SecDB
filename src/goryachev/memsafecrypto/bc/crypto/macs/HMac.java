@@ -94,6 +94,7 @@ public class HMac
 	}
 
 
+	@Override
 	public String getAlgorithmName()
 	{
 		return digest.getAlgorithmName() + "/HMAC";
@@ -106,6 +107,7 @@ public class HMac
 	}
 
 
+	@Override
 	public void init(CipherParameters params)
 	{
 		digest.reset();
@@ -152,24 +154,28 @@ public class HMac
 	}
 
 
+	@Override
 	public int getMacSize()
 	{
 		return digestSize;
 	}
 
 
+	@Override
 	public void update(byte in)
 	{
 		digest.update(in);
 	}
 
 
+	@Override
 	public void update(CByteArray in, int inOff, int len)
 	{
 		digest.update(in, inOff, len);
 	}
 
 
+	@Override
 	public int doFinal(CByteArray out, int outOff)
 	{
 		digest.doFinal(outputBuf, blockLength);
@@ -207,6 +213,7 @@ public class HMac
 	/**
 	 * Reset the mac generator.
 	 */
+	@Override
 	public void reset()
 	{
 		/*
@@ -221,6 +228,7 @@ public class HMac
 	}
 	
 	
+	@Override
 	public void zero()
 	{
 		reset();

@@ -26,6 +26,7 @@ public class Poly1305KeyGenerator
 	 * Initialises the key generator.<br>
 	 * Poly1305 keys are always 256 bits, so the key length in the provided parameters is ignored.
 	 */
+	@Override
 	public void init(KeyGenerationParameters param)
 	{
 		// Poly1305 keys are always 256 bits
@@ -38,6 +39,7 @@ public class Poly1305KeyGenerator
 	 * <code>k[0] ... k[15], r[0] ... r[15]</code> with the required bits in <code>r</code> cleared
 	 * as per {@link #clamp(byte[])}.
 	 */
+	@Override
 	public byte[] generateKey()
 	{
 		final byte[] key = super.generateKey();

@@ -1,4 +1,4 @@
-// Copyright © 2011-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.util.CKit;
 import goryachev.memsafecrypto.CByteArray;
@@ -82,6 +82,7 @@ public class XSalsa20Poly1305DecryptStream
 	}
 	
 
+	@Override
 	public int read() throws IOException
 	{
 		if(available == 0)
@@ -101,6 +102,7 @@ public class XSalsa20Poly1305DecryptStream
 	}
 
 
+	@Override
 	public int read(byte[] b, int off, int len) throws IOException
 	{
 		if(available == 0)
@@ -196,6 +198,7 @@ public class XSalsa20Poly1305DecryptStream
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		Crypto.zero(xsalsa20);

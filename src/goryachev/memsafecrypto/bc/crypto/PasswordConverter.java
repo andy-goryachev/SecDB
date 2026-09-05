@@ -14,12 +14,14 @@ public enum PasswordConverter
 	 */
 	ASCII
 	{
+		@Override
 		public String getType()
 		{
 			return "ASCII";
 		}
 
 
+		@Override
 		public CByteArray convert(CCharArray password)
 		{
 			return PBEParametersGenerator.PKCS5PasswordToBytes(password);
@@ -30,12 +32,14 @@ public enum PasswordConverter
 	 */
 	UTF8
 	{
+		@Override
 		public String getType()
 		{
 			return "UTF8";
 		}
 
 
+		@Override
 		public CByteArray convert(CCharArray password)
 		{
 			return PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(password);
@@ -46,12 +50,14 @@ public enum PasswordConverter
 	 */
 	PKCS12
 	{
+		@Override
 		public String getType()
 		{
 			return "PKCS12";
 		}
 
 
+		@Override
 		public CByteArray convert(CCharArray password)
 		{
 			return PBEParametersGenerator.PKCS12PasswordToBytes(password);

@@ -303,6 +303,7 @@ public class Blake2bDigest
 	 *
 	 * @param b the input byte to be entered.
 	 */
+	@Override
 	public void update(byte b)
 	{
 		int remainingLength = 0; // left bytes of buffer
@@ -339,6 +340,7 @@ public class Blake2bDigest
 	 * @param offset  the offset into the byte array where the data starts.
 	 * @param len     the length of the data.
 	 */
+	@Override
 	public void update(byte[] message, int offset, int len)
 	{
 		if(message == null || len == 0)
@@ -403,6 +405,7 @@ public class Blake2bDigest
 	 * @param offset  the offset into the byte array where the data starts.
 	 * @param len     the length of the data.
 	 */
+	@Override
 	public void update(CByteArray message, int offset, int len)
 	{
 		if(message == null || len == 0)
@@ -468,6 +471,7 @@ public class Blake2bDigest
 	 * @param out       the array the digest is to be copied into.
 	 * @param outOffset the offset into the out array the digest is to start at.
 	 */
+	@Override
 	public int doFinal(byte[] out, int outOffset)
 	{
 		f0 = 0xFFFFFFFFFFFFFFFFL;
@@ -510,6 +514,7 @@ public class Blake2bDigest
 	 * @param out       the array the digest is to be copied into.
 	 * @param outOffset the offset into the out array the digest is to start at.
 	 */
+	@Override
 	public int doFinal(CByteArray out, int outOffset)
 	{
 		f0 = 0xFFFFFFFFFFFFFFFFL;
@@ -549,6 +554,7 @@ public class Blake2bDigest
 	 * The key, the salt and the personal string will
 	 * remain for further computations.
 	 */
+	@Override
 	public void reset()
 	{
 		bufferPos = 0;
@@ -566,6 +572,7 @@ public class Blake2bDigest
 	}
 	
 	
+	@Override
 	public void zero()
 	{
 		reset();
@@ -656,6 +663,7 @@ public class Blake2bDigest
 	 *
 	 * @return the algorithm name
 	 */
+	@Override
 	public String getAlgorithmName()
 	{
 		return "BLAKE2b";
@@ -667,6 +675,7 @@ public class Blake2bDigest
 	 *
 	 * @return the size, in bytes, of the digest produced by this message digest.
 	 */
+	@Override
 	public int getDigestSize()
 	{
 		return digestLength;
@@ -679,6 +688,7 @@ public class Blake2bDigest
 	 *
 	 * @return byte length of the digests internal buffer.
 	 */
+	@Override
 	public int getByteLength()
 	{
 		return BLOCK_LENGTH_BYTES;

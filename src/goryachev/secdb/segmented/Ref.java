@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriter;
@@ -106,6 +106,7 @@ public abstract class Ref
 	}
 	
 	
+	@Override
 	public long getLength()
 	{
 		return length;
@@ -155,6 +156,7 @@ public abstract class Ref
 		}
 
 		
+		@Override
 		public String toPersistentString()
 		{
 			SB sb = new SB(32);
@@ -167,6 +169,7 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public void write(DWriter wr) throws Exception
 		{
 			wr.writeShort(1);
@@ -176,30 +179,35 @@ public abstract class Ref
 		}
 		
 
+		@Override
 		public boolean isSingleSegment()
 		{
 			return true;
 		}
 		
 		
+		@Override
 		public int getSegmentCount()
 		{
 			return 1;
 		}
 		
 		
+		@Override
 		public String getSegment()
 		{
 			return segment;
 		}
 		
 		
+		@Override
 		public long getOffset()
 		{
 			return offset;
 		}
 		
 		
+		@Override
 		public String getSegment(int ix)
 		{
 			if(ix == 0)
@@ -210,6 +218,7 @@ public abstract class Ref
 		}
 
 
+		@Override
 		public long getOffset(int ix)
 		{
 			if(ix == 0)
@@ -220,6 +229,7 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public int hashCode()
 		{
 			int h = FH.hash(SingleSegment.class);
@@ -229,6 +239,7 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public boolean equals(Object x)
 		{
 			if(x == this)
@@ -250,6 +261,7 @@ public abstract class Ref
 		}
 		
 
+		@Override
 		public Ref.MultiSegment addSegment(String seg, long off)
 		{
 			String[] segments = new String[]
@@ -268,6 +280,7 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "Ref[" + length + ":" + Hex.toHexString(offset) + ":" + segment + "]";
@@ -329,6 +342,7 @@ public abstract class Ref
 		}
 
 
+		@Override
 		public String toPersistentString()
 		{
 			int sz = getSegmentCount();
@@ -352,6 +366,7 @@ public abstract class Ref
 		}
 		
 
+		@Override
 		public void write(DWriter wr) throws Exception
 		{
 			int sz = getSegmentCount();
@@ -366,42 +381,49 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public boolean isSingleSegment()
 		{
 			return false;
 		}
 
 		
+		@Override
 		public int getSegmentCount()
 		{
 			return segments.length;
 		}
 		
 		
+		@Override
 		public String getSegment()
 		{
 			throw new Error();
 		}
 
 
+		@Override
 		public long getOffset()
 		{
 			throw new Error();
 		}
 		
 		
+		@Override
 		public String getSegment(int ix)
 		{
 			return segments[ix];
 		}
 
 
+		@Override
 		public long getOffset(int ix)
 		{
 			return offsets[ix];
 		}
 		
 		
+		@Override
 		public int hashCode()
 		{
 			int h = FH.hash(SingleSegment.class);
@@ -411,6 +433,7 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public boolean equals(Object x)
 		{
 			if(x == this)
@@ -432,6 +455,7 @@ public abstract class Ref
 		}
 		
 		
+		@Override
 		public Ref.MultiSegment addSegment(String seg, long off)
 		{
 			int ct = getSegmentCount();
@@ -448,6 +472,7 @@ public abstract class Ref
 		}
 
 		
+		@Override
 		public String toString()
 		{
 			SB sb = new SB();

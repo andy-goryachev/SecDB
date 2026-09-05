@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 import goryachev.common.util.CKit;
 import java.security.SecureRandom;
@@ -24,6 +24,7 @@ public class CRandom
 	}
 
 
+	@Override
 	public String getAlgorithm()
 	{
 		return "andy@goryachev/Blake2b512+jvm";

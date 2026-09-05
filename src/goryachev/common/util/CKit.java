@@ -1,4 +1,4 @@
-// Copyright © 1996-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 1996-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import goryachev.common.log.Log;
@@ -47,7 +47,7 @@ import java.util.zip.ZipFile;
 
 public final class CKit
 {
-	public static final String COPYRIGHT = "Copyright © 1996-2024 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © 1996-2026 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	protected static final Log log = Log.get("CKit");
 	public static final char APPLE = '\u2318';
 	public static final char BOM = '\ufeff';
@@ -398,7 +398,7 @@ public final class CKit
 	
 	public static String readString(InputStream is) throws Exception
 	{
-		Reader in = new InputStreamReader(is, CHARSET_UTF8);
+		Reader in = new InputStreamReader(toBufferedInputStream(is), CHARSET_UTF8);
 		try
 		{
 			SB sb = new SB(16384);
@@ -446,6 +446,11 @@ public final class CKit
 	public static String readString(String resource, Charset encoding) throws Exception
 	{
 		InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
+		if(in == null)
+		{
+			throw new IOException("resource not found:" + resource);
+		}
+		
 		try
 		{
 			return readString(in, encoding);
@@ -522,12 +527,7 @@ public final class CKit
 	
 	public static String readString(InputStream is, int max, Charset cs) throws Exception
 	{
-		if(!(is instanceof BufferedInputStream))
-		{
-			is = new BufferedInputStream(is);
-		}
-		
-		Reader in = new InputStreamReader(is, cs);
+		Reader in = new InputStreamReader(toBufferedInputStream(is), cs);
 		try
 		{
 			return readString(in, max);
@@ -2521,12 +2521,14 @@ public final class CKit
 				private int ix;
 				
 				
+				@Override
 				public boolean hasNext()
 				{
 					return ix < items.length;
 				}
 
 				
+				@Override
 				public T next()
 				{
 					return items[ix++];

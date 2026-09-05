@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb;
 import goryachev.common.log.Log;
 import goryachev.common.util.SKey;
@@ -29,7 +29,7 @@ public class DBEngine<R extends IRef>
 	protected BPlusTreeNode<SKey,DataHolder<R>> loadRoot() throws Exception
 	{
 		R ref = store.getRootRef();
-		log.debug("root=%s", ref);
+		log.debug("root={0}", ref);
 		
 		if(ref == null)
 		{
@@ -60,7 +60,7 @@ public class DBEngine<R extends IRef>
 	public DataHolder<R> getValue(SKey key) throws Exception
 	{
 		DataHolder<R> h = loadRoot().getValue(key);
-		log.trace("key=%s, ref=%s", key, h);
+		log.trace("key={0}, ref={1}", key, h);
 		return h;
 	}
 
@@ -100,6 +100,7 @@ public class DBEngine<R extends IRef>
 	{
 		return new Predicate<SKey>()
 		{
+			@Override
 			public boolean test(SKey key)
 			{
 				return key.toString().startsWith(prefix.toString());
@@ -128,7 +129,7 @@ public class DBEngine<R extends IRef>
 		R ref = DBEngineIO.store(store, newRoot);
 		store.setRootRef(ref);
 		
-		log.debug("new root=%s", ref);
+		log.debug("new root={0}", ref);
 	}
 
 

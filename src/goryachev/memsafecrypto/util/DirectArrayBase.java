@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.ICryptoZeroable;
 import java.nio.ByteBuffer;
@@ -78,6 +78,7 @@ public class DirectArrayBase
 	}
 	
 
+	@Override
 	public void zero()
 	{
 		int sz = sizeInBytes();

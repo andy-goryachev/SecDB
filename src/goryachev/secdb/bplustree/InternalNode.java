@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.bplustree;
 import goryachev.secdb.QueryClient;
 import java.util.function.Predicate;
@@ -27,6 +27,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public boolean isLeafNode()
 	{
 		return false;
@@ -81,6 +82,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public boolean prefixQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
 		// similar to queryForward
@@ -100,6 +102,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public boolean prefixReverseQuery(K prefix, Predicate<K> isPrefix, QueryClient<K,V> client) throws Exception
 	{
 		int ix = findReverseIndex(prefix, isPrefix);
@@ -149,6 +152,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 	
+	@Override
 	public boolean queryForward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		int ix = findInsertIndex(start);
@@ -167,6 +171,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 
+	@Override
 	public boolean queryBackward(K start, boolean includeStart, K end, boolean includeEnd, QueryClient<K,V> client) throws Exception
 	{
 		int ix = findInsertIndex(start);
@@ -275,6 +280,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 
 	
+	@Override
 	public void dump(Appendable out, String indent, int level) throws Exception
 	{
 		int sz = getChildCount();
@@ -298,6 +304,7 @@ public abstract class InternalNode<K extends Comparable<? super K>,V>
 	}
 	
 	
+	@Override
 	public void dumpKeys(Appendable out, String indent, int level) throws Exception
 	{
 		int sz = getChildCount();

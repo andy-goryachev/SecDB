@@ -35,6 +35,7 @@ public class DigestRandomGenerator
 	}
 
 
+	@Override
 	public void addSeedMaterial(byte[] inSeed)
 	{
 		synchronized(this)
@@ -50,6 +51,7 @@ public class DigestRandomGenerator
 	}
 
 
+	@Override
 	public void addSeedMaterial(long rSeed)
 	{
 		synchronized(this)
@@ -62,12 +64,14 @@ public class DigestRandomGenerator
 	}
 
 
+	@Override
 	public void nextBytes(byte[] bytes)
 	{
 		nextBytes(bytes, 0, bytes.length);
 	}
 
 
+	@Override
 	public void nextBytes(byte[] bytes, int start, int len)
 	{
 		synchronized(this)
@@ -90,12 +94,14 @@ public class DigestRandomGenerator
 	}
 	
 	
+	@Override
 	public void nextBytes(CByteArray bytes)
 	{
 		nextBytes(bytes, 0, bytes.length());
 	}
 
 
+	@Override
 	public void nextBytes(CByteArray bytes, int start, int len)
 	{
 		synchronized(this)

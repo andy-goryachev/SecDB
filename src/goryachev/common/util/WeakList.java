@@ -1,4 +1,4 @@
-// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -162,6 +162,7 @@ public class WeakList<T>
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		int sz = list.size();

@@ -1,6 +1,7 @@
-// Copyright © 2010-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2010-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
@@ -158,22 +159,6 @@ public class SB
 	}
 	
 	
-	/** appends json-escaped value */
-	public SB safeJson(Object x)
-	{
-		if(x == null)
-		{
-			sb.append("null");
-		}
-		else
-		{
-			String s = JsonDump.toJsonString(x);
-			sb.append(s);
-		}
-		return this;
-	}
-	
-	
 	// StringBuilder methods
 
 
@@ -191,6 +176,7 @@ public class SB
 	}
 	
 	
+	@Override
 	public Appendable append(CharSequence cs)
 	{
 		sb.append(cs);
@@ -198,6 +184,7 @@ public class SB
 	}
 
 
+	@Override
 	public SB append(CharSequence cs, int start, int end)
 	{
 		sb.append(cs, start, end);
@@ -226,6 +213,7 @@ public class SB
 	}
 
 
+	@Override
 	public SB append(char x)
 	{
 		sb.append(x);
@@ -465,12 +453,14 @@ public class SB
 	}
 
 
+	@Override
 	public String toString()
 	{
 		return sb.toString();
 	}
 	
 	
+	@Override
 	public int length()
 	{
 		return getLength();
@@ -495,6 +485,7 @@ public class SB
 	}
 
 
+	@Override
 	public char charAt(int ix)
 	{
 		return sb.charAt(ix);
@@ -520,6 +511,7 @@ public class SB
 	}
 
 
+	@Override
 	public boolean isEmpty()
 	{
 		return sb.length() == 0;
@@ -552,6 +544,7 @@ public class SB
 	}
 
 
+	@Override
 	public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
 	{
 		sb.getChars(srcBegin, srcEnd, dst, dstBegin);
@@ -763,6 +756,7 @@ public class SB
 	}
 
 
+	@Override
 	public CharSequence subSequence(int start, int end)
 	{
 		return sb.subSequence(start, end);
@@ -871,5 +865,66 @@ public class SB
 	public byte[] getBytes(Charset cs)
 	{
 		return toString().getBytes(cs);
+	}
+	
+	
+	public SB hex1(int c)
+	{
+		hex(c);
+		return this;
+	}
+	
+	
+	public SB hex2(int c)
+	{
+		hex(c >> 4);
+		hex(c);
+		return this;
+	}
+
+	
+	
+	public SB hex4(int c)
+	{
+		hex(c >> 12);
+		hex(c >> 8);
+		hex(c >> 4);
+		hex(c);
+		return this;
+	}
+
+	
+	public SB hex8(long c)
+	{
+		hex(c >> 28);
+		hex(c >> 24);
+		hex(c >> 20);
+		hex(c >> 16);
+		hex(c >> 12);
+		hex(c >> 8);
+		hex(c >> 4);
+		hex(c);
+		return this;
+	}
+
+	
+	private void hex(int v)
+	{
+		char c = Hex.toHexChar(v);
+		sb.append(c);
+	}
+	
+	
+	private void hex(long c)
+	{
+		hex((int)c);
+	}
+	
+	
+	public SB appendFormatted(String pattern, Object ... args)
+	{
+		String s = MessageFormat.format(pattern, args);
+		sb.append(s);
+		return this;
 	}
 }

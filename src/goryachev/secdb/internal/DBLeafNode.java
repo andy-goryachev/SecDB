@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.internal;
 import goryachev.common.util.SKey;
 import goryachev.secdb.IRef;
@@ -30,12 +30,14 @@ public class DBLeafNode<R extends IRef>
 	}
 	
 	
+	@Override
 	protected LeafNode<SKey,DataHolder<R>> newLeafNode()
 	{
 		return createModified(store);
 	}
 	
 	
+	@Override
 	protected InternalNode newInternalNode()
 	{
 		return DBInternalNode.createModified(store);

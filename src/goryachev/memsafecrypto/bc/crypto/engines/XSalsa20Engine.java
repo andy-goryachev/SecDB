@@ -12,12 +12,14 @@ import goryachev.memsafecrypto.util.CUtils;
 public class XSalsa20Engine
 	extends Salsa20Engine
 {
+	@Override
 	public String getAlgorithmName()
 	{
 		return "XSalsa20";
 	}
 
 
+	@Override
 	protected int getNonceSize()
 	{
 		return 24;

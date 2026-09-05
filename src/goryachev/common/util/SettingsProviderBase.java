@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CReader;
 import goryachev.common.log.Log;
@@ -9,17 +9,17 @@ import java.util.List;
  * In-memory map-based Settings Provider.
  */
 public abstract class SettingsProviderBase
-    implements GlobalSettingsProvider
+	implements GlobalSettingsProvider
 {
 	protected abstract void saveSettings();
 
 	//
 	
-	// stores String or String[]
-	protected CMap<String,Object> data = new CMap<>();
 	private static final Log log = Log.get("SettingsProviderBase");
 	private static final Log logReads = Log.get("SettingsProviderBase.reads");
 	private static final Log logWrites = Log.get("SettingsProviderBase.writes");
+	// stores String or String[]
+	protected CMap<String,Object> data = new CMap<>();
 
 	
 	public SettingsProviderBase()
@@ -27,6 +27,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
+	@Override
 	public synchronized List<String> getKeys()
 	{
 		return data.keys();
@@ -74,28 +75,30 @@ public abstract class SettingsProviderBase
 		if(x instanceof String[] ss)
 		{
 			rv = ss;
-			log.debug(() -> key + " " + new CList<>(rv));
+			logReads.debug(() -> key + " " + new CList<>(rv));
 		}
 		else if(x instanceof String s)
 		{
 			rv = new String[] { s };
-			log.debug(() -> key + " [" + s + "]");
+			logReads.debug(() -> key + " [" + s + "]");
 		}
 		else
 		{
 			rv = null;
-			log.debug(() -> key + " <null>");
+			logReads.debug(() -> key + " <null>");
 		}
 		return rv;
 	}
 	
 	
+	@Override
 	public String getString(String key)
 	{
 		return getStringPrivate(key);
 	}
 
 
+	@Override
 	public synchronized void setString(String key, String val)
 	{
 		if(val == null)
@@ -111,6 +114,7 @@ public abstract class SettingsProviderBase
 	}
 
 
+	@Override
 	public SStream getStream(String key)
 	{
 		String[] ss = getArrayPrivate(key);
@@ -118,6 +122,7 @@ public abstract class SettingsProviderBase
 	}
 
 
+	@Override
 	public synchronized void setStream(String key, SStream s)
 	{
 		String[] ss = s.toArray();
@@ -316,6 +321,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
+	@Override
 	public final void save()
 	{
 		saveSettings();

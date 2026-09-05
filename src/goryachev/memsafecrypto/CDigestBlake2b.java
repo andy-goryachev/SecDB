@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 import goryachev.common.util.CDigest;
 import goryachev.common.util.api.IMessageDigest;
@@ -34,24 +34,28 @@ public class CDigestBlake2b
 		}
 		
 		
+		@Override
 		public void update(byte b)
 		{
 			digest.update(b);
 		}
 
 
+		@Override
 		public void update(byte[] buf, int offset, int length)
 		{
 			digest.update(buf, offset, length);
 		}
 
 
+		@Override
 		public void reset()
 		{
 			digest.reset();
 		}
 
 
+		@Override
 		public byte[] digest()
 		{
 			byte[] out = new byte[digest.getDigestSize()];

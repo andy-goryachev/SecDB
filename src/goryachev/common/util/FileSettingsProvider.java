@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
  * File-based Settings Provider.
  */
 public class FileSettingsProvider
-    extends SettingsProviderBase
+	extends SettingsProviderBase
 {
 	protected static final Log log = Log.get("FileSettingsProvider");
 	private File file;
@@ -27,6 +27,7 @@ public class FileSettingsProvider
 	}
 	
 
+	@Override
 	protected void saveSettings()
 	{
 		try

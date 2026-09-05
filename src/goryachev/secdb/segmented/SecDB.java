@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import goryachev.common.util.SKey;
 import goryachev.secdb.DBEngine;
@@ -49,6 +49,7 @@ public class SecDB
 	}
 	
 	
+	@Override
 	public void close() throws IOException
 	{
 		store.close();
@@ -66,6 +67,7 @@ public class SecDB
 	{
 		execute(new Transaction()
 		{
+			@Override
 			protected void body() throws Exception
 			{
 				insert(key, in);
@@ -78,6 +80,7 @@ public class SecDB
 	{
 		execute(new Transaction()
 		{
+			@Override
 			protected void body() throws Exception
 			{
 				remove(key);
@@ -90,6 +93,7 @@ public class SecDB
 	{
 		execute(new Transaction()
 		{
+			@Override
 			protected void body() throws Exception
 			{
 				for(SKey k: keys)
@@ -113,6 +117,7 @@ public class SecDB
 	{
 		engine.rangeQuery(start, includeStart, end, includeEnd, new QueryClient<SKey,DataHolder<Ref>>()
 		{
+			@Override
 			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h) throws Exception
 			{
 				IStored v = h.getStoredValue();
@@ -127,6 +132,7 @@ public class SecDB
 	{
 		engine.prefixQuery(prefix, new QueryClient<SKey,DataHolder<Ref>>()
 		{
+			@Override
 			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h) throws Exception
 			{
 				IStored v = h.getStoredValue();
@@ -141,6 +147,7 @@ public class SecDB
 	{
 		engine.prefixReverseQuery(prefix, new QueryClient<SKey,DataHolder<Ref>>()
 		{
+			@Override
 			public boolean acceptQueryResult(SKey key, DataHolder<Ref> h) throws Exception
 			{
 				IStored v = h.getStoredValue();

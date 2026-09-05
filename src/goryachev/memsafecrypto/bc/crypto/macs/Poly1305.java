@@ -85,6 +85,7 @@ public class Poly1305
 	 *        {@link Poly1305KeyGenerator Poly1305 key format}, otherwise just the
 	 *        {@link KeyParameter}.
 	 */
+	@Override
 	public void init(CipherParameters params) throws IllegalArgumentException
 	{
 		CByteArray nonce = null;
@@ -169,18 +170,21 @@ public class Poly1305
 	}
 
 
+	@Override
 	public String getAlgorithmName()
 	{
 		return cipher == null ? "Poly1305" : "Poly1305-" + cipher.getAlgorithmName();
 	}
 
 
+	@Override
 	public int getMacSize()
 	{
 		return BLOCK_SIZE;
 	}
 
 
+	@Override
 	public void update(final byte in) throws IllegalStateException
 	{
 		singleByte[0] = in;
@@ -207,6 +211,7 @@ public class Poly1305
 	}
 	
 	
+	@Override
 	public void update(CByteArray in, final int inOff, final int len) throws DataLengthException, IllegalStateException
 	{
 		int copied = 0;
@@ -342,6 +347,7 @@ public class Poly1305
 	}
 	
 	
+	@Override
 	public int doFinal(CByteArray out, final int outOff) throws DataLengthException, IllegalStateException
 	{
 		if(outOff + BLOCK_SIZE > out.length())
@@ -410,6 +416,7 @@ public class Poly1305
 	}
 
 
+	@Override
 	public void reset()
 	{
 		currentBlockOffset = 0;
@@ -418,6 +425,7 @@ public class Poly1305
 	}
 	
 	
+	@Override
 	public void zero()
 	{
 		reset();

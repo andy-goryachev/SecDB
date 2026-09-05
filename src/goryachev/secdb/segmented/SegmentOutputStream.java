@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,12 +55,14 @@ public class SegmentOutputStream
 	}
 	
 	
+	@Override
 	public void write(int b) throws IOException
 	{
 		throw new Error("single byte write is not supported");
 	}
 
 
+	@Override
 	public void write(byte[] buf, int off, int len) throws IOException
 	{
 		try
@@ -101,6 +103,7 @@ public class SegmentOutputStream
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		finalRef = ref;

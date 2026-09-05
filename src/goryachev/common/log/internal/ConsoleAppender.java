@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log.internal;
 import goryachev.common.log.AppenderBase;
 import goryachev.common.log.LogLevel;
@@ -27,6 +27,7 @@ public class ConsoleAppender
 	}
 	
 
+	@Override
 	public void emit(String s)
 	{
 		out.println(s);

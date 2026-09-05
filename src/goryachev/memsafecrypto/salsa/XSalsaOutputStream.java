@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.io.CIOTools;
 import goryachev.common.util.CKit;
@@ -53,6 +53,7 @@ public class XSalsaOutputStream
 	}
 	
 
+	@Override
 	public void write(byte[] buf, int off, int len) throws IOException
 	{
 		int offset = 0;
@@ -70,12 +71,14 @@ public class XSalsaOutputStream
 	}
 
 
+	@Override
 	public void write(byte[] buf) throws IOException
 	{
 		write(buf, 0, buf.length);
 	}
 	
 	
+	@Override
 	public void write(int b) throws IOException
 	{
 		smallBuffer[0] = (byte)b;
@@ -83,6 +86,7 @@ public class XSalsaOutputStream
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		Crypto.zero(keyParameter);

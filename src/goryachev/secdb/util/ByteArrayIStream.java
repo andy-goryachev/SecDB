@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.util;
 import goryachev.secdb.IStream;
 import java.io.ByteArrayInputStream;
@@ -20,12 +20,14 @@ public class ByteArrayIStream
 	}
 	
 
+	@Override
 	public InputStream getStream()
 	{
 		return new ByteArrayInputStream(bytes);
 	}
 
 
+	@Override
 	public long getLength()
 	{
 		return bytes.length;

@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented.log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.Parsers;
@@ -83,12 +83,14 @@ public abstract class LogEvent
 		}
 		
 		
+		@Override
 		public void write(SB sb) throws Exception
 		{
 			throw new Error();
 		}
 
 
+		@Override
 		public Ref getRefData()
 		{
 			try
@@ -118,6 +120,7 @@ public abstract class LogEvent
 		}
 		
 		
+		@Override
 		public void write(SB sb) throws Exception
 		{
 			sb.a(code);
@@ -140,6 +143,7 @@ public abstract class LogEvent
 		}
 		
 		
+		@Override
 		public Ref getRefData()
 		{
 			if(data instanceof Ref)

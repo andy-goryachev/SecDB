@@ -1,4 +1,4 @@
-// Copyright © 2004-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -379,6 +379,17 @@ public class Dump
 	{
 		String s = "          " + n;
 		return s.substring(s.length()-10, s.length());
+	}
+	
+	
+	public static String formatDouble(double x)
+	{
+		long v = (long)x;
+		if(v == x)
+		{
+			return Long.toString(v);
+		}
+		return Double.toString(x);
 	}
 	
 	

@@ -109,6 +109,7 @@ public class PKCS5S2ParametersGenerator
 	 * @param keySize the size of the key we want (in bits)
 	 * @return a KeyParameter object.
 	 */
+	@Override
 	public CipherParameters generateDerivedParameters(int keySize)
 	{
 		keySize = keySize / 8;
@@ -134,6 +135,7 @@ public class PKCS5S2ParametersGenerator
 	 * @param ivSize the size of the iv we want (in bits)
 	 * @return a ParametersWithIV object.
 	 */
+	@Override
 	public CipherParameters generateDerivedParameters(int keySize, int ivSize)
 	{
 		keySize = keySize / 8;
@@ -158,6 +160,7 @@ public class PKCS5S2ParametersGenerator
 	 * @param keySize the size of the key we want (in bits)
 	 * @return a KeyParameter object.
 	 */
+	@Override
 	public CipherParameters generateDerivedMacParameters(int keySize)
 	{
 		return generateDerivedParameters(keySize);

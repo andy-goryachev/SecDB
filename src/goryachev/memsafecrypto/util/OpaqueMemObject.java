@@ -1,4 +1,4 @@
-// Copyright © 2011-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
@@ -120,6 +120,7 @@ public abstract class OpaqueMemObject
 	}
 	
 	
+	@Override
 	public final String toString()
 	{
 		return String.valueOf('*');
@@ -164,6 +165,7 @@ public abstract class OpaqueMemObject
 	}
 	
 	
+	@Override
 	public final void zero()
 	{
 		clear();

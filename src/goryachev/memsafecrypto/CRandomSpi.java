@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 import goryachev.memsafecrypto.bc.crypto.digests.Blake2bDigest;
 import goryachev.memsafecrypto.bc.crypto.prng.DigestRandomGenerator;
@@ -55,12 +55,14 @@ public final class CRandomSpi
 	}
 	
 
+	@Override
 	protected final void engineSetSeed(byte[] seed)
 	{
 		generator.addSeedMaterial(seed);
 	}
 	
 
+	@Override
 	protected final void engineNextBytes(byte[] bytes)
 	{
 		generator.nextBytes(bytes);
@@ -73,6 +75,7 @@ public final class CRandomSpi
 	}
 	
 
+	@Override
 	protected final byte[] engineGenerateSeed(int byteCount)
 	{
 		byte[] b = new byte[byteCount];

@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.secdb.segmented;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,7 @@ public class SegmentInputStream
 	}
 	
 
+	@Override
 	public int read() throws IOException
 	{
 		if((length - position) > 0)
@@ -50,6 +51,7 @@ public class SegmentInputStream
 	}
 
 
+	@Override
 	public int read(byte[] buf, int off, int len) throws IOException
 	{
 		long remain = length - position;
@@ -125,6 +127,7 @@ public class SegmentInputStream
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		// TODO clear the key

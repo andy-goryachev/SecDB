@@ -1,4 +1,4 @@
-// Copyright © 2005-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2005-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -56,9 +56,9 @@ public class RandomAccessByteBuffer
 		{
 			size = position;
 		}
-	}        
-        
-	
+	}
+
+
 	public void writeBoolean(boolean d) throws IOException
 	{
 		writeByte(d ? 1 : 0);
@@ -160,7 +160,7 @@ public class RandomAccessByteBuffer
 			}
 		}
 	}
-    
+
 
 	public void seek(int pos) throws IOException
 	{
